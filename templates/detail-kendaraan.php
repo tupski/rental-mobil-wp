@@ -25,6 +25,9 @@ $bahan_bakar = !empty($bahan_bakar_terms) ? $bahan_bakar_terms[0]->name : '';
 
 $tipe_terms = get_the_terms($post_id, 'tipe_kendaraan');
 $tipe = !empty($tipe_terms) ? $tipe_terms[0]->name : '';
+
+$tahun_terms = get_the_terms($post_id, 'tahun_kendaraan');
+$tahun = !empty($tahun_terms) ? $tahun_terms[0]->name : '';
 ?>
 
 <div class="rental-mobil-detail">
@@ -80,6 +83,13 @@ $tipe = !empty($tipe_terms) ? $tipe_terms[0]->name : '';
                         <div class="rental-mobil-detail-spec-item">
                             <span class="rental-mobil-detail-spec-label"><?php _e('Tipe Kendaraan', 'rental-mobil-wp'); ?></span>
                             <span class="rental-mobil-detail-spec-value"><?php echo esc_html($tipe); ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($tahun)) : ?>
+                        <div class="rental-mobil-detail-spec-item">
+                            <span class="rental-mobil-detail-spec-label"><?php _e('Tahun', 'rental-mobil-wp'); ?></span>
+                            <span class="rental-mobil-detail-spec-value"><?php echo esc_html($tahun); ?></span>
                         </div>
                     <?php endif; ?>
                 </div>

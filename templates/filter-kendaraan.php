@@ -28,14 +28,21 @@ $tipe_terms = get_terms(array(
     'taxonomy' => 'tipe_kendaraan',
     'hide_empty' => true,
 ));
+
+$tahun_terms = get_terms(array(
+    'taxonomy' => 'tahun_kendaraan',
+    'hide_empty' => true,
+    'orderby' => 'name',
+    'order' => 'DESC',
+));
 ?>
 
 <div class="rental-mobil-filter">
     <h3 class="rental-mobil-filter-title"><?php _e('Filter Kendaraan', 'rental-mobil-wp'); ?></h3>
-    
+
     <form id="rental-mobil-filter-form" class="rental-mobil-filter-form">
         <?php wp_nonce_field('rental_mobil_nonce', 'rental_mobil_filter_nonce'); ?>
-        
+
         <div class="rental-mobil-filter-row">
             <?php if (!empty($merk_terms) && !is_wp_error($merk_terms)) : ?>
                 <div class="rental-mobil-filter-col">
@@ -48,7 +55,7 @@ $tipe_terms = get_terms(array(
                     </select>
                 </div>
             <?php endif; ?>
-            
+
             <?php if (!empty($transmisi_terms) && !is_wp_error($transmisi_terms)) : ?>
                 <div class="rental-mobil-filter-col">
                     <label for="rental-mobil-filter-transmisi"><?php _e('Transmisi', 'rental-mobil-wp'); ?></label>
@@ -60,7 +67,7 @@ $tipe_terms = get_terms(array(
                     </select>
                 </div>
             <?php endif; ?>
-            
+
             <?php if (!empty($bahan_bakar_terms) && !is_wp_error($bahan_bakar_terms)) : ?>
                 <div class="rental-mobil-filter-col">
                     <label for="rental-mobil-filter-bahan-bakar"><?php _e('Bahan Bakar', 'rental-mobil-wp'); ?></label>
@@ -72,7 +79,7 @@ $tipe_terms = get_terms(array(
                     </select>
                 </div>
             <?php endif; ?>
-            
+
             <?php if (!empty($tipe_terms) && !is_wp_error($tipe_terms)) : ?>
                 <div class="rental-mobil-filter-col">
                     <label for="rental-mobil-filter-tipe"><?php _e('Tipe Kendaraan', 'rental-mobil-wp'); ?></label>
@@ -84,7 +91,19 @@ $tipe_terms = get_terms(array(
                     </select>
                 </div>
             <?php endif; ?>
-            
+
+            <?php if (!empty($tahun_terms) && !is_wp_error($tahun_terms)) : ?>
+                <div class="rental-mobil-filter-col">
+                    <label for="rental-mobil-filter-tahun"><?php _e('Tahun', 'rental-mobil-wp'); ?></label>
+                    <select id="rental-mobil-filter-tahun" name="tahun" class="rental-mobil-filter-select">
+                        <option value=""><?php _e('Semua Tahun', 'rental-mobil-wp'); ?></option>
+                        <?php foreach ($tahun_terms as $term) : ?>
+                            <option value="<?php echo esc_attr($term->slug); ?>"><?php echo esc_html($term->name); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            <?php endif; ?>
+
             <div class="rental-mobil-filter-col">
                 <label for="rental-mobil-filter-orderby"><?php _e('Urutkan', 'rental-mobil-wp'); ?></label>
                 <select id="rental-mobil-filter-orderby" name="orderby" class="rental-mobil-filter-select">
@@ -93,7 +112,7 @@ $tipe_terms = get_terms(array(
                     <option value="meta_value_num" data-meta-key="_rental_mobil_harga_sewa"><?php _e('Harga', 'rental-mobil-wp'); ?></option>
                 </select>
             </div>
-            
+
             <div class="rental-mobil-filter-col">
                 <label for="rental-mobil-filter-order"><?php _e('Urutan', 'rental-mobil-wp'); ?></label>
                 <select id="rental-mobil-filter-order" name="order" class="rental-mobil-filter-select">
@@ -102,7 +121,7 @@ $tipe_terms = get_terms(array(
                 </select>
             </div>
         </div>
-        
+
         <div class="rental-mobil-filter-actions">
             <button type="submit" class="rental-mobil-button rental-mobil-button-filter">
                 <?php _e('Filter', 'rental-mobil-wp'); ?>

@@ -22,6 +22,9 @@ $transmisi = !empty($transmisi_terms) ? $transmisi_terms[0]->name : '';
 
 $bahan_bakar_terms = get_the_terms($post_id, 'bahan_bakar');
 $bahan_bakar = !empty($bahan_bakar_terms) ? $bahan_bakar_terms[0]->name : '';
+
+$tahun_terms = get_the_terms($post_id, 'tahun_kendaraan');
+$tahun = !empty($tahun_terms) ? $tahun_terms[0]->name : '';
 ?>
 
 <div class="rental-mobil-card" data-id="<?php echo esc_attr($post_id); ?>">
@@ -54,6 +57,13 @@ $bahan_bakar = !empty($bahan_bakar_terms) ? $bahan_bakar_terms[0]->name : '';
                 <div class="rental-mobil-meta-item">
                     <span class="rental-mobil-meta-label"><?php _e('Bahan Bakar:', 'rental-mobil-wp'); ?></span>
                     <span class="rental-mobil-meta-value"><?php echo esc_html($bahan_bakar); ?></span>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($tahun)) : ?>
+                <div class="rental-mobil-meta-item">
+                    <span class="rental-mobil-meta-label"><?php _e('Tahun:', 'rental-mobil-wp'); ?></span>
+                    <span class="rental-mobil-meta-value"><?php echo esc_html($tahun); ?></span>
                 </div>
             <?php endif; ?>
         </div>

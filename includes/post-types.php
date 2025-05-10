@@ -155,4 +155,30 @@ function rental_mobil_register_post_types() {
     );
 
     register_taxonomy('tipe_kendaraan', array('kendaraan'), $args);
+
+    // Taxonomy: Tahun Kendaraan
+    $labels = array(
+        'name'              => _x('Tahun Kendaraan', 'taxonomy general name', 'rental-mobil-wp'),
+        'singular_name'     => _x('Tahun Kendaraan', 'taxonomy singular name', 'rental-mobil-wp'),
+        'search_items'      => __('Cari Tahun Kendaraan', 'rental-mobil-wp'),
+        'all_items'         => __('Semua Tahun Kendaraan', 'rental-mobil-wp'),
+        'parent_item'       => __('Tahun Kendaraan Induk', 'rental-mobil-wp'),
+        'parent_item_colon' => __('Tahun Kendaraan Induk:', 'rental-mobil-wp'),
+        'edit_item'         => __('Edit Tahun Kendaraan', 'rental-mobil-wp'),
+        'update_item'       => __('Update Tahun Kendaraan', 'rental-mobil-wp'),
+        'add_new_item'      => __('Tambah Tahun Kendaraan Baru', 'rental-mobil-wp'),
+        'new_item_name'     => __('Tahun Kendaraan Baru', 'rental-mobil-wp'),
+        'menu_name'         => __('Tahun Kendaraan', 'rental-mobil-wp'),
+    );
+
+    $args = array(
+        'hierarchical'      => true,
+        'labels'            => $labels,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'query_var'         => true,
+        'rewrite'           => array('slug' => 'tahun-kendaraan'),
+    );
+
+    register_taxonomy('tahun_kendaraan', array('kendaraan'), $args);
 }

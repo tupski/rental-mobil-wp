@@ -11,7 +11,7 @@ if (!defined('WPINC')) {
 /**
  * Shortcode untuk menampilkan daftar kendaraan
  */
-add_shortcode('rental_mobil_daftar', 'rental_mobil_daftar_shortcode');
+add_shortcode('daftar_kendaraan', 'rental_mobil_daftar_shortcode');
 function rental_mobil_daftar_shortcode($atts) {
     $atts = shortcode_atts(array(
         'jumlah' => -1,
@@ -19,9 +19,10 @@ function rental_mobil_daftar_shortcode($atts) {
         'transmisi' => '',
         'bahan_bakar' => '',
         'tipe' => '',
+        'tahun' => '',
         'orderby' => 'date',
         'order' => 'DESC',
-    ), $atts, 'rental_mobil_daftar');
+    ), $atts, 'daftar_kendaraan');
 
     // Mulai output buffering
     ob_start();
@@ -64,6 +65,14 @@ function rental_mobil_daftar_shortcode($atts) {
         );
     }
 
+    if (!empty($atts['tahun'])) {
+        $tax_query[] = array(
+            'taxonomy' => 'tahun_kendaraan',
+            'field'    => 'slug',
+            'terms'    => explode(',', $atts['tahun']),
+        );
+    }
+
     $args = array(
         'post_type'      => 'kendaraan',
         'posts_per_page' => $atts['jumlah'],
@@ -100,11 +109,11 @@ function rental_mobil_daftar_shortcode($atts) {
 /**
  * Shortcode untuk menampilkan detail kendaraan
  */
-add_shortcode('rental_mobil_detail', 'rental_mobil_detail_shortcode');
+add_shortcode('detail_kendaraan', 'rental_mobil_detail_shortcode');
 function rental_mobil_detail_shortcode($atts) {
     $atts = shortcode_atts(array(
         'id' => 0,
-    ), $atts, 'rental_mobil_detail');
+    ), $atts, 'detail_kendaraan');
 
     // Jika tidak ada ID, gunakan post ID saat ini
     if (empty($atts['id'])) {
@@ -150,6 +159,7 @@ function rental_mobil_filter_ajax() {
     $transmisi = isset($_POST['transmisi']) ? sanitize_text_field($_POST['transmisi']) : '';
     $bahan_bakar = isset($_POST['bahan_bakar']) ? sanitize_text_field($_POST['bahan_bakar']) : '';
     $tipe = isset($_POST['tipe']) ? sanitize_text_field($_POST['tipe']) : '';
+    $tahun = isset($_POST['tahun']) ? sanitize_text_field($_POST['tahun']) : '';
     $orderby = isset($_POST['orderby']) ? sanitize_text_field($_POST['orderby']) : 'date';
     $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'DESC';
 
@@ -185,6 +195,14 @@ function rental_mobil_filter_ajax() {
             'taxonomy' => 'tipe_kendaraan',
             'field'    => 'slug',
             'terms'    => $tipe,
+        );
+    }
+
+    if (!empty($tahun)) {
+        $tax_query[] = array(
+            'taxonomy' => 'tahun_kendaraan',
+            'field'    => 'slug',
+            'terms'    => $tahun,
         );
     }
 
