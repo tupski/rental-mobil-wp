@@ -360,14 +360,37 @@
     border: 1px solid #e0e0e0;
 }
 
+.rental-mobil-detail-price-title {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.rental-mobil-detail-price-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.rental-mobil-detail-price-item:last-child {
+    border-bottom: none;
+}
+
 .rental-mobil-detail-price-label {
     font-size: 16px;
     font-weight: 600;
-    margin-right: 10px;
+    color: #555;
 }
 
 .rental-mobil-detail-price-value {
-    font-size: 24px;
+    font-size: 18px;
     font-weight: 700;
     color: #0073aa;
 }
@@ -641,6 +664,12 @@
 
     .rental-mobil-detail-specs-grid {
         grid-template-columns: 1fr;
+    }
+
+    .rental-mobil-detail-price-item {
+        flex-direction: column;
+        align-items: center;
+        padding: 15px 0;
     }
 
     .rental-mobil-detail-price-label,

@@ -13,6 +13,12 @@ $post_id = $kendaraan->ID;
 $harga_sewa = rental_mobil_get_harga_sewa($post_id);
 $harga_formatted = rental_mobil_format_rupiah($harga_sewa);
 
+// Dapatkan harga mingguan dan bulanan
+$harga_mingguan = rental_mobil_get_harga_mingguan($post_id);
+$harga_mingguan_formatted = rental_mobil_format_rupiah($harga_mingguan);
+$harga_bulanan = rental_mobil_get_harga_bulanan($post_id);
+$harga_bulanan_formatted = rental_mobil_format_rupiah($harga_bulanan);
+
 // Dapatkan galeri dan video
 $galeri_images = rental_mobil_get_galeri($post_id);
 $youtube_url = rental_mobil_get_youtube_url($post_id);
@@ -91,8 +97,26 @@ $whatsapp_message = rental_mobil_get_whatsapp_message();
 
         <div class="rental-mobil-detail-info">
             <div class="rental-mobil-detail-price">
-                <span class="rental-mobil-detail-price-label"><?php _e('Harga Sewa:', 'rental-mobil-wp'); ?></span>
-                <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_formatted); ?> / <?php _e('hari', 'rental-mobil-wp'); ?></span>
+                <h3 class="rental-mobil-detail-price-title"><?php _e('Daftar Harga Sewa', 'rental-mobil-wp'); ?></h3>
+
+                <div class="rental-mobil-detail-price-item">
+                    <span class="rental-mobil-detail-price-label"><?php _e('Harga Harian:', 'rental-mobil-wp'); ?></span>
+                    <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_formatted); ?> / <?php _e('hari', 'rental-mobil-wp'); ?></span>
+                </div>
+
+                <?php if (!empty($harga_mingguan)) : ?>
+                <div class="rental-mobil-detail-price-item">
+                    <span class="rental-mobil-detail-price-label"><?php _e('Harga Mingguan:', 'rental-mobil-wp'); ?></span>
+                    <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_mingguan_formatted); ?> / <?php _e('minggu', 'rental-mobil-wp'); ?></span>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($harga_bulanan)) : ?>
+                <div class="rental-mobil-detail-price-item">
+                    <span class="rental-mobil-detail-price-label"><?php _e('Harga Bulanan:', 'rental-mobil-wp'); ?></span>
+                    <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_bulanan_formatted); ?> / <?php _e('bulan', 'rental-mobil-wp'); ?></span>
+                </div>
+                <?php endif; ?>
             </div>
 
             <div class="rental-mobil-detail-specs">

@@ -29,14 +29,29 @@ function rental_mobil_register_meta_boxes() {
 function rental_mobil_details_callback($post) {
     wp_nonce_field(basename(__FILE__), 'rental_mobil_nonce');
     $harga_sewa = get_post_meta($post->ID, '_rental_mobil_harga_sewa', true);
+    $harga_mingguan = get_post_meta($post->ID, '_rental_mobil_harga_mingguan', true);
+    $harga_bulanan = get_post_meta($post->ID, '_rental_mobil_harga_bulanan', true);
     $galeri = get_post_meta($post->ID, '_rental_mobil_galeri', true);
     $youtube_url = get_post_meta($post->ID, '_rental_mobil_youtube_url', true);
     ?>
     <div class="rental-mobil-meta-box">
+        <h4><?php _e('Harga Sewa', 'rental-mobil-wp'); ?></h4>
         <p>
             <label for="rental_mobil_harga_sewa"><?php _e('Harga Sewa (per hari)', 'rental-mobil-wp'); ?></label>
             <input type="number" id="rental_mobil_harga_sewa" name="rental_mobil_harga_sewa" value="<?php echo esc_attr($harga_sewa); ?>" class="widefat">
             <span class="description"><?php _e('Masukkan harga sewa kendaraan per hari dalam Rupiah (tanpa titik atau koma)', 'rental-mobil-wp'); ?></span>
+        </p>
+
+        <p>
+            <label for="rental_mobil_harga_mingguan"><?php _e('Harga Sewa (per minggu)', 'rental-mobil-wp'); ?></label>
+            <input type="number" id="rental_mobil_harga_mingguan" name="rental_mobil_harga_mingguan" value="<?php echo esc_attr($harga_mingguan); ?>" class="widefat">
+            <span class="description"><?php _e('Masukkan harga sewa kendaraan per minggu dalam Rupiah (tanpa titik atau koma)', 'rental-mobil-wp'); ?></span>
+        </p>
+
+        <p>
+            <label for="rental_mobil_harga_bulanan"><?php _e('Harga Sewa (per bulan)', 'rental-mobil-wp'); ?></label>
+            <input type="number" id="rental_mobil_harga_bulanan" name="rental_mobil_harga_bulanan" value="<?php echo esc_attr($harga_bulanan); ?>" class="widefat">
+            <span class="description"><?php _e('Masukkan harga sewa kendaraan per bulan dalam Rupiah (tanpa titik atau koma)', 'rental-mobil-wp'); ?></span>
         </p>
 
         <p>
@@ -85,6 +100,24 @@ function rental_mobil_save_meta_box_data($post_id) {
         );
     }
 
+    // Simpan harga mingguan
+    if (isset($_POST['rental_mobil_harga_mingguan'])) {
+        update_post_meta(
+            $post_id,
+            '_rental_mobil_harga_mingguan',
+            sanitize_text_field($_POST['rental_mobil_harga_mingguan'])
+        );
+    }
+
+    // Simpan harga bulanan
+    if (isset($_POST['rental_mobil_harga_bulanan'])) {
+        update_post_meta(
+            $post_id,
+            '_rental_mobil_harga_bulanan',
+            sanitize_text_field($_POST['rental_mobil_harga_bulanan'])
+        );
+    }
+
     // Simpan galeri
     if (isset($_POST['rental_mobil_galeri'])) {
         update_post_meta(
@@ -116,6 +149,22 @@ function rental_mobil_format_rupiah($angka) {
  */
 function rental_mobil_get_harga_sewa($post_id) {
     $harga = get_post_meta($post_id, '_rental_mobil_harga_sewa', true);
+    return $harga ? $harga : 0;
+}
+
+/**
+ * Dapatkan harga sewa mingguan kendaraan
+ */
+function rental_mobil_get_harga_mingguan($post_id) {
+    $harga = get_post_meta($post_id, '_rental_mobil_harga_mingguan', true);
+    return $harga ? $harga : 0;
+}
+
+/**
+ * Dapatkan harga sewa bulanan kendaraan
+ */
+function rental_mobil_get_harga_bulanan($post_id) {
+    $harga = get_post_meta($post_id, '_rental_mobil_harga_bulanan', true);
     return $harga ? $harga : 0;
 }
 
