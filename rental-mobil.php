@@ -8,6 +8,8 @@
  * Author URI: https://tupski.web.id
  * Text Domain: rental-mobil-wp
  * Domain Path: /languages
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 // Jika file ini dipanggil langsung, abort.
