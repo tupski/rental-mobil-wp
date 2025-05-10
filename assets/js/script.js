@@ -19,6 +19,8 @@
         const resetButton = $('.rental-mobil-button-reset');
         const filterToggle = $('#rental-mobil-filter-toggle');
         const filterContainer = $('.rental-mobil-filter');
+        const filterOverlay = $('#rental-mobil-filter-overlay');
+        const filterClose = $('#rental-mobil-filter-close');
 
         // Galeri Kendaraan
         const galleryThumbnails = $('.rental-mobil-detail-gallery-thumbnail');
@@ -30,7 +32,20 @@
 
         // Toggle filter pada mobile
         filterToggle.on('click', function() {
-            filterContainer.toggleClass('active');
+            filterContainer.addClass('active');
+            filterOverlay.addClass('active');
+        });
+
+        // Tutup filter sidebar
+        filterClose.on('click', function() {
+            filterContainer.removeClass('active');
+            filterOverlay.removeClass('active');
+        });
+
+        // Tutup filter sidebar jika klik overlay
+        filterOverlay.on('click', function() {
+            filterContainer.removeClass('active');
+            filterOverlay.removeClass('active');
         });
 
         // Galeri Kendaraan - Klik thumbnail untuk mengganti gambar utama
@@ -103,6 +118,13 @@
             $('#rental-mobil-booking-kendaraan-title').val(kendaraanTitle);
 
             modal.css('display', 'block');
+
+            // Scroll ke form booking jika di mobile
+            if ($(window).width() <= 768) {
+                $('html, body').animate({
+                    scrollTop: $('#rental-mobil-inline-booking-form').offset().top - 20
+                }, 500);
+            }
         });
 
         // Tutup Modal
@@ -209,11 +231,19 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                             $('#rental-mobil-booking-kendaraan-title').val(kendaraanTitle);
 
                             modal.css('display', 'block');
+
+                            // Scroll ke form booking jika di mobile
+                            if ($(window).width() <= 768) {
+                                $('html, body').animate({
+                                    scrollTop: $('#rental-mobil-inline-booking-form').offset().top - 20
+                                }, 500);
+                            }
                         });
 
                         // Sembunyikan filter pada mobile setelah submit
                         if ($(window).width() <= 768) {
                             filterContainer.removeClass('active');
+                            filterOverlay.removeClass('active');
                         }
                     } else {
                         $('#rental-mobil-results').html('<p>Terjadi kesalahan. Silakan coba lagi.</p>');

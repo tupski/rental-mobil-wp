@@ -267,7 +267,7 @@
 
 .rental-mobil-detail-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 60% 40%;
     gap: 30px;
     width: 100%;
 }
@@ -277,6 +277,18 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    width: 100%;
+}
+
+.rental-mobil-detail-info-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.rental-mobil-detail-sidebar {
+    width: 100%;
 }
 
 .rental-mobil-detail-gallery {
@@ -284,6 +296,7 @@
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: #fff;
+    margin-bottom: 20px;
 }
 
 .rental-mobil-detail-featured-image {
@@ -310,15 +323,20 @@
     padding: 15px;
     background-color: #f9f9f9;
     border-top: 1px solid #e0e0e0;
+    justify-content: center;
 }
 
 .rental-mobil-detail-gallery-thumbnail {
-    width: calc(25% - 8px);
+    width: calc(20% - 8px);
     border-radius: 4px;
     overflow: hidden;
     cursor: pointer;
     border: 2px solid transparent;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.rental-mobil-detail-gallery-thumbnail:hover {
+    transform: translateY(-3px);
 }
 
 .rental-mobil-detail-gallery-thumbnail:hover,
@@ -336,6 +354,7 @@
 .rental-mobil-detail-gallery-actions {
     margin-top: 15px;
     text-align: center;
+    padding: 0 15px 15px;
 }
 
 .rental-mobil-button-gallery {
@@ -531,7 +550,9 @@
     background-color: #f9f9f9;
     border-radius: 8px;
     border: 1px solid #e0e0e0;
-    margin-top: 20px;
+    margin-top: 0;
+    position: sticky;
+    top: 20px;
 }
 
 .rental-mobil-detail-booking-title {
@@ -573,10 +594,12 @@
     from {
         opacity: 0;
         transform: translateY(-50px);
+        will-change: opacity, transform;
     }
     to {
         opacity: 1;
         transform: translateY(0);
+        will-change: opacity, transform;
     }
 }
 
@@ -796,30 +819,89 @@
         display: block;
     }
 
+    /* Sidebar booking form pada mobile */
+    .rental-mobil-detail-sidebar {
+        order: -1;
+        margin-bottom: 20px;
+    }
+
+    .rental-mobil-detail-booking-form {
+        position: static;
+        margin-bottom: 20px;
+    }
+
     /* Tampilkan floating filter button pada mobile */
     .rental-mobil-filter-toggle {
         display: block;
     }
 
-    /* Sembunyikan filter secara default pada mobile */
+    /* Filter sebagai sidebar pada mobile */
     .rental-mobil-filter {
         display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 85%;
+        max-width: 300px;
+        height: 100%;
+        background-color: #fff;
+        z-index: 1000;
+        overflow-y: auto;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
     }
 
     /* Tampilkan filter ketika memiliki class active */
     .rental-mobil-filter.active {
         display: block;
+        transform: translateX(0);
+    }
+
+    /* Overlay untuk filter sidebar */
+    .rental-mobil-filter-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    .rental-mobil-filter-overlay.active {
+        display: block;
+    }
+
+    /* Filter close button */
+    .rental-mobil-filter-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+        background-color: #f0f0f0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 18px;
+        color: #333;
     }
 
     /* Filter row pada mobile */
     .rental-mobil-filter-row {
         flex-direction: column;
+        gap: 15px;
     }
 
-    .rental-mobil-filter-group {
+    .rental-mobil-filter-col {
         width: 100%;
         margin-right: 0;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
     /* Gallery modal pada mobile */

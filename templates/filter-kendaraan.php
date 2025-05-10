@@ -42,7 +42,11 @@ $tahun_terms = get_terms(array(
     <i class="dashicons dashicons-filter"></i>
 </div>
 
+<!-- Overlay untuk filter sidebar -->
+<div id="rental-mobil-filter-overlay" class="rental-mobil-filter-overlay"></div>
+
 <div class="rental-mobil-filter">
+    <div class="rental-mobil-filter-close" id="rental-mobil-filter-close">&times;</div>
     <h3 class="rental-mobil-filter-title"><?php _e('Filter Kendaraan', 'rental-mobil-wp'); ?></h3>
 
     <form id="rental-mobil-filter-form" class="rental-mobil-filter-form">

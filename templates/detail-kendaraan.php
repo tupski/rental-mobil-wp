@@ -120,96 +120,98 @@ $whatsapp_message = rental_mobil_get_whatsapp_message();
                     </div>
                 </div>
             <?php endif; ?>
+
+            <div class="rental-mobil-detail-info-left">
+                <div class="rental-mobil-detail-price">
+                    <h3 class="rental-mobil-detail-price-title"><?php _e('Daftar Harga Sewa', 'rental-mobil-wp'); ?></h3>
+
+                    <div class="rental-mobil-detail-price-grid">
+                        <div class="rental-mobil-detail-price-card">
+                            <div class="rental-mobil-detail-price-card-header">
+                                <span class="rental-mobil-detail-price-period"><?php _e('Harian', 'rental-mobil-wp'); ?></span>
+                            </div>
+                            <div class="rental-mobil-detail-price-card-body">
+                                <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_formatted); ?></span>
+                                <span class="rental-mobil-detail-price-unit">/ <?php _e('hari', 'rental-mobil-wp'); ?></span>
+                            </div>
+                        </div>
+
+                        <?php if (!empty($harga_mingguan)) : ?>
+                        <div class="rental-mobil-detail-price-card">
+                            <div class="rental-mobil-detail-price-card-header">
+                                <span class="rental-mobil-detail-price-period"><?php _e('Mingguan', 'rental-mobil-wp'); ?></span>
+                            </div>
+                            <div class="rental-mobil-detail-price-card-body">
+                                <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_mingguan_formatted); ?></span>
+                                <span class="rental-mobil-detail-price-unit">/ <?php _e('minggu', 'rental-mobil-wp'); ?></span>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($harga_bulanan)) : ?>
+                        <div class="rental-mobil-detail-price-card">
+                            <div class="rental-mobil-detail-price-card-header">
+                                <span class="rental-mobil-detail-price-period"><?php _e('Bulanan', 'rental-mobil-wp'); ?></span>
+                            </div>
+                            <div class="rental-mobil-detail-price-card-body">
+                                <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_bulanan_formatted); ?></span>
+                                <span class="rental-mobil-detail-price-unit">/ <?php _e('bulan', 'rental-mobil-wp'); ?></span>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="rental-mobil-detail-specs">
+                    <h3 class="rental-mobil-detail-specs-title"><?php _e('Spesifikasi', 'rental-mobil-wp'); ?></h3>
+
+                    <div class="rental-mobil-detail-specs-grid">
+                        <?php if (!empty($transmisi)) : ?>
+                            <div class="rental-mobil-detail-spec-item">
+                                <span class="rental-mobil-detail-spec-label"><?php _e('Transmisi', 'rental-mobil-wp'); ?></span>
+                                <span class="rental-mobil-detail-spec-value"><?php echo esc_html($transmisi); ?></span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($bahan_bakar)) : ?>
+                            <div class="rental-mobil-detail-spec-item">
+                                <span class="rental-mobil-detail-spec-label"><?php _e('Bahan Bakar', 'rental-mobil-wp'); ?></span>
+                                <span class="rental-mobil-detail-spec-value"><?php echo esc_html($bahan_bakar); ?></span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($tipe)) : ?>
+                            <div class="rental-mobil-detail-spec-item">
+                                <span class="rental-mobil-detail-spec-label"><?php _e('Tipe Kendaraan', 'rental-mobil-wp'); ?></span>
+                                <span class="rental-mobil-detail-spec-value"><?php echo esc_html($tipe); ?></span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($tahun)) : ?>
+                            <div class="rental-mobil-detail-spec-item">
+                                <span class="rental-mobil-detail-spec-label"><?php _e('Tahun', 'rental-mobil-wp'); ?></span>
+                                <span class="rental-mobil-detail-spec-value"><?php echo esc_html($tahun); ?></span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="rental-mobil-detail-description">
+                    <h3 class="rental-mobil-detail-description-title"><?php _e('Deskripsi', 'rental-mobil-wp'); ?></h3>
+                    <div class="rental-mobil-detail-description-content">
+                        <?php echo wpautop($kendaraan->post_content); ?>
+                    </div>
+                </div>
+
+                <div class="rental-mobil-detail-actions">
+                    <button class="rental-mobil-button rental-mobil-button-booking" data-id="<?php echo esc_attr($post_id); ?>" data-title="<?php echo esc_attr($kendaraan->post_title); ?>">
+                        <?php _e('Booking via WhatsApp', 'rental-mobil-wp'); ?>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div class="rental-mobil-detail-info">
-            <div class="rental-mobil-detail-price">
-                <h3 class="rental-mobil-detail-price-title"><?php _e('Daftar Harga Sewa', 'rental-mobil-wp'); ?></h3>
-
-                <div class="rental-mobil-detail-price-grid">
-                    <div class="rental-mobil-detail-price-card">
-                        <div class="rental-mobil-detail-price-card-header">
-                            <span class="rental-mobil-detail-price-period"><?php _e('Harian', 'rental-mobil-wp'); ?></span>
-                        </div>
-                        <div class="rental-mobil-detail-price-card-body">
-                            <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_formatted); ?></span>
-                            <span class="rental-mobil-detail-price-unit">/ <?php _e('hari', 'rental-mobil-wp'); ?></span>
-                        </div>
-                    </div>
-
-                    <?php if (!empty($harga_mingguan)) : ?>
-                    <div class="rental-mobil-detail-price-card">
-                        <div class="rental-mobil-detail-price-card-header">
-                            <span class="rental-mobil-detail-price-period"><?php _e('Mingguan', 'rental-mobil-wp'); ?></span>
-                        </div>
-                        <div class="rental-mobil-detail-price-card-body">
-                            <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_mingguan_formatted); ?></span>
-                            <span class="rental-mobil-detail-price-unit">/ <?php _e('minggu', 'rental-mobil-wp'); ?></span>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
-                    <?php if (!empty($harga_bulanan)) : ?>
-                    <div class="rental-mobil-detail-price-card">
-                        <div class="rental-mobil-detail-price-card-header">
-                            <span class="rental-mobil-detail-price-period"><?php _e('Bulanan', 'rental-mobil-wp'); ?></span>
-                        </div>
-                        <div class="rental-mobil-detail-price-card-body">
-                            <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_bulanan_formatted); ?></span>
-                            <span class="rental-mobil-detail-price-unit">/ <?php _e('bulan', 'rental-mobil-wp'); ?></span>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <div class="rental-mobil-detail-specs">
-                <h3 class="rental-mobil-detail-specs-title"><?php _e('Spesifikasi', 'rental-mobil-wp'); ?></h3>
-
-                <div class="rental-mobil-detail-specs-grid">
-                    <?php if (!empty($transmisi)) : ?>
-                        <div class="rental-mobil-detail-spec-item">
-                            <span class="rental-mobil-detail-spec-label"><?php _e('Transmisi', 'rental-mobil-wp'); ?></span>
-                            <span class="rental-mobil-detail-spec-value"><?php echo esc_html($transmisi); ?></span>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (!empty($bahan_bakar)) : ?>
-                        <div class="rental-mobil-detail-spec-item">
-                            <span class="rental-mobil-detail-spec-label"><?php _e('Bahan Bakar', 'rental-mobil-wp'); ?></span>
-                            <span class="rental-mobil-detail-spec-value"><?php echo esc_html($bahan_bakar); ?></span>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (!empty($tipe)) : ?>
-                        <div class="rental-mobil-detail-spec-item">
-                            <span class="rental-mobil-detail-spec-label"><?php _e('Tipe Kendaraan', 'rental-mobil-wp'); ?></span>
-                            <span class="rental-mobil-detail-spec-value"><?php echo esc_html($tipe); ?></span>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (!empty($tahun)) : ?>
-                        <div class="rental-mobil-detail-spec-item">
-                            <span class="rental-mobil-detail-spec-label"><?php _e('Tahun', 'rental-mobil-wp'); ?></span>
-                            <span class="rental-mobil-detail-spec-value"><?php echo esc_html($tahun); ?></span>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <div class="rental-mobil-detail-description">
-                <h3 class="rental-mobil-detail-description-title"><?php _e('Deskripsi', 'rental-mobil-wp'); ?></h3>
-                <div class="rental-mobil-detail-description-content">
-                    <?php echo wpautop($kendaraan->post_content); ?>
-                </div>
-            </div>
-
-            <div class="rental-mobil-detail-actions">
-                <button class="rental-mobil-button rental-mobil-button-booking" data-id="<?php echo esc_attr($post_id); ?>" data-title="<?php echo esc_attr($kendaraan->post_title); ?>">
-                    <?php _e('Booking via WhatsApp', 'rental-mobil-wp'); ?>
-                </button>
-            </div>
-
+        <div class="rental-mobil-detail-sidebar">
             <!-- Floating Booking Button untuk Mobile -->
             <div class="rental-mobil-floating-booking">
                 <button class="rental-mobil-button rental-mobil-button-booking" data-id="<?php echo esc_attr($post_id); ?>" data-title="<?php echo esc_attr($kendaraan->post_title); ?>">
