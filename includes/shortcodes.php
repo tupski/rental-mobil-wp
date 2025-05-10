@@ -27,6 +27,9 @@ function rental_mobil_daftar_shortcode($atts) {
     // Mulai output buffering
     ob_start();
 
+    // Buka container full width
+    echo '<div class="rental-mobil-container">';
+
     // Tampilkan filter
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/filter-kendaraan.php';
 
@@ -101,6 +104,9 @@ function rental_mobil_daftar_shortcode($atts) {
 
     // Tampilkan modal booking
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-modal.php';
+
+    // Tutup container
+    echo '</div>';
 
     // Ambil output buffering dan kembalikan
     return ob_get_clean();

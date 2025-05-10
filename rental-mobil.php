@@ -33,6 +33,22 @@ function rental_mobil_activate() {
     flush_rewrite_rules();
 }
 
+// Tambahkan fungsi untuk flush rewrite rules saat plugin diaktifkan
+add_action('init', 'rental_mobil_rewrite_flush', 20);
+function rental_mobil_rewrite_flush() {
+    // Cek apakah perlu flush rewrite rules
+    if (get_option('rental_mobil_flush_rewrite_rules')) {
+        flush_rewrite_rules();
+        delete_option('rental_mobil_flush_rewrite_rules');
+    }
+}
+
+// Set option untuk flush rewrite rules saat plugin diaktifkan
+function rental_mobil_set_flush_rewrite_rules() {
+    update_option('rental_mobil_flush_rewrite_rules', true);
+}
+register_activation_hook(__FILE__, 'rental_mobil_set_flush_rewrite_rules');
+
 // Deaktifasi plugin
 register_deactivation_hook(__FILE__, 'rental_mobil_deactivate');
 function rental_mobil_deactivate() {

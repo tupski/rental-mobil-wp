@@ -37,6 +37,11 @@ $tahun_terms = get_terms(array(
 ));
 ?>
 
+<!-- Floating Filter Button untuk Mobile -->
+<div id="rental-mobil-filter-toggle" class="rental-mobil-filter-toggle">
+    <i class="dashicons dashicons-filter"></i>
+</div>
+
 <div class="rental-mobil-filter">
     <h3 class="rental-mobil-filter-title"><?php _e('Filter Kendaraan', 'rental-mobil-wp'); ?></h3>
 
