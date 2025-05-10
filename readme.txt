@@ -1,13 +1,13 @@
 === Rental Mobil WP ===
-Contributors: artupski  
-Donate link: https://tupski.web.id/donate  
-Tags: car rental, rental, booking, whatsapp, mobil, kendaraan  
-Requires at least: 5.0  
-Tested up to: 6.4  
-Stable tag: 1.1.0  
-Requires PHP: 7.2  
-License: GPLv2 or later  
-License URI: https://www.gnu.org/licenses/gpl-2.0.html  
+Contributors: artupski
+Donate link: https://tupski.web.id/donate
+Tags: car rental, rental, booking, whatsapp, mobil, kendaraan
+Requires at least: 5.0
+Tested up to: 6.4
+Stable tag: 1.2.0
+Requires PHP: 7.2
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Plugin WordPress untuk rental mobil dengan fitur menampilkan daftar kendaraan, detail, dan booking via WhatsApp.
 
@@ -19,21 +19,23 @@ Rental Mobil WP adalah plugin WordPress yang dirancang khusus untuk bisnis renta
 
 * **Custom Post Type untuk Kendaraan** - Mengelola kendaraan dengan mudah
 * **Tampilan Responsif** - Kompatibel dengan semua tema WordPress, termasuk Divi
-* **Filter Kendaraan** - Filter berdasarkan merk, transmisi, bahan bakar, dan tipe kendaraan
+* **Filter Kendaraan** - Filter berdasarkan merk, transmisi, bahan bakar, tipe, dan tahun kendaraan
 * **Shortcode** - Tampilkan daftar kendaraan dan detail kendaraan di mana saja
 * **Booking via WhatsApp** - Form booking yang mengirim pesan langsung ke WhatsApp
 * **Pengaturan Kustom** - Konfigurasi nomor WhatsApp dan template pesan
+* **Harga Fleksibel** - Atur harga sewa harian, mingguan, dan bulanan
+* **Floating Filter Button** - Tombol filter yang responsif untuk tampilan mobile
 
 = Shortcode =
 
 Plugin ini menyediakan dua shortcode utama:
 
-1. `[daftar_kendaraan]` - Menampilkan daftar kendaraan dengan filter  
-   * Parameter: `jumlah`, `merk`, `transmisi`, `bahan_bakar`, `tipe`, `tahun`, `orderby`, `order`  
+1. `[daftar_kendaraan]` - Menampilkan daftar kendaraan dengan filter
+   * Parameter: `jumlah`, `merk`, `transmisi`, `bahan_bakar`, `tipe`, `tahun`, `orderby`, `order`
    * Contoh: `[daftar_kendaraan jumlah="6" tahun="2022" orderby="meta_value_num" order="ASC"]`
 
-2. `[detail_kendaraan id="ID"]` - Menampilkan detail kendaraan  
-   * Parameter: `id` (ID kendaraan)  
+2. `[detail_kendaraan id="ID"]` - Menampilkan detail kendaraan
+   * Parameter: `id` (ID kendaraan)
    * Contoh: `[detail_kendaraan id="123"]`
 
 = Tampilan Responsif =
@@ -58,19 +60,19 @@ Plugin ini siap untuk diterjemahkan ke berbagai bahasa. File `.pot` tersedia unt
 
 == Frequently Asked Questions ==
 
-= Apakah plugin ini kompatibel dengan tema saya? =  
+= Apakah plugin ini kompatibel dengan tema saya? =
 Ya, plugin ini dirancang untuk kompatibel dengan semua tema WordPress, termasuk Divi. Tampilan responsif memastikan plugin terlihat baik di semua perangkat.
 
-= Bagaimana cara menambahkan filter kendaraan? =  
+= Bagaimana cara menambahkan filter kendaraan? =
 Filter kendaraan otomatis ditampilkan saat Anda menggunakan shortcode `[daftar_kendaraan]`. Anda dapat menambahkan merk, transmisi, bahan bakar, dan tipe kendaraan melalui menu 'Kendaraan'.
 
-= Apakah saya bisa mengubah template pesan WhatsApp? =  
+= Apakah saya bisa mengubah template pesan WhatsApp? =
 Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di dashboard admin.
 
-= Apakah plugin ini mendukung pembayaran online? =  
+= Apakah plugin ini mendukung pembayaran online? =
 Tidak, plugin ini hanya menyediakan form booking yang mengirim pesan ke WhatsApp. Untuk pembayaran online, Anda perlu mengintegrasikan dengan plugin pembayaran terpisah.
 
-= Bisakah saya menambahkan field kustom lainnya? =  
+= Bisakah saya menambahkan field kustom lainnya? =
 Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includes/meta-boxes.php`.
 
 == Screenshots ==
@@ -82,6 +84,14 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 
 == Changelog ==
 
+= 1.2.0 =
+* Menambahkan fitur harga sewa mingguan dan bulanan
+* Menampilkan harga mingguan dan bulanan di halaman detail kendaraan
+* Mengubah slug halaman detail dari /kendaraan/ menjadi /rental/
+* Menambahkan floating filter button untuk tampilan mobile
+* Perbaikan tampilan daftar kendaraan dengan layout fullwidth
+* Perbaikan tampilan detail kendaraan untuk mobile
+
 = 1.1.0 =
 * Menambahkan fitur tahun kendaraan
 * Menambahkan filter berdasarkan tahun kendaraan
@@ -91,6 +101,9 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 * Rilis pertama
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Menambahkan fitur harga sewa mingguan dan bulanan, perbaikan tampilan mobile, dan mengubah slug halaman detail.
 
 = 1.1.0 =
 Menambahkan fitur tahun kendaraan dan filter berdasarkan tahun kendaraan.
