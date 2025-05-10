@@ -2,6 +2,23 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.3.0] - 2023-11-30
+
+### Ditambahkan
+- Galeri kendaraan dengan integrasi Media Library WordPress
+- Modal galeri untuk melihat gambar dalam ukuran penuh
+- Floating booking button untuk tampilan mobile
+- Bagian kendaraan terkait berdasarkan tipe kendaraan
+
+### Diubah
+- Peningkatan tampilan detail kendaraan dengan layout yang lebih modern
+- Perbaikan tampilan harga dengan format kartu yang lebih menarik
+- Peningkatan responsivitas untuk semua ukuran layar
+
+### Diperbaiki
+- Tampilan galeri pada perangkat mobile
+- Navigasi galeri untuk pengalaman pengguna yang lebih baik
+
 ## [1.2.0] - 2023-11-25
 
 ### Ditambahkan

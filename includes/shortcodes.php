@@ -34,48 +34,6 @@ function rental_mobil_daftar_shortcode($atts) {
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/filter-kendaraan.php';
 
     // Query kendaraan
-    $tax_query = array();
-
-    if (!empty($atts['merk'])) {
-        $tax_query[] = array(
-            'taxonomy' => 'merk_kendaraan',
-            'field'    => 'slug',
-            'terms'    => explode(',', $atts['merk']),
-        );
-    }
-
-    if (!empty($atts['transmisi'])) {
-        $tax_query[] = array(
-            'taxonomy' => 'transmisi',
-            'field'    => 'slug',
-            'terms'    => explode(',', $atts['transmisi']),
-        );
-    }
-
-    if (!empty($atts['bahan_bakar'])) {
-        $tax_query[] = array(
-            'taxonomy' => 'bahan_bakar',
-            'field'    => 'slug',
-            'terms'    => explode(',', $atts['bahan_bakar']),
-        );
-    }
-
-    if (!empty($atts['tipe'])) {
-        $tax_query[] = array(
-            'taxonomy' => 'tipe_kendaraan',
-            'field'    => 'slug',
-            'terms'    => explode(',', $atts['tipe']),
-        );
-    }
-
-    if (!empty($atts['tahun'])) {
-        $tax_query[] = array(
-            'taxonomy' => 'tahun_kendaraan',
-            'field'    => 'slug',
-            'terms'    => explode(',', $atts['tahun']),
-        );
-    }
-
     $args = array(
         'post_type'      => 'kendaraan',
         'posts_per_page' => $atts['jumlah'],
@@ -83,8 +41,97 @@ function rental_mobil_daftar_shortcode($atts) {
         'order'          => $atts['order'],
     );
 
-    if (!empty($tax_query)) {
-        $args['tax_query'] = $tax_query;
+    // Gunakan tax_query dengan optimasi untuk filter berdasarkan taxonomy
+
+    // Tambahkan filter berdasarkan parameter
+    if (!empty($atts['merk'])) {
+        $merk_terms = get_terms(array(
+            'taxonomy' => 'merk_kendaraan',
+            'slug' => explode(',', $atts['merk']),
+            'fields' => 'ids',
+        ));
+
+        if (!empty($merk_terms) && !is_wp_error($merk_terms)) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'merk_kendaraan',
+                'field'    => 'term_id',
+                'terms'    => $merk_terms,
+                'operator' => 'IN',
+            );
+        }
+    }
+
+    if (!empty($atts['transmisi'])) {
+        $transmisi_terms = get_terms(array(
+            'taxonomy' => 'transmisi',
+            'slug' => explode(',', $atts['transmisi']),
+            'fields' => 'ids',
+        ));
+
+        if (!empty($transmisi_terms) && !is_wp_error($transmisi_terms)) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'transmisi',
+                'field'    => 'term_id',
+                'terms'    => $transmisi_terms,
+                'operator' => 'IN',
+            );
+        }
+    }
+
+    if (!empty($atts['bahan_bakar'])) {
+        $bahan_bakar_terms = get_terms(array(
+            'taxonomy' => 'bahan_bakar',
+            'slug' => explode(',', $atts['bahan_bakar']),
+            'fields' => 'ids',
+        ));
+
+        if (!empty($bahan_bakar_terms) && !is_wp_error($bahan_bakar_terms)) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'bahan_bakar',
+                'field'    => 'term_id',
+                'terms'    => $bahan_bakar_terms,
+                'operator' => 'IN',
+            );
+        }
+    }
+
+    if (!empty($atts['tipe'])) {
+        $tipe_terms = get_terms(array(
+            'taxonomy' => 'tipe_kendaraan',
+            'slug' => explode(',', $atts['tipe']),
+            'fields' => 'ids',
+        ));
+
+        if (!empty($tipe_terms) && !is_wp_error($tipe_terms)) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'tipe_kendaraan',
+                'field'    => 'term_id',
+                'terms'    => $tipe_terms,
+                'operator' => 'IN',
+            );
+        }
+    }
+
+    if (!empty($atts['tahun'])) {
+        $tahun_terms = get_terms(array(
+            'taxonomy' => 'tahun_kendaraan',
+            'slug' => explode(',', $atts['tahun']),
+            'fields' => 'ids',
+        ));
+
+        if (!empty($tahun_terms) && !is_wp_error($tahun_terms)) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'tahun_kendaraan',
+                'field'    => 'term_id',
+                'terms'    => $tahun_terms,
+                'operator' => 'IN',
+            );
+        }
+    }
+
+    // Jika ada lebih dari satu tax_query, tambahkan relation AND
+    if (isset($args['tax_query']) && count($args['tax_query']) > 1) {
+        $args['tax_query']['relation'] = 'AND';
     }
 
     $query = new WP_Query($args);
@@ -170,48 +217,6 @@ function rental_mobil_filter_ajax() {
     $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'DESC';
 
     // Query kendaraan
-    $tax_query = array();
-
-    if (!empty($merk)) {
-        $tax_query[] = array(
-            'taxonomy' => 'merk_kendaraan',
-            'field'    => 'slug',
-            'terms'    => $merk,
-        );
-    }
-
-    if (!empty($transmisi)) {
-        $tax_query[] = array(
-            'taxonomy' => 'transmisi',
-            'field'    => 'slug',
-            'terms'    => $transmisi,
-        );
-    }
-
-    if (!empty($bahan_bakar)) {
-        $tax_query[] = array(
-            'taxonomy' => 'bahan_bakar',
-            'field'    => 'slug',
-            'terms'    => $bahan_bakar,
-        );
-    }
-
-    if (!empty($tipe)) {
-        $tax_query[] = array(
-            'taxonomy' => 'tipe_kendaraan',
-            'field'    => 'slug',
-            'terms'    => $tipe,
-        );
-    }
-
-    if (!empty($tahun)) {
-        $tax_query[] = array(
-            'taxonomy' => 'tahun_kendaraan',
-            'field'    => 'slug',
-            'terms'    => $tahun,
-        );
-    }
-
     $args = array(
         'post_type'      => 'kendaraan',
         'posts_per_page' => -1,
@@ -219,8 +224,95 @@ function rental_mobil_filter_ajax() {
         'order'          => $order,
     );
 
-    if (!empty($tax_query)) {
-        $args['tax_query'] = $tax_query;
+    // Tambahkan filter berdasarkan parameter
+    if (!empty($merk)) {
+        $merk_terms = get_terms(array(
+            'taxonomy' => 'merk_kendaraan',
+            'slug' => $merk,
+            'fields' => 'ids',
+        ));
+
+        if (!empty($merk_terms) && !is_wp_error($merk_terms)) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'merk_kendaraan',
+                'field'    => 'term_id',
+                'terms'    => $merk_terms,
+                'operator' => 'IN',
+            );
+        }
+    }
+
+    if (!empty($transmisi)) {
+        $transmisi_terms = get_terms(array(
+            'taxonomy' => 'transmisi',
+            'slug' => $transmisi,
+            'fields' => 'ids',
+        ));
+
+        if (!empty($transmisi_terms) && !is_wp_error($transmisi_terms)) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'transmisi',
+                'field'    => 'term_id',
+                'terms'    => $transmisi_terms,
+                'operator' => 'IN',
+            );
+        }
+    }
+
+    if (!empty($bahan_bakar)) {
+        $bahan_bakar_terms = get_terms(array(
+            'taxonomy' => 'bahan_bakar',
+            'slug' => $bahan_bakar,
+            'fields' => 'ids',
+        ));
+
+        if (!empty($bahan_bakar_terms) && !is_wp_error($bahan_bakar_terms)) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'bahan_bakar',
+                'field'    => 'term_id',
+                'terms'    => $bahan_bakar_terms,
+                'operator' => 'IN',
+            );
+        }
+    }
+
+    if (!empty($tipe)) {
+        $tipe_terms = get_terms(array(
+            'taxonomy' => 'tipe_kendaraan',
+            'slug' => $tipe,
+            'fields' => 'ids',
+        ));
+
+        if (!empty($tipe_terms) && !is_wp_error($tipe_terms)) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'tipe_kendaraan',
+                'field'    => 'term_id',
+                'terms'    => $tipe_terms,
+                'operator' => 'IN',
+            );
+        }
+    }
+
+    if (!empty($tahun)) {
+        $tahun_terms = get_terms(array(
+            'taxonomy' => 'tahun_kendaraan',
+            'slug' => $tahun,
+            'fields' => 'ids',
+        ));
+
+        if (!empty($tahun_terms) && !is_wp_error($tahun_terms)) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'tahun_kendaraan',
+                'field'    => 'term_id',
+                'terms'    => $tahun_terms,
+                'operator' => 'IN',
+            );
+        }
+    }
+
+    // Jika ada lebih dari satu tax_query, tambahkan relation AND
+    if (isset($args['tax_query']) && count($args['tax_query']) > 1) {
+        $args['tax_query']['relation'] = 'AND';
     }
 
     $query = new WP_Query($args);

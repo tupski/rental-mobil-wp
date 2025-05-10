@@ -32,7 +32,15 @@ $tahun = !empty($tahun_terms) ? $tahun_terms[0]->name : '';
         <?php if (has_post_thumbnail()) : ?>
             <?php the_post_thumbnail('medium'); ?>
         <?php else : ?>
-            <img src="<?php echo RENTAL_MOBIL_PLUGIN_URL; ?>assets/img/no-image.svg" alt="<?php the_title_attribute(); ?>">
+            <?php
+            $no_image_id = attachment_url_to_postid(RENTAL_MOBIL_PLUGIN_URL . 'assets/img/no-image.svg');
+            if ($no_image_id) {
+                echo wp_get_attachment_image($no_image_id, 'medium', false, array('alt' => get_the_title()));
+            } else {
+                // Fallback jika gambar tidak terdaftar di media library
+                echo '<img src="' . esc_url(RENTAL_MOBIL_PLUGIN_URL . 'assets/img/no-image.svg') . '" alt="' . esc_attr(get_the_title()) . '">';
+            }
+            ?>
         <?php endif; ?>
     </div>
     <div class="rental-mobil-card-content">

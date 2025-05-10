@@ -1,10 +1,10 @@
 === Rental Mobil WP ===
 Contributors: artupski
 Donate link: https://tupski.web.id/donate
-Tags: car rental, rental, booking, whatsapp, mobil, kendaraan
+Tags: car rental, rental, booking, whatsapp, mobil
 Requires at least: 5.0
-Tested up to: 6.4
-Stable tag: 1.2.0
+Tested up to: 6.8
+Stable tag: 1.3.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -84,6 +84,21 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 
 == Changelog ==
 
+= 1.3.1 =
+* Perbaikan penggunaan gambar dengan wp_get_attachment_image()
+* Optimasi query database untuk performa yang lebih baik
+* Pembaruan kompatibilitas dengan WordPress 6.8
+* Perbaikan minor dan peningkatan kualitas kode
+
+= 1.3.0 =
+* Peningkatan tampilan detail kendaraan dengan layout yang lebih modern
+* Menambahkan galeri kendaraan dengan integrasi Media Library WordPress
+* Menambahkan modal galeri untuk melihat gambar dalam ukuran penuh
+* Menambahkan floating booking button untuk tampilan mobile
+* Menambahkan bagian kendaraan terkait berdasarkan tipe kendaraan
+* Perbaikan tampilan harga dengan format kartu yang lebih menarik
+* Peningkatan responsivitas untuk semua ukuran layar
+
 = 1.2.0 =
 * Menambahkan fitur harga sewa mingguan dan bulanan
 * Menampilkan harga mingguan dan bulanan di halaman detail kendaraan
@@ -101,6 +116,12 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 * Rilis pertama
 
 == Upgrade Notice ==
+
+= 1.3.1 =
+Perbaikan penting untuk kompatibilitas dengan WordPress 6.8, optimasi performa, dan peningkatan kualitas kode.
+
+= 1.3.0 =
+Peningkatan tampilan detail kendaraan, galeri dengan Media Library, floating booking button, dan kendaraan terkait.
 
 = 1.2.0 =
 Menambahkan fitur harga sewa mingguan dan bulanan, perbaikan tampilan mobile, dan mengubah slug halaman detail.

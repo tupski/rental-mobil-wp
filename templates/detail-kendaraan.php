@@ -50,12 +50,21 @@ $whatsapp_message = rental_mobil_get_whatsapp_message();
     <div class="rental-mobil-detail-header">
         <h1 class="rental-mobil-detail-title"><?php echo esc_html($kendaraan->post_title); ?></h1>
 
-        <?php if (!empty($merk)) : ?>
-            <div class="rental-mobil-detail-merk">
-                <span class="rental-mobil-detail-merk-label"><?php _e('Merk:', 'rental-mobil-wp'); ?></span>
-                <span class="rental-mobil-detail-merk-value"><?php echo esc_html($merk); ?></span>
-            </div>
-        <?php endif; ?>
+        <div class="rental-mobil-detail-meta">
+            <?php if (!empty($merk)) : ?>
+                <div class="rental-mobil-detail-meta-item">
+                    <span class="rental-mobil-detail-meta-label"><?php _e('Merk:', 'rental-mobil-wp'); ?></span>
+                    <span class="rental-mobil-detail-meta-value"><?php echo esc_html($merk); ?></span>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($tahun)) : ?>
+                <div class="rental-mobil-detail-meta-item">
+                    <span class="rental-mobil-detail-meta-label"><?php _e('Tahun:', 'rental-mobil-wp'); ?></span>
+                    <span class="rental-mobil-detail-meta-value"><?php echo esc_html($tahun); ?></span>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 
     <div class="rental-mobil-detail-content">
@@ -68,20 +77,38 @@ $whatsapp_message = rental_mobil_get_whatsapp_message();
                     </div>
                 <?php else : ?>
                     <div class="rental-mobil-detail-featured-image">
-                        <img src="<?php echo RENTAL_MOBIL_PLUGIN_URL; ?>assets/img/no-image.svg" alt="<?php echo esc_attr($kendaraan->post_title); ?>">
+                        <?php
+                        $no_image_id = attachment_url_to_postid(RENTAL_MOBIL_PLUGIN_URL . 'assets/img/no-image.svg');
+                        if ($no_image_id) {
+                            echo wp_get_attachment_image($no_image_id, 'large', false, array('alt' => esc_attr($kendaraan->post_title)));
+                        } else {
+                            // Fallback jika gambar tidak terdaftar di media library
+                            echo '<img src="' . esc_url(RENTAL_MOBIL_PLUGIN_URL . 'assets/img/no-image.svg') . '" alt="' . esc_attr($kendaraan->post_title) . '">';
+                        }
+                        ?>
                     </div>
                 <?php endif; ?>
 
                 <!-- Galeri Kendaraan -->
                 <?php if (!empty($galeri_images)) : ?>
                     <div class="rental-mobil-detail-gallery-thumbnails">
-                        <?php foreach ($galeri_images as $image_url) : ?>
+                        <?php foreach ($galeri_images as $attachment_id) : ?>
                             <div class="rental-mobil-detail-gallery-thumbnail">
-                                <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($kendaraan->post_title); ?>" class="rental-mobil-gallery-image">
+                                <?php echo wp_get_attachment_image($attachment_id, 'thumbnail', false, array(
+                                    'alt' => esc_attr($kendaraan->post_title),
+                                    'class' => 'rental-mobil-gallery-image'
+                                )); ?>
                             </div>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
+
+                <!-- Media Gallery Button -->
+                <div class="rental-mobil-detail-gallery-actions">
+                    <button class="rental-mobil-button rental-mobil-button-gallery" id="rental-mobil-open-gallery">
+                        <?php _e('Lihat Semua Foto', 'rental-mobil-wp'); ?>
+                    </button>
+                </div>
             </div>
 
             <!-- Video YouTube -->
@@ -99,24 +126,41 @@ $whatsapp_message = rental_mobil_get_whatsapp_message();
             <div class="rental-mobil-detail-price">
                 <h3 class="rental-mobil-detail-price-title"><?php _e('Daftar Harga Sewa', 'rental-mobil-wp'); ?></h3>
 
-                <div class="rental-mobil-detail-price-item">
-                    <span class="rental-mobil-detail-price-label"><?php _e('Harga Harian:', 'rental-mobil-wp'); ?></span>
-                    <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_formatted); ?> / <?php _e('hari', 'rental-mobil-wp'); ?></span>
-                </div>
+                <div class="rental-mobil-detail-price-grid">
+                    <div class="rental-mobil-detail-price-card">
+                        <div class="rental-mobil-detail-price-card-header">
+                            <span class="rental-mobil-detail-price-period"><?php _e('Harian', 'rental-mobil-wp'); ?></span>
+                        </div>
+                        <div class="rental-mobil-detail-price-card-body">
+                            <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_formatted); ?></span>
+                            <span class="rental-mobil-detail-price-unit">/ <?php _e('hari', 'rental-mobil-wp'); ?></span>
+                        </div>
+                    </div>
 
-                <?php if (!empty($harga_mingguan)) : ?>
-                <div class="rental-mobil-detail-price-item">
-                    <span class="rental-mobil-detail-price-label"><?php _e('Harga Mingguan:', 'rental-mobil-wp'); ?></span>
-                    <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_mingguan_formatted); ?> / <?php _e('minggu', 'rental-mobil-wp'); ?></span>
-                </div>
-                <?php endif; ?>
+                    <?php if (!empty($harga_mingguan)) : ?>
+                    <div class="rental-mobil-detail-price-card">
+                        <div class="rental-mobil-detail-price-card-header">
+                            <span class="rental-mobil-detail-price-period"><?php _e('Mingguan', 'rental-mobil-wp'); ?></span>
+                        </div>
+                        <div class="rental-mobil-detail-price-card-body">
+                            <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_mingguan_formatted); ?></span>
+                            <span class="rental-mobil-detail-price-unit">/ <?php _e('minggu', 'rental-mobil-wp'); ?></span>
+                        </div>
+                    </div>
+                    <?php endif; ?>
 
-                <?php if (!empty($harga_bulanan)) : ?>
-                <div class="rental-mobil-detail-price-item">
-                    <span class="rental-mobil-detail-price-label"><?php _e('Harga Bulanan:', 'rental-mobil-wp'); ?></span>
-                    <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_bulanan_formatted); ?> / <?php _e('bulan', 'rental-mobil-wp'); ?></span>
+                    <?php if (!empty($harga_bulanan)) : ?>
+                    <div class="rental-mobil-detail-price-card">
+                        <div class="rental-mobil-detail-price-card-header">
+                            <span class="rental-mobil-detail-price-period"><?php _e('Bulanan', 'rental-mobil-wp'); ?></span>
+                        </div>
+                        <div class="rental-mobil-detail-price-card-body">
+                            <span class="rental-mobil-detail-price-value"><?php echo esc_html($harga_bulanan_formatted); ?></span>
+                            <span class="rental-mobil-detail-price-unit">/ <?php _e('bulan', 'rental-mobil-wp'); ?></span>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
-                <?php endif; ?>
             </div>
 
             <div class="rental-mobil-detail-specs">
@@ -163,6 +207,13 @@ $whatsapp_message = rental_mobil_get_whatsapp_message();
             <div class="rental-mobil-detail-actions">
                 <button class="rental-mobil-button rental-mobil-button-booking" data-id="<?php echo esc_attr($post_id); ?>" data-title="<?php echo esc_attr($kendaraan->post_title); ?>">
                     <?php _e('Booking via WhatsApp', 'rental-mobil-wp'); ?>
+                </button>
+            </div>
+
+            <!-- Floating Booking Button untuk Mobile -->
+            <div class="rental-mobil-floating-booking">
+                <button class="rental-mobil-button rental-mobil-button-booking" data-id="<?php echo esc_attr($post_id); ?>" data-title="<?php echo esc_attr($kendaraan->post_title); ?>">
+                    <?php _e('Booking Sekarang', 'rental-mobil-wp'); ?>
                 </button>
             </div>
 
@@ -222,5 +273,69 @@ $whatsapp_message = rental_mobil_get_whatsapp_message();
             </div>
         </div>
     </div>
+
+    <!-- Kendaraan Terkait -->
+    <?php
+    // Dapatkan kendaraan terkait berdasarkan tipe kendaraan
+    if (!empty($tipe_terms)) {
+        $related_args = array(
+            'post_type' => 'kendaraan',
+            'posts_per_page' => 3,
+            'post__not_in' => array($post_id),
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => '_rental_mobil_tipe',
+                    'value' => $tipe,
+                    'compare' => '=',
+                ),
+            ),
+        );
+
+        $related_query = new WP_Query($related_args);
+
+        if ($related_query->have_posts()) :
+    ?>
+    <div class="rental-mobil-related">
+        <h3 class="rental-mobil-related-title"><?php _e('Kendaraan Terkait', 'rental-mobil-wp'); ?></h3>
+        <div class="rental-mobil-grid">
+            <?php while ($related_query->have_posts()) : $related_query->the_post(); ?>
+                <?php include RENTAL_MOBIL_PLUGIN_DIR . 'templates/card-kendaraan.php'; ?>
+            <?php endwhile; ?>
+        </div>
+    </div>
+    <?php
+        endif;
+        wp_reset_postdata();
+    }
+    ?>
 </div>
+</div>
+
+<!-- Gallery Modal -->
+<div id="rental-mobil-gallery-modal" class="rental-mobil-modal rental-mobil-gallery-modal">
+    <div class="rental-mobil-modal-content rental-mobil-gallery-modal-content">
+        <span class="rental-mobil-modal-close">&times;</span>
+        <div class="rental-mobil-gallery-modal-images">
+            <?php if (has_post_thumbnail($post_id)) : ?>
+                <div class="rental-mobil-gallery-modal-image">
+                    <?php echo get_the_post_thumbnail($post_id, 'large'); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($galeri_images)) : ?>
+                <?php foreach ($galeri_images as $attachment_id) : ?>
+                    <div class="rental-mobil-gallery-modal-image">
+                        <?php echo wp_get_attachment_image($attachment_id, 'large', false, array(
+                            'alt' => esc_attr($kendaraan->post_title)
+                        )); ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+        <div class="rental-mobil-gallery-modal-nav">
+            <button class="rental-mobil-gallery-prev">&lt;</button>
+            <button class="rental-mobil-gallery-next">&gt;</button>
+        </div>
+    </div>
 </div>

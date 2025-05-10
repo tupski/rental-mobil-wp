@@ -43,6 +43,57 @@
             $(this).addClass('active');
         });
 
+        // Gallery Modal
+        const galleryModal = $('#rental-mobil-gallery-modal');
+        const galleryModalClose = galleryModal.find('.rental-mobil-modal-close');
+        const galleryOpenButton = $('#rental-mobil-open-gallery');
+        const galleryImages = $('.rental-mobil-gallery-modal-image');
+        const galleryPrev = $('.rental-mobil-gallery-prev');
+        const galleryNext = $('.rental-mobil-gallery-next');
+        let currentImageIndex = 0;
+
+        // Fungsi untuk menampilkan gambar dengan index tertentu
+        function showGalleryImage(index) {
+            galleryImages.removeClass('active');
+            galleryImages.eq(index).addClass('active');
+            currentImageIndex = index;
+        }
+
+        // Buka Gallery Modal
+        galleryOpenButton.on('click', function() {
+            galleryModal.css('display', 'block');
+            showGalleryImage(0);
+        });
+
+        // Tutup Gallery Modal
+        galleryModalClose.on('click', function() {
+            galleryModal.css('display', 'none');
+        });
+
+        // Navigasi Gallery
+        galleryPrev.on('click', function() {
+            let newIndex = currentImageIndex - 1;
+            if (newIndex < 0) {
+                newIndex = galleryImages.length - 1;
+            }
+            showGalleryImage(newIndex);
+        });
+
+        galleryNext.on('click', function() {
+            let newIndex = currentImageIndex + 1;
+            if (newIndex >= galleryImages.length) {
+                newIndex = 0;
+            }
+            showGalleryImage(newIndex);
+        });
+
+        // Tutup Gallery Modal jika klik di luar modal
+        $(window).on('click', function(event) {
+            if (event.target === galleryModal[0]) {
+                galleryModal.css('display', 'none');
+            }
+        });
+
         // Buka Modal Booking
         bookingButtons.on('click', function() {
             const kendaraanId = $(this).data('id');

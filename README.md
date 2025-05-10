@@ -85,6 +85,21 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 
 ## Changelog
 
+### 1.3.1
+* Perbaikan penggunaan gambar dengan wp_get_attachment_image()
+* Optimasi query database untuk performa yang lebih baik
+* Pembaruan kompatibilitas dengan WordPress 6.8
+* Perbaikan minor dan peningkatan kualitas kode
+
+### 1.3.0
+* Peningkatan tampilan detail kendaraan dengan layout yang lebih modern
+* Menambahkan galeri kendaraan dengan integrasi Media Library WordPress
+* Menambahkan modal galeri untuk melihat gambar dalam ukuran penuh
+* Menambahkan floating booking button untuk tampilan mobile
+* Menambahkan bagian kendaraan terkait berdasarkan tipe kendaraan
+* Perbaikan tampilan harga dengan format kartu yang lebih menarik
+* Peningkatan responsivitas untuk semua ukuran layar
+
 ### 1.2.0
 * Menambahkan fitur harga sewa mingguan dan bulanan
 * Menampilkan harga mingguan dan bulanan di halaman detail kendaraan
@@ -102,6 +117,12 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 * Rilis pertama
 
 ## Upgrade Notice
+
+### 1.3.1
+Perbaikan penting untuk kompatibilitas dengan WordPress 6.8, optimasi performa, dan peningkatan kualitas kode.
+
+### 1.3.0
+Peningkatan tampilan detail kendaraan, galeri dengan Media Library, floating booking button, dan kendaraan terkait.
 
 ### 1.2.0
 Menambahkan fitur harga sewa mingguan dan bulanan, perbaikan tampilan mobile, dan mengubah slug halaman detail.

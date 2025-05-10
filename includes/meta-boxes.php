@@ -56,9 +56,131 @@ function rental_mobil_details_callback($post) {
 
         <p>
             <label for="rental_mobil_galeri"><?php _e('Galeri Kendaraan', 'rental-mobil-wp'); ?></label>
-            <textarea id="rental_mobil_galeri" name="rental_mobil_galeri" class="widefat" rows="3"><?php echo esc_textarea($galeri); ?></textarea>
-            <span class="description"><?php _e('Masukkan URL gambar untuk galeri, pisahkan dengan koma (,). Contoh: https://example.com/image1.jpg, https://example.com/image2.jpg', 'rental-mobil-wp'); ?></span>
+            <div class="rental-mobil-media-gallery">
+                <input type="hidden" id="rental_mobil_galeri" name="rental_mobil_galeri" value="<?php echo esc_attr($galeri); ?>" />
+                <div id="rental_mobil_galeri_container" class="rental-mobil-media-gallery-container">
+                    <?php
+                    if (!empty($galeri)) {
+                        $gallery_ids = explode(',', $galeri);
+                        foreach ($gallery_ids as $attachment_id) {
+                            if (!empty($attachment_id)) {
+                                $image = wp_get_attachment_image_src($attachment_id, 'thumbnail');
+                                if ($image) {
+                                    echo '<div class="rental-mobil-media-gallery-image" data-id="' . esc_attr($attachment_id) . '">';
+                                    echo '<img src="' . esc_url($image[0]) . '" alt="" />';
+                                    echo '<a href="#" class="rental-mobil-media-gallery-remove">×</a>';
+                                    echo '</div>';
+                                }
+                            }
+                        }
+                    }
+                    ?>
+                </div>
+                <button type="button" class="button" id="rental_mobil_galeri_button"><?php _e('Tambah Gambar', 'rental-mobil-wp'); ?></button>
+            </div>
+            <span class="description"><?php _e('Tambahkan gambar untuk galeri kendaraan. Klik "Tambah Gambar" untuk memilih dari media library.', 'rental-mobil-wp'); ?></span>
         </p>
+
+        <style>
+            .rental-mobil-media-gallery-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .rental-mobil-media-gallery-image {
+                position: relative;
+                width: 80px;
+                height: 80px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+            .rental-mobil-media-gallery-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .rental-mobil-media-gallery-remove {
+                position: absolute;
+                top: 0;
+                right: 0;
+                background: rgba(0,0,0,0.5);
+                color: #fff;
+                width: 20px;
+                height: 20px;
+                text-align: center;
+                line-height: 18px;
+                text-decoration: none;
+                font-weight: bold;
+            }
+            .rental-mobil-media-gallery-remove:hover {
+                background: rgba(0,0,0,0.8);
+                color: #fff;
+            }
+        </style>
+
+        <script>
+            jQuery(document).ready(function($) {
+                // Media Uploader
+                var mediaUploader;
+
+                $('#rental_mobil_galeri_button').on('click', function(e) {
+                    e.preventDefault();
+
+                    if (mediaUploader) {
+                        mediaUploader.open();
+                        return;
+                    }
+
+                    mediaUploader = wp.media({
+                        title: '<?php _e('Pilih Gambar untuk Galeri', 'rental-mobil-wp'); ?>',
+                        button: {
+                            text: '<?php _e('Tambahkan ke Galeri', 'rental-mobil-wp'); ?>'
+                        },
+                        multiple: true
+                    });
+
+                    mediaUploader.on('select', function() {
+                        var attachments = mediaUploader.state().get('selection').toJSON();
+                        var galleryIds = $('#rental_mobil_galeri').val() ? $('#rental_mobil_galeri').val().split(',') : [];
+
+                        $.each(attachments, function(i, attachment) {
+                            if (galleryIds.indexOf(attachment.id.toString()) === -1) {
+                                galleryIds.push(attachment.id);
+
+                                $('#rental_mobil_galeri_container').append(
+                                    '<div class="rental-mobil-media-gallery-image" data-id="' + attachment.id + '">' +
+                                    '<img src="' + (attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.url) + '" alt="" />' +
+                                    '<a href="#" class="rental-mobil-media-gallery-remove">×</a>' +
+                                    '</div>'
+                                );
+                            }
+                        });
+
+                        $('#rental_mobil_galeri').val(galleryIds.join(','));
+                    });
+
+                    mediaUploader.open();
+                });
+
+                // Remove image
+                $(document).on('click', '.rental-mobil-media-gallery-remove', function(e) {
+                    e.preventDefault();
+
+                    var container = $(this).parent();
+                    var imageId = container.data('id');
+                    var galleryIds = $('#rental_mobil_galeri').val().split(',');
+
+                    galleryIds = galleryIds.filter(function(id) {
+                        return id != imageId;
+                    });
+
+                    $('#rental_mobil_galeri').val(galleryIds.join(','));
+                    container.remove();
+                });
+            });
+        </script>
 
         <p>
             <label for="rental_mobil_youtube_url"><?php _e('URL Video YouTube', 'rental-mobil-wp'); ?></label>
@@ -177,11 +299,11 @@ function rental_mobil_get_galeri($post_id) {
         return array();
     }
 
-    $images = explode(',', $galeri);
-    $images = array_map('trim', $images);
-    $images = array_filter($images);
+    $image_ids = explode(',', $galeri);
+    $image_ids = array_map('trim', $image_ids);
+    $image_ids = array_filter($image_ids);
 
-    return $images;
+    return $image_ids;
 }
 
 /**
