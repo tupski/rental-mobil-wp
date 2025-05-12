@@ -30,6 +30,7 @@
         const filterOverlay = $('#rental-mobil-filter-overlay');
         const filterClose = $('#rental-mobil-filter-close');
         const sidebar = $('.rental-mobil-sidebar');
+        const activeFilters = $('#rental-mobil-active-filters');
 
         // Search Functionality
         const searchInput = $('#rental-mobil-search-input');
@@ -341,6 +342,10 @@
             $('#rental-mobil-booking-kendaraan-id').val(kendaraanId);
             $('#rental-mobil-booking-kendaraan-title').val(kendaraanTitle);
 
+            // Set judul dinamis
+            $('.rental-mobil-modal-title-kendaraan').text(kendaraanTitle);
+            $('.rental-mobil-modal-subtitle-kendaraan').text(kendaraanTitle);
+
             modal.css('display', 'block');
 
             // Scroll ke form booking jika di mobile
@@ -616,6 +621,9 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                     if (response.success) {
                         $('#rental-mobil-results').html(response.data.html);
 
+                        // Tampilkan filter aktif
+                        renderActiveFilters(response.data.active_filters);
+
                         // Reinitialize booking buttons
                         $('.rental-mobil-button-booking').on('click', function() {
                             const kendaraanId = $(this).data('id');
@@ -666,6 +674,48 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                 filterOverlay.removeClass('active');
             }
         });
+
+        // Fungsi untuk menampilkan filter aktif
+        function renderActiveFilters(filters) {
+            activeFilters.empty();
+
+            if (!filters || Object.keys(filters).length === 0) {
+                return;
+            }
+
+            $.each(filters, function(key, filter) {
+                activeFilters.append(`
+                    <div class="rental-mobil-active-filter" data-filter="${key}">
+                        <span class="rental-mobil-active-filter-label">${filter.label}:</span>
+                        <span class="rental-mobil-active-filter-value">${filter.value}</span>
+                        <span class="rental-mobil-active-filter-remove" data-filter="${key}">×</span>
+                    </div>
+                `);
+            });
+
+            // Inisialisasi tombol hapus filter
+            $('.rental-mobil-active-filter-remove').on('click', function() {
+                const filterKey = $(this).data('filter');
+
+                // Reset nilai filter
+                if (filterKey === 'keyword') {
+                    $('#rental-mobil-filter-keyword').val('');
+                } else if (filterKey === 'merk') {
+                    $('#rental-mobil-filter-merk').val('');
+                } else if (filterKey === 'transmisi') {
+                    $('#rental-mobil-filter-transmisi').val('');
+                } else if (filterKey === 'bahan_bakar') {
+                    $('#rental-mobil-filter-bahan-bakar').val('');
+                } else if (filterKey === 'tipe') {
+                    $('#rental-mobil-filter-tipe').val('');
+                } else if (filterKey === 'tahun') {
+                    $('#rental-mobil-filter-tahun').val('');
+                }
+
+                // Submit form
+                filterForm.submit();
+            });
+        }
 
         // Submit Form Booking Inline
         inlineBookingForm.on('submit', function(e) {

@@ -58,11 +58,23 @@
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
 }
 
 .rental-mobil-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Featured and Popular Styles */
+.rental-mobil-card[data-featured="1"] {
+    background-color: #fff9e6;
+    border: 1px solid #ffeeba;
+}
+
+.rental-mobil-card[data-popular="1"] {
+    background-color: #f0f7fc;
+    border: 1px solid #cce5ff;
 }
 
 .rental-mobil-card-image {
@@ -178,6 +190,65 @@
 .rental-mobil-content {
     width: 75%;
     position: relative;
+}
+
+/* Content Header Styles */
+.rental-mobil-content-header {
+    margin-bottom: 20px;
+}
+
+.rental-mobil-content-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 15px;
+    color: #333;
+    white-space: nowrap;
+}
+
+/* Active Filters */
+.rental-mobil-active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.rental-mobil-active-filter {
+    display: flex;
+    align-items: center;
+    background-color: #f0f7fc;
+    border: 1px solid #cce5ff;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 13px;
+    color: #0073aa;
+}
+
+.rental-mobil-active-filter-label {
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+.rental-mobil-active-filter-value {
+    margin-right: 5px;
+}
+
+.rental-mobil-active-filter-remove {
+    cursor: pointer;
+    color: #0073aa;
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: rgba(0, 115, 170, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.rental-mobil-active-filter-remove:hover {
+    background-color: rgba(0, 115, 170, 0.2);
 }
 
 /* Search Box Styles */
@@ -869,12 +940,23 @@
     font-size: 24px;
     font-weight: 700;
     color: #333;
+    line-height: 1.3;
+}
+
+.rental-mobil-modal-title-kendaraan {
+    color: #0073aa;
 }
 
 .rental-mobil-modal-subtitle {
-    margin: 0;
+    margin: 0 0 20px;
     font-size: 14px;
     color: #666;
+    line-height: 1.4;
+}
+
+.rental-mobil-modal-subtitle-kendaraan {
+    font-weight: 600;
+    color: #0073aa;
 }
 
 .rental-mobil-booking-form {
@@ -1117,11 +1199,23 @@
 .rental-mobil-badge-featured {
     background-color: #ffb900;
     color: #333;
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+    border: 1px solid rgba(255, 185, 0, 0.5);
 }
 
 .rental-mobil-badge-popular {
     background-color: #0073aa;
     color: #fff;
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+    border: 1px solid rgba(0, 115, 170, 0.5);
+}
+
+/* Quick view badges */
+.rental-mobil-quick-view-badges .rental-mobil-badge {
+    position: relative;
+    top: auto;
+    right: auto;
+    display: inline-block;
 }
 
 /* Homepage Section */
@@ -1175,6 +1269,16 @@
     .rental-mobil-modal-content {
         margin: 20px;
         padding: 15px;
+    }
+
+    .rental-mobil-modal-title {
+        font-size: 20px;
+        white-space: normal;
+    }
+
+    .rental-mobil-content-title {
+        font-size: 20px;
+        white-space: normal;
     }
 
     /* Tampilkan floating booking button pada mobile */

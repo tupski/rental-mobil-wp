@@ -20,6 +20,7 @@ function rental_mobil_filter_ajax() {
     }
 
     // Dapatkan parameter filter
+    $keyword = isset($_POST['keyword']) ? sanitize_text_field($_POST['keyword']) : '';
     $merk = isset($_POST['merk']) ? sanitize_text_field($_POST['merk']) : '';
     $transmisi = isset($_POST['transmisi']) ? sanitize_text_field($_POST['transmisi']) : '';
     $bahan_bakar = isset($_POST['bahan_bakar']) ? sanitize_text_field($_POST['bahan_bakar']) : '';
@@ -28,6 +29,66 @@ function rental_mobil_filter_ajax() {
     $orderby = isset($_POST['orderby']) ? sanitize_text_field($_POST['orderby']) : 'date';
     $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'DESC';
     $jumlah = isset($_POST['jumlah']) ? intval($_POST['jumlah']) : -1;
+
+    // Buat array untuk menyimpan filter aktif
+    $active_filters = array();
+
+    if (!empty($keyword)) {
+        $active_filters['keyword'] = array(
+            'label' => __('Kata Kunci', 'rental-mobil-wp'),
+            'value' => $keyword
+        );
+    }
+
+    if (!empty($merk)) {
+        $term = get_term_by('slug', $merk, 'merk_kendaraan');
+        if ($term) {
+            $active_filters['merk'] = array(
+                'label' => __('Merk', 'rental-mobil-wp'),
+                'value' => $term->name
+            );
+        }
+    }
+
+    if (!empty($transmisi)) {
+        $term = get_term_by('slug', $transmisi, 'transmisi');
+        if ($term) {
+            $active_filters['transmisi'] = array(
+                'label' => __('Transmisi', 'rental-mobil-wp'),
+                'value' => $term->name
+            );
+        }
+    }
+
+    if (!empty($bahan_bakar)) {
+        $term = get_term_by('slug', $bahan_bakar, 'bahan_bakar');
+        if ($term) {
+            $active_filters['bahan_bakar'] = array(
+                'label' => __('Bahan Bakar', 'rental-mobil-wp'),
+                'value' => $term->name
+            );
+        }
+    }
+
+    if (!empty($tipe)) {
+        $term = get_term_by('slug', $tipe, 'tipe_kendaraan');
+        if ($term) {
+            $active_filters['tipe'] = array(
+                'label' => __('Tipe', 'rental-mobil-wp'),
+                'value' => $term->name
+            );
+        }
+    }
+
+    if (!empty($tahun)) {
+        $term = get_term_by('slug', $tahun, 'tahun_kendaraan');
+        if ($term) {
+            $active_filters['tahun'] = array(
+                'label' => __('Tahun', 'rental-mobil-wp'),
+                'value' => $term->name
+            );
+        }
+    }
 
     // Query kendaraan
     $args = array(
@@ -40,6 +101,11 @@ function rental_mobil_filter_ajax() {
     // Jika orderby adalah harga, tambahkan meta_key
     if ($orderby === 'meta_value_num') {
         $args['meta_key'] = '_rental_mobil_harga_sewa';
+    }
+
+    // Jika ada keyword, tambahkan pencarian
+    if (!empty($keyword)) {
+        $args['s'] = $keyword;
     }
 
     // Tambahkan filter berdasarkan parameter
@@ -115,6 +181,7 @@ function rental_mobil_filter_ajax() {
     wp_send_json_success(array(
         'html' => $html,
         'count' => $query->found_posts,
+        'active_filters' => $active_filters
     ));
 }
 

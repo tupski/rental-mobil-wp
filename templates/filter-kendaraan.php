@@ -49,6 +49,11 @@ $tahun_terms = in_array('tahun', $filter_options) ? get_terms(array(
     <form id="rental-mobil-filter-form" class="rental-mobil-filter-form">
         <?php wp_nonce_field('rental_mobil_nonce', 'rental_mobil_filter_nonce'); ?>
 
+        <div class="rental-mobil-filter-group">
+            <label for="rental-mobil-filter-keyword"><?php _e('Kata Kunci', 'rental-mobil-wp'); ?></label>
+            <input type="text" id="rental-mobil-filter-keyword" name="keyword" class="rental-mobil-filter-input" placeholder="<?php _e('Ketik nama kendaraan...', 'rental-mobil-wp'); ?>">
+        </div>
+
         <?php if (!empty($merk_terms) && !is_wp_error($merk_terms)) : ?>
             <div class="rental-mobil-filter-group">
                 <label for="rental-mobil-filter-merk"><?php _e('Merk', 'rental-mobil-wp'); ?></label>

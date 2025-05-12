@@ -14,8 +14,8 @@ if (!defined('WPINC')) {
         <span class="rental-mobil-modal-close">&times;</span>
 
         <div class="rental-mobil-modal-header">
-            <h2 class="rental-mobil-modal-title"><?php _e('Booking Kendaraan', 'rental-mobil-wp'); ?></h2>
-            <p class="rental-mobil-modal-subtitle"><?php _e('Silakan isi form di bawah ini untuk booking kendaraan', 'rental-mobil-wp'); ?></p>
+            <h2 class="rental-mobil-modal-title"><?php _e('Booking', 'rental-mobil-wp'); ?> <span class="rental-mobil-modal-title-kendaraan"></span> <?php _e('Sekarang', 'rental-mobil-wp'); ?></h2>
+            <p class="rental-mobil-modal-subtitle"><?php _e('Silakan isi form di bawah ini untuk booking', 'rental-mobil-wp'); ?> <span class="rental-mobil-modal-subtitle-kendaraan"></span></p>
         </div>
 
         <form id="rental-mobil-booking-form" class="rental-mobil-booking-form">

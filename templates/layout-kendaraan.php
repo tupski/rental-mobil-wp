@@ -13,31 +13,27 @@ if (!defined('WPINC')) {
     <!-- Sidebar Filter (25%) -->
     <div class="rental-mobil-sidebar">
         <div class="rental-mobil-sidebar-inner">
-            <div class="rental-mobil-search-box">
-                <h3 class="rental-mobil-filter-title"><?php _e('Cari Kendaraan', 'rental-mobil-wp'); ?></h3>
-                <div class="rental-mobil-search-input-wrapper">
-                    <input type="text" id="rental-mobil-search-input" class="rental-mobil-search-input" placeholder="<?php _e('Ketik nama kendaraan...', 'rental-mobil-wp'); ?>">
-                    <button type="button" id="rental-mobil-search-button" class="rental-mobil-search-button">
-                        <span class="dashicons dashicons-search"></span>
-                    </button>
-                </div>
-                <div id="rental-mobil-search-results" class="rental-mobil-search-results"></div>
-            </div>
-            
+
             <?php include RENTAL_MOBIL_PLUGIN_DIR . 'templates/filter-kendaraan.php'; ?>
         </div>
     </div>
-    
+
     <!-- Content (75%) -->
     <div class="rental-mobil-content">
         <!-- Floating Filter Button untuk Mobile -->
         <div id="rental-mobil-filter-toggle" class="rental-mobil-filter-toggle">
             <i class="dashicons dashicons-filter"></i>
         </div>
-        
+
         <!-- Overlay untuk filter sidebar -->
         <div id="rental-mobil-filter-overlay" class="rental-mobil-filter-overlay"></div>
-        
+
+        <!-- Title and Active Filters -->
+        <div class="rental-mobil-content-header">
+            <h2 class="rental-mobil-content-title"><?php _e('Daftar Kendaraan Rental', 'rental-mobil-wp'); ?></h2>
+            <div id="rental-mobil-active-filters" class="rental-mobil-active-filters"></div>
+        </div>
+
         <!-- Results -->
         <div id="rental-mobil-results" class="rental-mobil-results">
             <?php

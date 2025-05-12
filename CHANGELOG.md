@@ -30,6 +30,12 @@ Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di fil
 - Perbaikan card mobil unggulan dan banyak disewa agar modal ajax muncul
 - Perbaikan tombol pada modal popup (hanya tombol booking)
 - Perbaikan fatal error karena fungsi AJAX yang dideklarasikan dua kali
+- Perbaikan pencarian dengan menghapus autocomplete dan hanya berfungsi saat tombol filter diklik
+- Penambahan filter aktif dengan tombol close
+- Perbaikan judul "Daftar Kendaraan Rental" dan ukuran pada mobile
+- Perbaikan modal booking dengan judul dinamis
+- Perbaikan warna background untuk card mobil unggulan dan banyak disewa
+- Perbaikan posisi badge unggulan dan banyak disewa
 
 ## [1.4.0] - 2023-12-20
 
