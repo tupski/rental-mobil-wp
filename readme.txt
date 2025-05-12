@@ -2,10 +2,10 @@
 Contributors: artupski
 Donate link: https://tupski.web.id/donate
 Tags: car rental, rental, booking, whatsapp, mobil
-Requires at least: 5.0
+Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.3.1
-Requires PHP: 7.2
+Stable tag: 1.3.2
+Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,12 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 
 == Changelog ==
 
+= 1.3.2 =
+* Peningkatan persyaratan versi WordPress menjadi 6.0
+* Peningkatan persyaratan versi PHP menjadi 8.0
+* Perbaikan kompatibilitas dengan PHP 8.0 dan WordPress 6.0+
+* Optimasi performa dan keamanan
+
 = 1.3.1 =
 * Perbaikan penggunaan gambar dengan wp_get_attachment_image()
 * Optimasi query database untuk performa yang lebih baik
@@ -116,6 +122,9 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 * Rilis pertama
 
 == Upgrade Notice ==
+
+= 1.3.2 =
+Peningkatan persyaratan versi WordPress menjadi 6.0 dan PHP menjadi 8.0. Perbaikan kompatibilitas, optimasi performa, dan peningkatan keamanan.
 
 = 1.3.1 =
 Perbaikan penting untuk kompatibilitas dengan WordPress 6.8, optimasi performa, dan peningkatan kualitas kode.

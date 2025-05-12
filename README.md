@@ -85,6 +85,12 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 
 ## Changelog
 
+### 1.3.2
+* Peningkatan persyaratan versi WordPress menjadi 6.0
+* Peningkatan persyaratan versi PHP menjadi 8.0
+* Perbaikan kompatibilitas dengan PHP 8.0 dan WordPress 6.0+
+* Optimasi performa dan keamanan
+
 ### 1.3.1
 * Perbaikan penggunaan gambar dengan wp_get_attachment_image()
 * Optimasi query database untuk performa yang lebih baik

@@ -1,15 +1,13 @@
-# Rental Mobil WP v1.3.0
+# Rental Mobil WP v1.3.2
 
 ## Deskripsi
 Rental Mobil WP adalah plugin WordPress yang dirancang khusus untuk bisnis rental mobil. Plugin ini memungkinkan Anda menampilkan daftar kendaraan, detail kendaraan, dan sistem booking yang terintegrasi dengan WhatsApp.
 
-## Fitur Baru di v1.3.0
-- **Galeri Kendaraan yang Ditingkatkan**: Integrasi dengan Media Library WordPress untuk manajemen gambar yang lebih baik
-- **Modal Galeri**: Tampilan galeri dengan navigasi untuk melihat gambar dalam ukuran penuh
-- **Floating Booking Button**: Tombol booking yang tetap terlihat saat pengguna scroll di perangkat mobile
-- **Kendaraan Terkait**: Menampilkan kendaraan lain dengan tipe yang sama di bagian bawah halaman
-- **Tampilan Harga yang Lebih Menarik**: Format kartu untuk menampilkan harga harian, mingguan, dan bulanan
-- **Responsivitas yang Ditingkatkan**: Perbaikan tampilan untuk semua ukuran layar
+## Perubahan di Versi 1.3.2
+- **Peningkatan Persyaratan Versi**: WordPress 6.0+ dan PHP 8.0+
+- **Perbaikan Kompatibilitas**: Kompatibilitas yang lebih baik dengan PHP 8.0 dan WordPress 6.0+
+- **Optimasi Performa**: Peningkatan performa dan kecepatan plugin
+- **Peningkatan Keamanan**: Perbaikan keamanan untuk melindungi data pengguna
 
 ## Cara Upgrade
 1. Nonaktifkan plugin versi lama
@@ -20,10 +18,11 @@ Rental Mobil WP adalah plugin WordPress yang dirancang khusus untuk bisnis renta
 ## Catatan Penting
 - Pastikan untuk memperbarui permalink setelah upgrade untuk memastikan perubahan slug berfungsi dengan baik
 - Jika Anda telah melakukan modifikasi pada file plugin, pastikan untuk backup sebelum upgrade
+- Versi ini memerlukan WordPress 6.0+ dan PHP 8.0+. Pastikan server Anda memenuhi persyaratan ini sebelum melakukan upgrade
 
 ## Kompatibilitas
-- WordPress 5.0 atau lebih baru
-- PHP 7.2 atau lebih baru
+- WordPress 6.0 atau lebih baru
+- PHP 8.0 atau lebih baru
 - Kompatibel dengan tema Divi
 
 ## Dukungan

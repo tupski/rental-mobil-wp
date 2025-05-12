@@ -2,6 +2,33 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.3.2] - 2023-12-15
+
+### Ditambahkan
+- Kompatibilitas dengan PHP 8.0
+
+### Diubah
+- Peningkatan persyaratan versi WordPress menjadi 6.0
+- Peningkatan persyaratan versi PHP menjadi 8.0
+
+### Diperbaiki
+- Perbaikan kompatibilitas dengan PHP 8.0 dan WordPress 6.0+
+- Optimasi performa dan keamanan
+
+## [1.3.1] - 2023-12-05
+
+### Ditambahkan
+- Kompatibilitas dengan WordPress 6.8
+
+### Diubah
+- Penggunaan gambar dengan wp_get_attachment_image() untuk meningkatkan kompatibilitas
+- Optimasi query database untuk performa yang lebih baik
+
+### Diperbaiki
+- Peringatan slow query pada penggunaan tax_query
+- Peringatan penggunaan gambar non-enqueued
+- Jumlah tag di readme.txt dibatasi menjadi 5 tag
+
 ## [1.3.0] - 2023-11-30
 
 ### Ditambahkan
