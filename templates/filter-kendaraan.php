@@ -8,33 +8,36 @@ if (!defined('WPINC')) {
     die;
 }
 
+// Dapatkan pengaturan filter
+$filter_options = rental_mobil_get_filter_options();
+
 // Dapatkan semua terms untuk filter
-$merk_terms = get_terms(array(
+$merk_terms = in_array('merk', $filter_options) ? get_terms(array(
     'taxonomy' => 'merk_kendaraan',
     'hide_empty' => true,
-));
+)) : array();
 
-$transmisi_terms = get_terms(array(
+$transmisi_terms = in_array('transmisi', $filter_options) ? get_terms(array(
     'taxonomy' => 'transmisi',
     'hide_empty' => true,
-));
+)) : array();
 
-$bahan_bakar_terms = get_terms(array(
+$bahan_bakar_terms = in_array('bahan_bakar', $filter_options) ? get_terms(array(
     'taxonomy' => 'bahan_bakar',
     'hide_empty' => true,
-));
+)) : array();
 
-$tipe_terms = get_terms(array(
+$tipe_terms = in_array('tipe', $filter_options) ? get_terms(array(
     'taxonomy' => 'tipe_kendaraan',
     'hide_empty' => true,
-));
+)) : array();
 
-$tahun_terms = get_terms(array(
+$tahun_terms = in_array('tahun', $filter_options) ? get_terms(array(
     'taxonomy' => 'tahun_kendaraan',
     'hide_empty' => true,
     'orderby' => 'name',
     'order' => 'DESC',
-));
+)) : array();
 ?>
 
 <!-- Floating Filter Button untuk Mobile -->
@@ -113,6 +116,7 @@ $tahun_terms = get_terms(array(
                 </div>
             <?php endif; ?>
 
+            <?php if (in_array('orderby', $filter_options)) : ?>
             <div class="rental-mobil-filter-col">
                 <label for="rental-mobil-filter-orderby"><?php _e('Urutkan', 'rental-mobil-wp'); ?></label>
                 <select id="rental-mobil-filter-orderby" name="orderby" class="rental-mobil-filter-select">
@@ -121,7 +125,9 @@ $tahun_terms = get_terms(array(
                     <option value="meta_value_num" data-meta-key="_rental_mobil_harga_sewa"><?php _e('Harga', 'rental-mobil-wp'); ?></option>
                 </select>
             </div>
+            <?php endif; ?>
 
+            <?php if (in_array('order', $filter_options)) : ?>
             <div class="rental-mobil-filter-col">
                 <label for="rental-mobil-filter-order"><?php _e('Urutan', 'rental-mobil-wp'); ?></label>
                 <select id="rental-mobil-filter-order" name="order" class="rental-mobil-filter-select">
@@ -129,6 +135,7 @@ $tahun_terms = get_terms(array(
                     <option value="ASC"><?php _e('Menaik', 'rental-mobil-wp'); ?></option>
                 </select>
             </div>
+            <?php endif; ?>
         </div>
 
         <div class="rental-mobil-filter-actions">
@@ -140,8 +147,4 @@ $tahun_terms = get_terms(array(
             </button>
         </div>
     </form>
-</div>
-
-<div id="rental-mobil-results" class="rental-mobil-results">
-    <!-- Hasil filter akan ditampilkan di sini -->
 </div>

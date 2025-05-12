@@ -33,6 +33,9 @@ function rental_mobil_daftar_shortcode($atts) {
     // Tampilkan filter
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/filter-kendaraan.php';
 
+    // Buka div untuk hasil filter
+    echo '<div id="rental-mobil-results" class="rental-mobil-results">';
+
     // Query kendaraan
     $args = array(
         'post_type'      => 'kendaraan',
@@ -148,6 +151,9 @@ function rental_mobil_daftar_shortcode($atts) {
     }
 
     wp_reset_postdata();
+
+    // Tutup div rental-mobil-results
+    echo '</div>';
 
     // Tampilkan modal booking
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-modal.php';
