@@ -317,6 +317,52 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                 }
             });
         });
+        // Inisialisasi slider
+        initSlider();
     });
+
+    // Fungsi untuk menginisialisasi slider
+    function initSlider() {
+        const $ = jQuery;
+        const sliders = $('.rental-mobil-slider');
+
+        if (sliders.length === 0) {
+            return;
+        }
+
+        sliders.each(function() {
+            const slider = $(this);
+            const container = slider.find('.rental-mobil-slider-container');
+            const prevButton = slider.find('.rental-mobil-slider-prev');
+            const nextButton = slider.find('.rental-mobil-slider-next');
+            const items = slider.find('.rental-mobil-slider-item');
+
+            if (items.length <= 0) {
+                return;
+            }
+
+            // Scroll ke item berikutnya
+            nextButton.on('click', function() {
+                const itemWidth = items.first().outerWidth(true);
+                const scrollLeft = container.scrollLeft();
+                const targetScroll = scrollLeft + itemWidth;
+
+                container.animate({
+                    scrollLeft: targetScroll
+                }, 300);
+            });
+
+            // Scroll ke item sebelumnya
+            prevButton.on('click', function() {
+                const itemWidth = items.first().outerWidth(true);
+                const scrollLeft = container.scrollLeft();
+                const targetScroll = scrollLeft - itemWidth;
+
+                container.animate({
+                    scrollLeft: targetScroll
+                }, 300);
+            });
+        });
+    }
 
 })(jQuery);

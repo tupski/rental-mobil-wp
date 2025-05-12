@@ -240,6 +240,21 @@
     font-size: 32px;
     font-weight: 700;
     color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.rental-mobil-detail-title .rental-mobil-badge {
+    position: relative;
+    top: auto;
+    right: auto;
+    font-size: 14px;
+    padding: 5px 10px;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .rental-mobil-detail-meta {
@@ -772,6 +787,106 @@
     font-weight: 600;
     color: #333;
     text-align: center;
+}
+
+/* Slider Styles */
+.rental-mobil-slider-section {
+    margin: 30px 0;
+}
+
+.rental-mobil-slider-title {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+}
+
+.rental-mobil-slider {
+    position: relative;
+    padding: 0 40px;
+}
+
+.rental-mobil-slider-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    gap: 20px;
+    padding: 10px 0;
+}
+
+.rental-mobil-slider-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.rental-mobil-slider-item {
+    flex: 0 0 300px;
+    max-width: 300px;
+}
+
+.rental-mobil-slider-prev,
+.rental-mobil-slider-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #0073aa;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    transition: background-color 0.3s ease;
+}
+
+.rental-mobil-slider-prev {
+    left: 0;
+}
+
+.rental-mobil-slider-next {
+    right: 0;
+}
+
+.rental-mobil-slider-prev:hover,
+.rental-mobil-slider-next:hover {
+    background-color: #005177;
+}
+
+.rental-mobil-slider-prev .dashicons,
+.rental-mobil-slider-next .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+/* Badge Styles */
+.rental-mobil-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 5;
+}
+
+.rental-mobil-badge-featured {
+    background-color: #ffb900;
+    color: #333;
+}
+
+.rental-mobil-badge-popular {
+    background-color: #0073aa;
+    color: #fff;
 }
 
 /* Responsive Styles */

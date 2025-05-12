@@ -13,6 +13,10 @@ $post_id = get_the_ID();
 $harga_sewa = rental_mobil_get_harga_sewa($post_id);
 $harga_formatted = rental_mobil_format_rupiah($harga_sewa);
 
+// Cek status kendaraan
+$is_featured = rental_mobil_is_featured($post_id);
+$is_popular = rental_mobil_is_popular($post_id);
+
 // Dapatkan terms
 $merk_terms = get_the_terms($post_id, 'merk_kendaraan');
 $merk = !empty($merk_terms) ? $merk_terms[0]->name : '';
@@ -41,6 +45,12 @@ $tahun = !empty($tahun_terms) ? $tahun_terms[0]->name : '';
                 echo '<img src="' . esc_url(RENTAL_MOBIL_PLUGIN_URL . 'assets/img/no-image.svg') . '" alt="' . esc_attr(get_the_title()) . '">';
             }
             ?>
+        <?php endif; ?>
+
+        <?php if ($is_featured) : ?>
+            <div class="rental-mobil-badge rental-mobil-badge-featured"><?php _e('Unggulan', 'rental-mobil-wp'); ?></div>
+        <?php elseif ($is_popular) : ?>
+            <div class="rental-mobil-badge rental-mobil-badge-popular"><?php _e('Paling Banyak Disewa', 'rental-mobil-wp'); ?></div>
         <?php endif; ?>
     </div>
     <div class="rental-mobil-card-content">

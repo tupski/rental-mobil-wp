@@ -13,6 +13,10 @@ $post_id = $kendaraan->ID;
 $harga_sewa = rental_mobil_get_harga_sewa($post_id);
 $harga_formatted = rental_mobil_format_rupiah($harga_sewa);
 
+// Cek status kendaraan
+$is_featured = rental_mobil_is_featured($post_id);
+$is_popular = rental_mobil_is_popular($post_id);
+
 // Dapatkan harga mingguan dan bulanan
 $harga_mingguan = rental_mobil_get_harga_mingguan($post_id);
 $harga_mingguan_formatted = rental_mobil_format_rupiah($harga_mingguan);
@@ -48,7 +52,14 @@ $whatsapp_message = rental_mobil_get_whatsapp_message();
 <div class="rental-mobil-container">
 <div class="rental-mobil-detail">
     <div class="rental-mobil-detail-header">
-        <h1 class="rental-mobil-detail-title"><?php echo esc_html($kendaraan->post_title); ?></h1>
+        <h1 class="rental-mobil-detail-title">
+            <?php echo esc_html($kendaraan->post_title); ?>
+            <?php if ($is_featured) : ?>
+                <span class="rental-mobil-badge rental-mobil-badge-featured"><?php _e('Unggulan', 'rental-mobil-wp'); ?></span>
+            <?php elseif ($is_popular) : ?>
+                <span class="rental-mobil-badge rental-mobil-badge-popular"><?php _e('Paling Banyak Disewa', 'rental-mobil-wp'); ?></span>
+            <?php endif; ?>
+        </h1>
 
         <div class="rental-mobil-detail-meta">
             <?php if (!empty($merk)) : ?>

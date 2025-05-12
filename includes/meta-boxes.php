@@ -33,6 +33,8 @@ function rental_mobil_details_callback($post) {
     $harga_bulanan = get_post_meta($post->ID, '_rental_mobil_harga_bulanan', true);
     $galeri = get_post_meta($post->ID, '_rental_mobil_galeri', true);
     $youtube_url = get_post_meta($post->ID, '_rental_mobil_youtube_url', true);
+    $is_featured = get_post_meta($post->ID, '_rental_mobil_is_featured', true);
+    $is_popular = get_post_meta($post->ID, '_rental_mobil_is_popular', true);
     ?>
     <div class="rental-mobil-meta-box">
         <h4><?php _e('Harga Sewa', 'rental-mobil-wp'); ?></h4>
@@ -187,6 +189,22 @@ function rental_mobil_details_callback($post) {
             <input type="url" id="rental_mobil_youtube_url" name="rental_mobil_youtube_url" value="<?php echo esc_url($youtube_url); ?>" class="widefat">
             <span class="description"><?php _e('Masukkan URL video YouTube. Contoh: https://www.youtube.com/watch?v=XXXXXXXXXXX', 'rental-mobil-wp'); ?></span>
         </p>
+
+        <h4><?php _e('Status Kendaraan', 'rental-mobil-wp'); ?></h4>
+        <p>
+            <label for="rental_mobil_is_featured">
+                <input type="checkbox" id="rental_mobil_is_featured" name="rental_mobil_is_featured" value="1" <?php checked($is_featured, '1'); ?>>
+                <?php _e('Kendaraan Unggulan', 'rental-mobil-wp'); ?>
+            </label>
+            <span class="description"><?php _e('Centang jika kendaraan ini adalah kendaraan unggulan yang akan ditampilkan di slider.', 'rental-mobil-wp'); ?></span>
+        </p>
+        <p>
+            <label for="rental_mobil_is_popular">
+                <input type="checkbox" id="rental_mobil_is_popular" name="rental_mobil_is_popular" value="1" <?php checked($is_popular, '1'); ?>>
+                <?php _e('Paling Banyak Disewa', 'rental-mobil-wp'); ?>
+            </label>
+            <span class="description"><?php _e('Centang jika kendaraan ini termasuk yang paling banyak disewa.', 'rental-mobil-wp'); ?></span>
+        </p>
     </div>
     <?php
 }
@@ -257,6 +275,22 @@ function rental_mobil_save_meta_box_data($post_id) {
             esc_url_raw($_POST['rental_mobil_youtube_url'])
         );
     }
+
+    // Simpan status kendaraan unggulan
+    $is_featured = isset($_POST['rental_mobil_is_featured']) ? '1' : '0';
+    update_post_meta(
+        $post_id,
+        '_rental_mobil_is_featured',
+        $is_featured
+    );
+
+    // Simpan status kendaraan paling banyak disewa
+    $is_popular = isset($_POST['rental_mobil_is_popular']) ? '1' : '0';
+    update_post_meta(
+        $post_id,
+        '_rental_mobil_is_popular',
+        $is_popular
+    );
 }
 
 /**
@@ -337,4 +371,56 @@ function rental_mobil_get_youtube_id($url) {
     }
 
     return $video_id;
+}
+
+/**
+ * Cek apakah kendaraan adalah kendaraan unggulan
+ */
+function rental_mobil_is_featured($post_id) {
+    return get_post_meta($post_id, '_rental_mobil_is_featured', true) === '1';
+}
+
+/**
+ * Cek apakah kendaraan adalah kendaraan paling banyak disewa
+ */
+function rental_mobil_is_popular($post_id) {
+    return get_post_meta($post_id, '_rental_mobil_is_popular', true) === '1';
+}
+
+/**
+ * Dapatkan semua kendaraan unggulan
+ */
+function rental_mobil_get_featured_vehicles($limit = -1) {
+    $args = array(
+        'post_type' => 'kendaraan',
+        'posts_per_page' => $limit,
+        'meta_query' => array(
+            array(
+                'key' => '_rental_mobil_is_featured',
+                'value' => '1',
+                'compare' => '='
+            )
+        )
+    );
+
+    return new WP_Query($args);
+}
+
+/**
+ * Dapatkan semua kendaraan paling banyak disewa
+ */
+function rental_mobil_get_popular_vehicles($limit = -1) {
+    $args = array(
+        'post_type' => 'kendaraan',
+        'posts_per_page' => $limit,
+        'meta_query' => array(
+            array(
+                'key' => '_rental_mobil_is_popular',
+                'value' => '1',
+                'compare' => '='
+            )
+        )
+    );
+
+    return new WP_Query($args);
 }

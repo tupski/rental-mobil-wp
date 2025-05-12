@@ -33,6 +33,15 @@ function rental_mobil_daftar_shortcode($atts) {
     // Tampilkan filter
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/filter-kendaraan.php';
 
+    // Tampilkan slider kendaraan paling banyak disewa
+    $popular_query = rental_mobil_get_popular_vehicles(5);
+    if ($popular_query->have_posts()) {
+        $type = 'popular';
+        $limit = 5;
+        $title = __('Paling Banyak Disewa', 'rental-mobil-wp');
+        include RENTAL_MOBIL_PLUGIN_DIR . 'templates/slider-kendaraan.php';
+    }
+
     // Buka div untuk hasil filter
     echo '<div id="rental-mobil-results" class="rental-mobil-results">';
 
@@ -343,6 +352,35 @@ function rental_mobil_filter_ajax() {
     wp_send_json_success(array(
         'html' => $html,
     ));
+}
+
+/**
+ * Shortcode untuk menampilkan kendaraan unggulan
+ */
+add_shortcode('kendaraan_unggulan', 'rental_mobil_unggulan_shortcode');
+function rental_mobil_unggulan_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'jumlah' => 5,
+        'tipe' => 'featured', // 'featured' atau 'popular'
+        'judul' => '',
+    ), $atts, 'kendaraan_unggulan');
+
+    // Mulai output buffering
+    ob_start();
+
+    // Set parameter untuk template
+    $type = $atts['tipe'];
+    $limit = $atts['jumlah'];
+    $title = !empty($atts['judul']) ? $atts['judul'] : '';
+
+    // Tampilkan slider
+    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/slider-kendaraan.php';
+
+    // Tampilkan modal booking
+    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-modal.php';
+
+    // Ambil output buffering dan kembalikan
+    return ob_get_clean();
 }
 
 /**
