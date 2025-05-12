@@ -36,12 +36,16 @@ if (!defined('WPINC')) {
         <!-- Results -->
         <div id="rental-mobil-results" class="rental-mobil-results">
             <?php
+            // Dapatkan halaman saat ini
+            $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
             // Query kendaraan
             $args = array(
                 'post_type'      => 'kendaraan',
-                'posts_per_page' => $atts['jumlah'],
+                'posts_per_page' => 9, // Tetapkan 9 kendaraan per halaman
                 'orderby'        => $atts['orderby'],
                 'order'          => $atts['order'],
+                'paged'          => $paged,
             );
 
             // Tambahkan filter berdasarkan parameter
@@ -144,6 +148,61 @@ if (!defined('WPINC')) {
                     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/card-kendaraan.php';
                 }
                 echo '</div>';
+
+                // Tambahkan paginasi
+                echo '<div class="rental-mobil-pagination">';
+                echo '<div class="rental-mobil-pagination-info">';
+                echo sprintf(
+                    __('Menampilkan %1$s dari %2$s kendaraan', 'rental-mobil-wp'),
+                    min($query->post_count, $query->found_posts),
+                    $query->found_posts
+                );
+                echo '</div>';
+
+                echo '<div class="rental-mobil-pagination-links" data-max-pages="' . $query->max_num_pages . '" data-current-page="' . $paged . '">';
+
+                // Tombol Previous
+                if ($paged > 1) {
+                    echo '<a href="#" class="rental-mobil-pagination-prev" data-page="' . ($paged - 1) . '">' . __('« Sebelumnya', 'rental-mobil-wp') . '</a>';
+                } else {
+                    echo '<span class="rental-mobil-pagination-prev disabled">' . __('« Sebelumnya', 'rental-mobil-wp') . '</span>';
+                }
+
+                // Nomor halaman
+                $start_page = max(1, $paged - 2);
+                $end_page = min($query->max_num_pages, $paged + 2);
+
+                if ($start_page > 1) {
+                    echo '<a href="#" class="rental-mobil-pagination-number" data-page="1">1</a>';
+                    if ($start_page > 2) {
+                        echo '<span class="rental-mobil-pagination-dots">...</span>';
+                    }
+                }
+
+                for ($i = $start_page; $i <= $end_page; $i++) {
+                    if ($i == $paged) {
+                        echo '<span class="rental-mobil-pagination-number current">' . $i . '</span>';
+                    } else {
+                        echo '<a href="#" class="rental-mobil-pagination-number" data-page="' . $i . '">' . $i . '</a>';
+                    }
+                }
+
+                if ($end_page < $query->max_num_pages) {
+                    if ($end_page < $query->max_num_pages - 1) {
+                        echo '<span class="rental-mobil-pagination-dots">...</span>';
+                    }
+                    echo '<a href="#" class="rental-mobil-pagination-number" data-page="' . $query->max_num_pages . '">' . $query->max_num_pages . '</a>';
+                }
+
+                // Tombol Next
+                if ($paged < $query->max_num_pages) {
+                    echo '<a href="#" class="rental-mobil-pagination-next" data-page="' . ($paged + 1) . '">' . __('Selanjutnya »', 'rental-mobil-wp') . '</a>';
+                } else {
+                    echo '<span class="rental-mobil-pagination-next disabled">' . __('Selanjutnya »', 'rental-mobil-wp') . '</span>';
+                }
+
+                echo '</div>'; // .rental-mobil-pagination-links
+                echo '</div>'; // .rental-mobil-pagination
             } else {
                 echo '<p>' . __('Tidak ada kendaraan yang ditemukan.', 'rental-mobil-wp') . '</p>';
             }

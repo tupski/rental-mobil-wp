@@ -20,9 +20,19 @@ if (!defined('WPINC')) {
                     <img src="" alt="" class="rental-mobil-quick-view-featured-image">
                 </div>
 
-                <!-- Thumbnail galeri -->
-                <div class="rental-mobil-quick-view-thumbnails">
-                    <!-- Thumbnails akan diisi oleh JavaScript -->
+                <!-- Thumbnail galeri dengan navigasi -->
+                <div class="rental-mobil-quick-view-thumbnails-wrapper">
+                    <button class="rental-mobil-quick-view-nav rental-mobil-quick-view-prev">
+                        <span class="dashicons dashicons-arrow-left-alt2"></span>
+                    </button>
+
+                    <div class="rental-mobil-quick-view-thumbnails">
+                        <!-- Thumbnails akan diisi oleh JavaScript -->
+                    </div>
+
+                    <button class="rental-mobil-quick-view-nav rental-mobil-quick-view-next">
+                        <span class="dashicons dashicons-arrow-right-alt2"></span>
+                    </button>
                 </div>
             </div>
 

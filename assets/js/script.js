@@ -505,6 +505,9 @@
                                 openZoomModal(imgSrc, title);
                             });
                         });
+
+                        // Inisialisasi navigasi thumbnail
+                        initThumbnailNavigation();
                     }
                 }
             });
@@ -529,8 +532,114 @@
             // Set gambar
             zoomImage.attr('src', imgSrc).attr('alt', title);
 
+            // Dapatkan semua thumbnail dari quick view
+            const thumbnails = $('.rental-mobil-quick-view-thumbnail');
+            const zoomThumbnailsContainer = $('.rental-mobil-zoom-thumbnails');
+
+            // Kosongkan container thumbnail zoom
+            zoomThumbnailsContainer.empty();
+
+            // Tambahkan semua thumbnail ke zoom modal
+            thumbnails.each(function() {
+                const thumbSrc = $(this).data('src');
+                const thumbImg = $(this).find('img').attr('src');
+                const isActive = thumbSrc === imgSrc;
+
+                zoomThumbnailsContainer.append(`
+                    <div class="rental-mobil-zoom-thumbnail ${isActive ? 'active' : ''}" data-src="${thumbSrc}">
+                        <img src="${thumbImg}" alt="${title}">
+                    </div>
+                `);
+            });
+
+            // Inisialisasi thumbnail click
+            $('.rental-mobil-zoom-thumbnail').on('click', function() {
+                const src = $(this).data('src');
+                zoomImage.attr('src', src);
+                $('.rental-mobil-zoom-thumbnail').removeClass('active');
+                $(this).addClass('active');
+            });
+
+            // Inisialisasi navigasi thumbnail
+            initZoomThumbnailNavigation();
+
+            // Inisialisasi tombol share
+            $('.rental-mobil-zoom-share').on('click', function() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: title,
+                        url: window.location.href
+                    })
+                    .catch(console.error);
+                } else {
+                    // Fallback untuk browser yang tidak mendukung Web Share API
+                    const tempInput = $('<input>');
+                    $('body').append(tempInput);
+                    tempInput.val(window.location.href).select();
+                    document.execCommand('copy');
+                    tempInput.remove();
+                    alert('URL telah disalin ke clipboard');
+                }
+            });
+
             // Tampilkan modal
             zoomModal.css('display', 'block');
+        }
+
+        // Fungsi untuk menginisialisasi navigasi thumbnail di zoom modal
+        function initZoomThumbnailNavigation() {
+            const thumbnails = $('.rental-mobil-zoom-thumbnail');
+            const prevButton = $('.rental-mobil-zoom-prev');
+            const nextButton = $('.rental-mobil-zoom-next');
+
+            // Jika kurang dari 6 thumbnail, sembunyikan navigasi
+            if (thumbnails.length <= 5) {
+                prevButton.hide();
+                nextButton.hide();
+                return;
+            }
+
+            // Tampilkan maksimal 5 thumbnail
+            if (thumbnails.length > 5) {
+                // Sembunyikan thumbnail ke-6 dan seterusnya
+                thumbnails.slice(5).css('display', 'none');
+
+                // Tampilkan tombol navigasi
+                prevButton.show();
+                nextButton.show();
+            }
+
+            // Navigasi ke thumbnail sebelumnya
+            prevButton.on('click', function() {
+                const firstVisible = thumbnails.filter(':visible').first().index();
+
+                if (firstVisible > 0) {
+                    // Sembunyikan thumbnail terakhir yang terlihat
+                    thumbnails.eq(firstVisible + 4).css('display', 'none');
+                    // Tampilkan thumbnail sebelumnya
+                    thumbnails.eq(firstVisible - 1).css('display', 'flex');
+                } else {
+                    // Loop ke akhir
+                    thumbnails.slice(0, 5).css('display', 'none');
+                    thumbnails.slice(Math.max(0, thumbnails.length - 5)).css('display', 'flex');
+                }
+            });
+
+            // Navigasi ke thumbnail berikutnya
+            nextButton.on('click', function() {
+                const lastVisible = thumbnails.filter(':visible').last().index();
+
+                if (lastVisible < thumbnails.length - 1) {
+                    // Sembunyikan thumbnail pertama yang terlihat
+                    thumbnails.filter(':visible').first().css('display', 'none');
+                    // Tampilkan thumbnail berikutnya
+                    thumbnails.eq(lastVisible + 1).css('display', 'flex');
+                } else {
+                    // Loop ke awal
+                    thumbnails.slice(Math.max(0, thumbnails.length - 5)).css('display', 'none');
+                    thumbnails.slice(0, 5).css('display', 'flex');
+                }
+            });
         }
 
         // Tutup Zoom Modal
@@ -633,10 +742,19 @@ Mohon informasi lebih lanjut. Terima kasih.`;
             const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
             window.history.pushState({ path: newUrl }, '', newUrl);
 
+            // Tambahkan paged=1 untuk reset ke halaman pertama saat filter
+            loadKendaraan(formData, 1);
+        });
+
+        // Fungsi untuk memuat kendaraan dengan AJAX
+        function loadKendaraan(formData, page) {
+            // Tambahkan parameter paged
+            const data = formData ? formData + '&paged=' + page : 'paged=' + page;
+
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
                 type: 'POST',
-                data: formData + '&action=rental_mobil_filter&nonce=' + rental_mobil_ajax.nonce,
+                data: data + '&action=rental_mobil_filter&nonce=' + rental_mobil_ajax.nonce,
                 beforeSend: function() {
                     $('#rental-mobil-results').html('<p>Memuat...</p>');
                 },
@@ -671,6 +789,9 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                             openQuickView(kendaraanId);
                         });
 
+                        // Inisialisasi paginasi
+                        initPagination(formData);
+
                         // Sembunyikan filter pada mobile setelah submit
                         if ($(window).width() <= 768) {
                             filterContainer.removeClass('active');
@@ -684,7 +805,24 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                     $('#rental-mobil-results').html('<p>Terjadi kesalahan. Silakan coba lagi.</p>');
                 }
             });
-        });
+        }
+
+        // Fungsi untuk menginisialisasi paginasi
+        function initPagination(formData) {
+            // Delegasi event untuk tombol paginasi
+            $(document).off('click', '.rental-mobil-pagination-links a').on('click', '.rental-mobil-pagination-links a', function(e) {
+                e.preventDefault();
+                const page = $(this).data('page');
+
+                // Scroll ke atas hasil
+                $('html, body').animate({
+                    scrollTop: $('#rental-mobil-results').offset().top - 50
+                }, 500);
+
+                // Muat kendaraan dengan halaman yang dipilih
+                loadKendaraan(formData, page);
+            });
+        }
 
         // Reset Filter
         resetButton.on('click', function() {
@@ -858,6 +996,64 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                     scrollLeft: targetScroll
                 }, 300);
             });
+        });
+    }
+
+    // Fungsi untuk menginisialisasi navigasi thumbnail
+    function initThumbnailNavigation() {
+        const $ = jQuery;
+        const thumbnailsContainer = $('.rental-mobil-quick-view-thumbnails');
+        const prevButton = $('.rental-mobil-quick-view-prev');
+        const nextButton = $('.rental-mobil-quick-view-next');
+        const thumbnails = $('.rental-mobil-quick-view-thumbnail');
+
+        // Jika kurang dari 4 thumbnail, sembunyikan navigasi
+        if (thumbnails.length <= 3) {
+            prevButton.hide();
+            nextButton.hide();
+            return;
+        }
+
+        // Tampilkan maksimal 3 thumbnail
+        if (thumbnails.length > 3) {
+            // Sembunyikan thumbnail ke-4 dan seterusnya
+            thumbnails.slice(3).css('display', 'none');
+
+            // Tampilkan tombol navigasi
+            prevButton.show();
+            nextButton.show();
+        }
+
+        // Navigasi ke thumbnail sebelumnya
+        prevButton.on('click', function() {
+            const firstVisible = thumbnails.filter(':visible').first().index();
+
+            if (firstVisible > 0) {
+                // Sembunyikan thumbnail terakhir yang terlihat
+                thumbnails.eq(firstVisible + 2).css('display', 'none');
+                // Tampilkan thumbnail sebelumnya
+                thumbnails.eq(firstVisible - 1).css('display', 'flex');
+            } else {
+                // Loop ke akhir
+                thumbnails.slice(0, 3).css('display', 'none');
+                thumbnails.slice(Math.max(0, thumbnails.length - 3)).css('display', 'flex');
+            }
+        });
+
+        // Navigasi ke thumbnail berikutnya
+        nextButton.on('click', function() {
+            const lastVisible = thumbnails.filter(':visible').last().index();
+
+            if (lastVisible < thumbnails.length - 1) {
+                // Sembunyikan thumbnail pertama yang terlihat
+                thumbnails.filter(':visible').first().css('display', 'none');
+                // Tampilkan thumbnail berikutnya
+                thumbnails.eq(lastVisible + 1).css('display', 'flex');
+            } else {
+                // Loop ke awal
+                thumbnails.slice(Math.max(0, thumbnails.length - 3)).css('display', 'none');
+                thumbnails.slice(0, 3).css('display', 'flex');
+            }
         });
     }
 

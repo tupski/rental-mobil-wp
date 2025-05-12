@@ -69,6 +69,11 @@ $galeri_images = rental_mobil_get_galeri($post_id);
             ?>
         <?php endif; ?>
 
+        <!-- Overlay dengan ikon mata saat hover -->
+        <div class="rental-mobil-card-image-overlay">
+            <span class="rental-mobil-card-image-icon dashicons dashicons-visibility"></span>
+        </div>
+
         <?php if ($is_featured) : ?>
             <div class="rental-mobil-badge rental-mobil-badge-featured"><?php _e('Unggulan', 'rental-mobil-wp'); ?></div>
         <?php elseif ($is_popular) : ?>
