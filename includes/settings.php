@@ -15,12 +15,12 @@ add_action('admin_init', 'rental_mobil_register_settings');
 function rental_mobil_register_settings() {
     register_setting('rental_mobil_options', 'rental_mobil_options', 'rental_mobil_validate_options');
 
-    // Tab Umum
+    // Tab Dokumentasi
     add_settings_section(
-        'rental_mobil_general_section',
-        __('Pengaturan Umum', 'rental-mobil-wp'),
-        'rental_mobil_general_section_callback',
-        'rental_mobil_general'
+        'rental_mobil_documentation_section',
+        __('Dokumentasi Plugin', 'rental-mobil-wp'),
+        'rental_mobil_documentation_section_callback',
+        'rental_mobil_documentation'
     );
 
     // Tab WhatsApp
@@ -132,10 +132,63 @@ function rental_mobil_register_settings() {
 }
 
 /**
- * General section callback
+ * Documentation section callback
  */
-function rental_mobil_general_section_callback() {
-    echo '<p>' . __('Pengaturan umum untuk plugin Rental Mobil.', 'rental-mobil-wp') . '</p>';
+function rental_mobil_documentation_section_callback() {
+    $plugin_data = get_plugin_data(RENTAL_MOBIL_PLUGIN_FILE);
+    $version = $plugin_data['Version'];
+
+    echo '<div class="rental-mobil-documentation">';
+    echo '<div class="rental-mobil-version"><strong>' . __('Versi Plugin:', 'rental-mobil-wp') . '</strong> ' . esc_html($version) . '</div>';
+
+    echo '<h3>' . __('Penggunaan Shortcode', 'rental-mobil-wp') . '</h3>';
+    echo '<div class="rental-mobil-shortcode-docs">';
+
+    echo '<div class="rental-mobil-shortcode-item">';
+    echo '<h4>[daftar_kendaraan]</h4>';
+    echo '<p>' . __('Menampilkan daftar kendaraan dengan filter di sidebar.', 'rental-mobil-wp') . '</p>';
+    echo '<pre>[daftar_kendaraan jumlah="10" orderby="date" order="DESC" merk="" transmisi="" bahan_bakar="" tipe="" tahun=""]</pre>';
+    echo '<p><strong>' . __('Parameter:', 'rental-mobil-wp') . '</strong></p>';
+    echo '<ul>';
+    echo '<li><code>jumlah</code> - ' . __('Jumlah kendaraan yang ditampilkan (default: 10)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>orderby</code> - ' . __('Mengurutkan berdasarkan (date, title, meta_value_num)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>order</code> - ' . __('Urutan (ASC, DESC)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>merk</code> - ' . __('Filter berdasarkan merk (slug)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>transmisi</code> - ' . __('Filter berdasarkan transmisi (slug)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>bahan_bakar</code> - ' . __('Filter berdasarkan bahan bakar (slug)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>tipe</code> - ' . __('Filter berdasarkan tipe kendaraan (slug)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>tahun</code> - ' . __('Filter berdasarkan tahun kendaraan (slug)', 'rental-mobil-wp') . '</li>';
+    echo '</ul>';
+    echo '</div>';
+
+    echo '<div class="rental-mobil-shortcode-item">';
+    echo '<h4>[detail_kendaraan]</h4>';
+    echo '<p>' . __('Menampilkan detail kendaraan berdasarkan ID atau slug.', 'rental-mobil-wp') . '</p>';
+    echo '<pre>[detail_kendaraan id="123" slug="nama-kendaraan"]</pre>';
+    echo '<p><strong>' . __('Parameter:', 'rental-mobil-wp') . '</strong></p>';
+    echo '<ul>';
+    echo '<li><code>id</code> - ' . __('ID kendaraan', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>slug</code> - ' . __('Slug kendaraan', 'rental-mobil-wp') . '</li>';
+    echo '</ul>';
+    echo '</div>';
+
+    echo '<div class="rental-mobil-shortcode-item">';
+    echo '<h4>[kendaraan_unggulan]</h4>';
+    echo '<p>' . __('Menampilkan slider kendaraan unggulan.', 'rental-mobil-wp') . '</p>';
+    echo '<pre>[kendaraan_unggulan jumlah="5" judul="Kendaraan Unggulan"]</pre>';
+    echo '<p><strong>' . __('Parameter:', 'rental-mobil-wp') . '</strong></p>';
+    echo '<ul>';
+    echo '<li><code>jumlah</code> - ' . __('Jumlah kendaraan yang ditampilkan (default: 5)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>judul</code> - ' . __('Judul slider (default: Kendaraan Unggulan)', 'rental-mobil-wp') . '</li>';
+    echo '</ul>';
+    echo '</div>';
+
+    echo '</div>';
+
+    echo '<h3>' . __('Kontribusi', 'rental-mobil-wp') . '</h3>';
+    echo '<p>' . sprintf(__('Plugin ini open source dan Anda dapat berkontribusi di %s', 'rental-mobil-wp'), '<a href="https://github.com/tupski/rental-mobil-wp" target="_blank">GitHub</a>') . '</p>';
+
+    echo '</div>';
 }
 
 /**
@@ -458,7 +511,7 @@ function rental_mobil_validate_options($input) {
  */
 function rental_mobil_settings_page() {
     // Cek tab aktif
-    $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general';
+    $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'documentation';
     ?>
     <div class="wrap rental-mobil-settings">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
@@ -474,8 +527,8 @@ function rental_mobil_settings_page() {
         </div>
 
         <h2 class="nav-tab-wrapper">
-            <a href="?page=rental-mobil&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>">
-                <span class="dashicons dashicons-admin-generic"></span> <?php _e('Umum', 'rental-mobil-wp'); ?>
+            <a href="?page=rental-mobil&tab=documentation" class="nav-tab <?php echo $active_tab == 'documentation' ? 'nav-tab-active' : ''; ?>">
+                <span class="dashicons dashicons-book"></span> <?php _e('Dokumentasi', 'rental-mobil-wp'); ?>
             </a>
             <a href="?page=rental-mobil&tab=whatsapp" class="nav-tab <?php echo $active_tab == 'whatsapp' ? 'nav-tab-active' : ''; ?>">
                 <span class="dashicons dashicons-whatsapp"></span> <?php _e('WhatsApp', 'rental-mobil-wp'); ?>
@@ -494,9 +547,9 @@ function rental_mobil_settings_page() {
                 settings_fields('rental_mobil_options');
 
                 // Tampilkan section berdasarkan tab aktif
-                if ($active_tab == 'general') {
-                    echo '<div id="rental-mobil-general-settings" class="rental-mobil-settings-tab">';
-                    do_settings_sections('rental_mobil_general');
+                if ($active_tab == 'documentation') {
+                    echo '<div id="rental-mobil-documentation-settings" class="rental-mobil-settings-tab">';
+                    do_settings_sections('rental_mobil_documentation');
                     echo '</div>';
                 } elseif ($active_tab == 'whatsapp') {
                     echo '<div id="rental-mobil-whatsapp-settings" class="rental-mobil-settings-tab">';

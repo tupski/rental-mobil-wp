@@ -610,6 +610,29 @@ Mohon informasi lebih lanjut. Terima kasih.`;
 
             const formData = $(this).serialize();
 
+            // Update URL dengan parameter filter
+            const formValues = {};
+            $.each($(this).serializeArray(), function(i, field) {
+                if (field.value) {
+                    formValues[field.name] = field.value;
+                }
+            });
+
+            // Buat parameter URL dalam bahasa Indonesia
+            const urlParams = new URLSearchParams();
+            if (formValues.keyword) urlParams.set('kata_kunci', formValues.keyword);
+            if (formValues.merk) urlParams.set('merk', formValues.merk);
+            if (formValues.transmisi) urlParams.set('transmisi', formValues.transmisi);
+            if (formValues.bahan_bakar) urlParams.set('bahan_bakar', formValues.bahan_bakar);
+            if (formValues.tipe) urlParams.set('tipe', formValues.tipe);
+            if (formValues.tahun) urlParams.set('tahun', formValues.tahun);
+            if (formValues.orderby) urlParams.set('urutkan', formValues.orderby);
+            if (formValues.order) urlParams.set('urutan', formValues.order);
+
+            // Update URL tanpa reload halaman
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.pushState({ path: newUrl }, '', newUrl);
+
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
                 type: 'POST',
@@ -778,6 +801,9 @@ Mohon informasi lebih lanjut. Terima kasih.`;
 
         // Inisialisasi quick view trigger untuk slider
         initSliderQuickView();
+
+        // Cek parameter URL dan isi form filter
+        initFilterFromUrl();
     });
 
     // Fungsi untuk menginisialisasi quick view trigger untuk slider
@@ -833,6 +859,59 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                 }, 300);
             });
         });
+    }
+
+    // Fungsi untuk menginisialisasi filter dari parameter URL
+    function initFilterFromUrl() {
+        const $ = jQuery;
+        const urlParams = new URLSearchParams(window.location.search);
+        let hasFilter = false;
+
+        // Mapping parameter URL ke field form
+        if (urlParams.has('kata_kunci')) {
+            $('#rental-mobil-filter-keyword').val(urlParams.get('kata_kunci'));
+            hasFilter = true;
+        }
+
+        if (urlParams.has('merk')) {
+            $('#rental-mobil-filter-merk').val(urlParams.get('merk'));
+            hasFilter = true;
+        }
+
+        if (urlParams.has('transmisi')) {
+            $('#rental-mobil-filter-transmisi').val(urlParams.get('transmisi'));
+            hasFilter = true;
+        }
+
+        if (urlParams.has('bahan_bakar')) {
+            $('#rental-mobil-filter-bahan-bakar').val(urlParams.get('bahan_bakar'));
+            hasFilter = true;
+        }
+
+        if (urlParams.has('tipe')) {
+            $('#rental-mobil-filter-tipe').val(urlParams.get('tipe'));
+            hasFilter = true;
+        }
+
+        if (urlParams.has('tahun')) {
+            $('#rental-mobil-filter-tahun').val(urlParams.get('tahun'));
+            hasFilter = true;
+        }
+
+        if (urlParams.has('urutkan')) {
+            $('#rental-mobil-filter-orderby').val(urlParams.get('urutkan'));
+            hasFilter = true;
+        }
+
+        if (urlParams.has('urutan')) {
+            $('#rental-mobil-filter-order').val(urlParams.get('urutan'));
+            hasFilter = true;
+        }
+
+        // Jika ada parameter filter, submit form
+        if (hasFilter) {
+            $('#rental-mobil-filter-form').submit();
+        }
     }
 
 })(jQuery);

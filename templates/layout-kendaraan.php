@@ -28,9 +28,8 @@ if (!defined('WPINC')) {
         <!-- Overlay untuk filter sidebar -->
         <div id="rental-mobil-filter-overlay" class="rental-mobil-filter-overlay"></div>
 
-        <!-- Title and Active Filters -->
+        <!-- Active Filters -->
         <div class="rental-mobil-content-header">
-            <h2 class="rental-mobil-content-title"><?php _e('Daftar Kendaraan Rental', 'rental-mobil-wp'); ?></h2>
             <div id="rental-mobil-active-filters" class="rental-mobil-active-filters"></div>
         </div>
 

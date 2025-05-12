@@ -2,6 +2,25 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.4.2] - 2024-01-30
+
+### Ditambahkan
+- Tab Dokumentasi di admin menggantikan tab Pengaturan Umum
+- Informasi versi plugin di halaman Dokumentasi
+- Link kontribusi GitHub di halaman Dokumentasi
+- Border untuk filter di semua sisi
+
+### Diubah
+- Judul "Daftar Kendaraan" dan "Daftar Kendaraan Rental" dihapus
+- Styling field keyword untuk konsistensi dengan elemen lain
+- Background untuk judul "Filter Kendaraan"
+- Parameter filter di URL menggunakan bahasa Indonesia
+
+### Diperbaiki
+- Styling input keyword yang tidak konsisten
+- Tampilan filter dengan border yang lebih jelas
+- Konsistensi styling antara input dan select
+
 ## [1.4.1] - 2023-12-25
 
 ### Ditambahkan
