@@ -9,16 +9,27 @@ Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di fil
 - Ikon zoom pada gambar utama
 - Efek hover pada gambar untuk menunjukkan bahwa gambar bisa di-zoom
 - Modal zoom untuk melihat gambar dalam ukuran penuh
+- Fitur pencarian dengan keyword menggunakan AJAX
+- Autocomplete pada kolom pencarian
+- Layout baru dengan filter di sebelah kiri (25%) dan card di sebelah kanan (75%)
+- Tombol reset filter
+- Scroll lock pada sidebar filter
 
 ### Diubah
 - Perbaikan tampilan quick view pada perangkat mobile
 - Peningkatan layout dan responsivitas quick view
 - Perbaikan padding dan margin untuk tampilan mobile
 - Perbaikan ukuran font dan elemen untuk tampilan mobile
+- Tampilan filter yang lebih modern dengan efek hover dan focus
+- Peningkatan UX dengan autocomplete dan hasil pencarian yang lebih baik
 
 ### Diperbaiki
 - Masalah pengaturan yang tidak tersimpan dengan benar di beberapa tab browser
 - Perbaikan caching pengaturan untuk memastikan konsistensi data
+- Perbaikan tampilan filter pada perangkat mobile
+- Perbaikan card mobil unggulan dan banyak disewa agar modal ajax muncul
+- Perbaikan tombol pada modal popup (hanya tombol booking)
+- Perbaikan fatal error karena fungsi AJAX yang dideklarasikan dua kali
 
 ## [1.4.0] - 2023-12-20
 

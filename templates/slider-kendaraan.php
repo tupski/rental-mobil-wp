@@ -28,27 +28,40 @@ if (!$query->have_posts()) {
 
 <div class="rental-mobil-slider-section">
     <h2 class="rental-mobil-slider-title"><?php echo esc_html($title); ?></h2>
-    
+
     <div class="rental-mobil-slider">
         <div class="rental-mobil-slider-container">
-            <?php while ($query->have_posts()) : $query->the_post(); 
+            <?php while ($query->have_posts()) : $query->the_post();
                 $post_id = get_the_ID();
                 $harga_sewa = rental_mobil_get_harga_sewa($post_id);
                 $harga_formatted = rental_mobil_format_rupiah($harga_sewa);
-                
+
                 // Dapatkan terms
                 $merk_terms = get_the_terms($post_id, 'merk_kendaraan');
                 $merk = !empty($merk_terms) ? $merk_terms[0]->name : '';
-                
+
                 $transmisi_terms = get_the_terms($post_id, 'transmisi');
                 $transmisi = !empty($transmisi_terms) ? $transmisi_terms[0]->name : '';
-                
+
                 $tahun_terms = get_the_terms($post_id, 'tahun_kendaraan');
                 $tahun = !empty($tahun_terms) ? $tahun_terms[0]->name : '';
             ?>
                 <div class="rental-mobil-slider-item">
-                    <div class="rental-mobil-card">
-                        <div class="rental-mobil-card-image">
+                    <div class="rental-mobil-card"
+                         data-id="<?php echo esc_attr($post_id); ?>"
+                         data-title="<?php the_title_attribute(); ?>"
+                         data-permalink="<?php the_permalink(); ?>"
+                         data-harga-harian="<?php echo esc_attr($harga_formatted); ?>"
+                         data-harga-mingguan="<?php echo isset($harga_mingguan) ? esc_attr(rental_mobil_format_rupiah($harga_mingguan)) : __('Hubungi Kami', 'rental-mobil-wp'); ?>"
+                         data-harga-bulanan="<?php echo isset($harga_bulanan) ? esc_attr(rental_mobil_format_rupiah($harga_bulanan)) : __('Hubungi Kami', 'rental-mobil-wp'); ?>"
+                         data-merk="<?php echo esc_attr($merk); ?>"
+                         data-transmisi="<?php echo esc_attr($transmisi); ?>"
+                         data-bahan-bakar="<?php echo isset($bahan_bakar) ? esc_attr($bahan_bakar) : ''; ?>"
+                         data-tahun="<?php echo esc_attr($tahun); ?>"
+                         data-featured="<?php echo $type === 'featured' ? '1' : '0'; ?>"
+                         data-popular="<?php echo $type === 'popular' ? '1' : '0'; ?>"
+                         data-quick-view="1">
+                        <div class="rental-mobil-card-image rental-mobil-quick-view-trigger" data-id="<?php echo esc_attr($post_id); ?>">
                             <?php if (has_post_thumbnail()) : ?>
                                 <?php the_post_thumbnail('medium'); ?>
                             <?php else : ?>
@@ -62,7 +75,7 @@ if (!$query->have_posts()) {
                                 }
                                 ?>
                             <?php endif; ?>
-                            
+
                             <?php if ($type === 'featured') : ?>
                                 <div class="rental-mobil-badge rental-mobil-badge-featured"><?php _e('Unggulan', 'rental-mobil-wp'); ?></div>
                             <?php elseif ($type === 'popular') : ?>
@@ -70,8 +83,8 @@ if (!$query->have_posts()) {
                             <?php endif; ?>
                         </div>
                         <div class="rental-mobil-card-content">
-                            <h3 class="rental-mobil-card-title"><?php the_title(); ?></h3>
-                            
+                            <h3 class="rental-mobil-card-title rental-mobil-quick-view-trigger" data-id="<?php echo esc_attr($post_id); ?>"><?php the_title(); ?></h3>
+
                             <div class="rental-mobil-card-meta">
                                 <?php if (!empty($merk)) : ?>
                                     <div class="rental-mobil-meta-item">
@@ -79,14 +92,14 @@ if (!$query->have_posts()) {
                                         <span class="rental-mobil-meta-value"><?php echo esc_html($merk); ?></span>
                                     </div>
                                 <?php endif; ?>
-                                
+
                                 <?php if (!empty($transmisi)) : ?>
                                     <div class="rental-mobil-meta-item">
                                         <span class="rental-mobil-meta-label"><?php _e('Transmisi:', 'rental-mobil-wp'); ?></span>
                                         <span class="rental-mobil-meta-value"><?php echo esc_html($transmisi); ?></span>
                                     </div>
                                 <?php endif; ?>
-                                
+
                                 <?php if (!empty($tahun)) : ?>
                                     <div class="rental-mobil-meta-item">
                                         <span class="rental-mobil-meta-label"><?php _e('Tahun:', 'rental-mobil-wp'); ?></span>
@@ -94,16 +107,16 @@ if (!$query->have_posts()) {
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            
+
                             <div class="rental-mobil-card-price">
                                 <span class="rental-mobil-price-label"><?php _e('Mulai dari', 'rental-mobil-wp'); ?></span>
                                 <span class="rental-mobil-price-value"><?php echo esc_html($harga_formatted); ?> / <?php _e('hari', 'rental-mobil-wp'); ?></span>
                             </div>
-                            
+
                             <div class="rental-mobil-card-actions">
-                                <a href="<?php the_permalink(); ?>" class="rental-mobil-button rental-mobil-button-detail">
+                                <button class="rental-mobil-button rental-mobil-button-detail rental-mobil-quick-view-trigger" data-id="<?php echo esc_attr($post_id); ?>">
                                     <?php _e('Lihat Detail', 'rental-mobil-wp'); ?>
-                                </a>
+                                </button>
                                 <button class="rental-mobil-button rental-mobil-button-booking" data-id="<?php echo esc_attr($post_id); ?>" data-title="<?php the_title_attribute(); ?>">
                                     <?php _e('Booking', 'rental-mobil-wp'); ?>
                                 </button>
@@ -114,7 +127,7 @@ if (!$query->have_posts()) {
             <?php endwhile; ?>
             <?php wp_reset_postdata(); ?>
         </div>
-        
+
         <button class="rental-mobil-slider-prev">
             <span class="dashicons dashicons-arrow-left-alt2"></span>
         </button>

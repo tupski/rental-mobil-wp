@@ -139,13 +139,145 @@
     flex: 1;
 }
 
+/* Layout Styles */
+.rental-mobil-layout {
+    display: flex;
+    gap: 30px;
+    width: 100%;
+}
+
+.rental-mobil-sidebar {
+    width: 25%;
+    position: relative;
+}
+
+.rental-mobil-sidebar-inner {
+    position: sticky;
+    top: 30px;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #0073aa #f0f0f0;
+}
+
+.rental-mobil-sidebar-inner::-webkit-scrollbar {
+    width: 6px;
+}
+
+.rental-mobil-sidebar-inner::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.rental-mobil-sidebar-inner::-webkit-scrollbar-thumb {
+    background-color: #0073aa;
+    border-radius: 10px;
+}
+
+.rental-mobil-content {
+    width: 75%;
+    position: relative;
+}
+
+/* Search Box Styles */
+.rental-mobil-search-box {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rental-mobil-search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.rental-mobil-search-input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rental-mobil-search-input:focus {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.2);
+    outline: none;
+}
+
+.rental-mobil-search-button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #0073aa;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rental-mobil-search-results {
+    margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rental-mobil-search-results.active {
+    display: block;
+}
+
+.rental-mobil-search-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.rental-mobil-search-item:last-child {
+    border-bottom: none;
+}
+
+.rental-mobil-search-item:hover {
+    background-color: #f9f9f9;
+}
+
+.rental-mobil-search-item-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.rental-mobil-search-item-meta {
+    font-size: 12px;
+    color: #666;
+}
+
+.rental-mobil-search-no-results {
+    padding: 15px;
+    text-align: center;
+    color: #666;
+}
+
 /* Filter Styles */
 .rental-mobil-filter {
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: #f9f9f9;
+    padding: 15px;
+    background-color: #fff;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Floating Filter Button untuk Mobile */
@@ -182,36 +314,52 @@
     font-size: 18px;
     font-weight: 600;
     color: #333;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
 }
 
-.rental-mobil-filter-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
+.rental-mobil-filter-group {
+    margin-bottom: 15px;
 }
 
-.rental-mobil-filter-col {
-    display: flex;
-    flex-direction: column;
-}
-
-.rental-mobil-filter-col label {
+.rental-mobil-filter-group label {
+    display: block;
     margin-bottom: 5px;
     font-weight: 600;
     font-size: 14px;
+    color: #333;
 }
 
 .rental-mobil-filter-select {
-    padding: 8px 10px;
+    width: 100%;
+    padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     background-color: #fff;
+    font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rental-mobil-filter-select:focus {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.2);
+    outline: none;
 }
 
 .rental-mobil-filter-actions {
     display: flex;
     gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.rental-mobil-filter-actions .rental-mobil-button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
 .rental-mobil-button-reset {
@@ -222,6 +370,32 @@
 .rental-mobil-button-reset:hover {
     background-color: #e0e0e0;
     color: #333;
+}
+
+.rental-mobil-filter-close {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.rental-mobil-filter-close:hover {
+    color: #333;
+}
+
+.rental-mobil-filter-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
 }
 
 /* Detail Page Styles */
@@ -644,6 +818,52 @@
     text-align: center;
 }
 
+/* Search Modal Styles */
+.rental-mobil-search-modal-content {
+    max-width: 900px;
+}
+
+.rental-mobil-search-modal-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.rental-mobil-search-modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.rental-mobil-search-modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.rental-mobil-search-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.rental-mobil-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 115, 170, 0.2);
+    border-top-color: #0073aa;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .rental-mobil-modal-title {
     margin: 0 0 10px;
     font-size: 24px;
@@ -973,14 +1193,19 @@
         margin-bottom: 20px;
     }
 
-    /* Tampilkan floating filter button pada mobile */
-    .rental-mobil-filter-toggle {
-        display: block;
+    /* Layout Responsive */
+    .rental-mobil-layout {
+        flex-direction: column;
+        gap: 20px;
     }
 
-    /* Filter sebagai sidebar pada mobile */
-    .rental-mobil-filter {
+    .rental-mobil-sidebar {
+        width: 100%;
         display: none;
+    }
+
+    .rental-mobil-sidebar.active {
+        display: block;
         position: fixed;
         top: 0;
         left: 0;
@@ -992,14 +1217,35 @@
         overflow-y: auto;
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
         padding: 20px;
-        transform: translateX(-100%);
+        transform: translateX(0);
         transition: transform 0.3s ease;
+    }
+
+    .rental-mobil-sidebar-inner {
+        position: static;
+        max-height: none;
+        padding-right: 0;
+    }
+
+    .rental-mobil-content {
+        width: 100%;
+    }
+
+    /* Tampilkan floating filter button pada mobile */
+    .rental-mobil-filter-toggle {
+        display: block;
+    }
+
+    /* Filter sebagai sidebar pada mobile */
+    .rental-mobil-filter {
+        padding: 15px;
+        box-shadow: none;
+        border-radius: 0;
     }
 
     /* Tampilkan filter ketika memiliki class active */
     .rental-mobil-filter.active {
         display: block;
-        transform: translateX(0);
     }
 
     /* Overlay untuk filter sidebar */
@@ -1020,31 +1266,18 @@
 
     /* Filter close button */
     .rental-mobil-filter-close {
+        display: block;
         position: absolute;
         top: 10px;
         right: 10px;
-        width: 30px;
-        height: 30px;
-        background-color: #f0f0f0;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         cursor: pointer;
-        font-size: 18px;
-        color: #333;
+        color: #666;
+        transition: color 0.3s ease;
     }
 
-    /* Filter row pada mobile */
-    .rental-mobil-filter-row {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .rental-mobil-filter-col {
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 10px;
+    /* Search Box pada mobile */
+    .rental-mobil-search-box {
+        margin-bottom: 15px;
     }
 
     /* Gallery modal pada mobile */
@@ -1357,12 +1590,15 @@
 
 .rental-mobil-quick-view-actions {
     display: flex;
-    gap: 10px;
     margin-top: auto;
 }
 
 .rental-mobil-quick-view-actions .rental-mobil-button {
     flex: 1;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 /* Cursor pointer untuk elemen yang bisa diklik */

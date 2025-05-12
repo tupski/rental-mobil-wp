@@ -64,6 +64,7 @@ require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/meta-boxes.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/shortcodes.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/settings.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/admin-columns.php';
+require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/ajax-handlers.php';
 
 // Enqueue scripts and styles
 add_action('wp_enqueue_scripts', 'rental_mobil_enqueue_scripts');

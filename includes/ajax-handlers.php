@@ -1,0 +1,344 @@
+<?php
+/**
+ * AJAX Handlers
+ */
+
+// Jika file ini dipanggil langsung, abort.
+if (!defined('WPINC')) {
+    die;
+}
+
+/**
+ * AJAX handler untuk filter kendaraan
+ */
+add_action('wp_ajax_rental_mobil_filter', 'rental_mobil_filter_ajax');
+add_action('wp_ajax_nopriv_rental_mobil_filter', 'rental_mobil_filter_ajax');
+function rental_mobil_filter_ajax() {
+    // Verifikasi nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'rental_mobil_nonce')) {
+        wp_send_json_error(array('message' => __('Verifikasi keamanan gagal.', 'rental-mobil-wp')));
+    }
+
+    // Dapatkan parameter filter
+    $merk = isset($_POST['merk']) ? sanitize_text_field($_POST['merk']) : '';
+    $transmisi = isset($_POST['transmisi']) ? sanitize_text_field($_POST['transmisi']) : '';
+    $bahan_bakar = isset($_POST['bahan_bakar']) ? sanitize_text_field($_POST['bahan_bakar']) : '';
+    $tipe = isset($_POST['tipe']) ? sanitize_text_field($_POST['tipe']) : '';
+    $tahun = isset($_POST['tahun']) ? sanitize_text_field($_POST['tahun']) : '';
+    $orderby = isset($_POST['orderby']) ? sanitize_text_field($_POST['orderby']) : 'date';
+    $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'DESC';
+    $jumlah = isset($_POST['jumlah']) ? intval($_POST['jumlah']) : -1;
+
+    // Query kendaraan
+    $args = array(
+        'post_type'      => 'kendaraan',
+        'posts_per_page' => $jumlah,
+        'orderby'        => $orderby,
+        'order'          => $order,
+    );
+
+    // Jika orderby adalah harga, tambahkan meta_key
+    if ($orderby === 'meta_value_num') {
+        $args['meta_key'] = '_rental_mobil_harga_sewa';
+    }
+
+    // Tambahkan filter berdasarkan parameter
+    $tax_query = array();
+
+    if (!empty($merk)) {
+        $tax_query[] = array(
+            'taxonomy' => 'merk_kendaraan',
+            'field'    => 'slug',
+            'terms'    => $merk,
+        );
+    }
+
+    if (!empty($transmisi)) {
+        $tax_query[] = array(
+            'taxonomy' => 'transmisi',
+            'field'    => 'slug',
+            'terms'    => $transmisi,
+        );
+    }
+
+    if (!empty($bahan_bakar)) {
+        $tax_query[] = array(
+            'taxonomy' => 'bahan_bakar',
+            'field'    => 'slug',
+            'terms'    => $bahan_bakar,
+        );
+    }
+
+    if (!empty($tipe)) {
+        $tax_query[] = array(
+            'taxonomy' => 'tipe_kendaraan',
+            'field'    => 'slug',
+            'terms'    => $tipe,
+        );
+    }
+
+    if (!empty($tahun)) {
+        $tax_query[] = array(
+            'taxonomy' => 'tahun_kendaraan',
+            'field'    => 'slug',
+            'terms'    => $tahun,
+        );
+    }
+
+    // Jika ada tax_query, tambahkan ke args
+    if (!empty($tax_query)) {
+        $args['tax_query'] = $tax_query;
+        if (count($tax_query) > 1) {
+            $args['tax_query']['relation'] = 'AND';
+        }
+    }
+
+    $query = new WP_Query($args);
+
+    ob_start();
+
+    if ($query->have_posts()) {
+        echo '<div class="rental-mobil-grid">';
+        while ($query->have_posts()) {
+            $query->the_post();
+            include RENTAL_MOBIL_PLUGIN_DIR . 'templates/card-kendaraan.php';
+        }
+        echo '</div>';
+    } else {
+        echo '<p>' . __('Tidak ada kendaraan yang ditemukan.', 'rental-mobil-wp') . '</p>';
+    }
+
+    wp_reset_postdata();
+
+    $html = ob_get_clean();
+
+    wp_send_json_success(array(
+        'html' => $html,
+        'count' => $query->found_posts,
+    ));
+}
+
+/**
+ * AJAX handler untuk pencarian kendaraan
+ */
+add_action('wp_ajax_rental_mobil_search', 'rental_mobil_search_ajax');
+add_action('wp_ajax_nopriv_rental_mobil_search', 'rental_mobil_search_ajax');
+function rental_mobil_search_ajax() {
+    // Verifikasi nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'rental_mobil_nonce')) {
+        wp_send_json_error(array('message' => __('Verifikasi keamanan gagal.', 'rental-mobil-wp')));
+    }
+
+    // Dapatkan keyword
+    $keyword = isset($_POST['keyword']) ? sanitize_text_field($_POST['keyword']) : '';
+
+    if (empty($keyword)) {
+        wp_send_json_error(array('message' => __('Silakan masukkan kata kunci pencarian.', 'rental-mobil-wp')));
+    }
+
+    // Query kendaraan
+    $args = array(
+        'post_type'      => 'kendaraan',
+        'posts_per_page' => 10,
+        's'              => $keyword,
+    );
+
+    $query = new WP_Query($args);
+
+    $results = array();
+
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+
+            // Dapatkan data kendaraan
+            $id = get_the_ID();
+            $title = get_the_title();
+            $permalink = get_permalink();
+            $thumbnail = get_the_post_thumbnail_url($id, 'thumbnail');
+            $harga = get_post_meta($id, '_rental_mobil_harga_sewa', true);
+            $harga_formatted = 'Rp ' . number_format($harga, 0, ',', '.');
+
+            // Dapatkan terms
+            $merk_terms = get_the_terms($id, 'merk_kendaraan');
+            $merk = !empty($merk_terms) && !is_wp_error($merk_terms) ? $merk_terms[0]->name : '';
+
+            $transmisi_terms = get_the_terms($id, 'transmisi');
+            $transmisi = !empty($transmisi_terms) && !is_wp_error($transmisi_terms) ? $transmisi_terms[0]->name : '';
+
+            $results[] = array(
+                'id' => $id,
+                'title' => $title,
+                'permalink' => $permalink,
+                'thumbnail' => $thumbnail,
+                'harga' => $harga_formatted,
+                'merk' => $merk,
+                'transmisi' => $transmisi,
+            );
+        }
+    }
+
+    wp_reset_postdata();
+
+    wp_send_json_success(array(
+        'results' => $results,
+        'count' => count($results),
+    ));
+}
+
+/**
+ * AJAX handler untuk autocomplete
+ */
+add_action('wp_ajax_rental_mobil_autocomplete', 'rental_mobil_autocomplete_ajax');
+add_action('wp_ajax_nopriv_rental_mobil_autocomplete', 'rental_mobil_autocomplete_ajax');
+function rental_mobil_autocomplete_ajax() {
+    // Verifikasi nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'rental_mobil_nonce')) {
+        wp_send_json_error(array('message' => __('Verifikasi keamanan gagal.', 'rental-mobil-wp')));
+    }
+
+    // Dapatkan keyword
+    $keyword = isset($_POST['keyword']) ? sanitize_text_field($_POST['keyword']) : '';
+
+    if (empty($keyword)) {
+        wp_send_json_success(array('results' => array()));
+    }
+
+    // Query kendaraan
+    $args = array(
+        'post_type'      => 'kendaraan',
+        'posts_per_page' => 5,
+        's'              => $keyword,
+    );
+
+    $query = new WP_Query($args);
+
+    $results = array();
+
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+
+            // Dapatkan data kendaraan
+            $id = get_the_ID();
+            $title = get_the_title();
+            $permalink = get_permalink();
+
+            $results[] = array(
+                'id' => $id,
+                'title' => $title,
+                'permalink' => $permalink,
+            );
+        }
+    }
+
+    wp_reset_postdata();
+
+    wp_send_json_success(array(
+        'results' => $results,
+    ));
+}
+
+/**
+ * AJAX handler untuk mendapatkan galeri kendaraan
+ */
+add_action('wp_ajax_rental_mobil_get_gallery', 'rental_mobil_get_gallery_ajax');
+add_action('wp_ajax_nopriv_rental_mobil_get_gallery', 'rental_mobil_get_gallery_ajax');
+function rental_mobil_get_gallery_ajax() {
+    // Verifikasi nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'rental_mobil_nonce')) {
+        wp_send_json_error('Invalid nonce');
+    }
+
+    // Dapatkan ID kendaraan
+    $kendaraan_id = isset($_POST['kendaraan_id']) ? intval($_POST['kendaraan_id']) : 0;
+
+    if (empty($kendaraan_id)) {
+        wp_send_json_error('ID kendaraan tidak valid');
+    }
+
+    // Dapatkan galeri kendaraan
+    $gallery_ids = rental_mobil_get_galeri($kendaraan_id);
+    $gallery = array();
+
+    if (!empty($gallery_ids)) {
+        foreach ($gallery_ids as $attachment_id) {
+            $full_image = wp_get_attachment_image_src($attachment_id, 'large');
+            $thumbnail = wp_get_attachment_image_src($attachment_id, 'thumbnail');
+
+            if ($full_image && $thumbnail) {
+                $gallery[] = array(
+                    'id' => $attachment_id,
+                    'url' => $full_image[0],
+                    'thumbnail' => $thumbnail[0]
+                );
+            }
+        }
+    }
+
+    wp_send_json_success(array(
+        'gallery' => $gallery
+    ));
+}
+
+/**
+ * AJAX handler untuk mendapatkan nomor WhatsApp dan template pesan
+ */
+add_action('wp_ajax_rental_mobil_get_whatsapp', 'rental_mobil_get_whatsapp_ajax');
+add_action('wp_ajax_nopriv_rental_mobil_get_whatsapp', 'rental_mobil_get_whatsapp_ajax');
+function rental_mobil_get_whatsapp_ajax() {
+    // Verifikasi nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'rental_mobil_nonce')) {
+        wp_send_json_error('Invalid nonce');
+    }
+
+    // Dapatkan nomor WhatsApp dari pengaturan
+    $whatsapp_number = rental_mobil_get_whatsapp_number();
+
+    if (empty($whatsapp_number)) {
+        wp_send_json_error('Nomor WhatsApp belum diatur. Silakan hubungi administrator.');
+    }
+
+    // Dapatkan template pesan
+    $message_template = rental_mobil_get_whatsapp_message();
+
+    // Dapatkan data dari form
+    $kendaraan_id = isset($_POST['kendaraan_id']) ? intval($_POST['kendaraan_id']) : 0;
+    $nama = isset($_POST['nama']) ? sanitize_text_field($_POST['nama']) : '';
+    $domisili = isset($_POST['domisili']) ? sanitize_text_field($_POST['domisili']) : '';
+    $tanggal_sewa = isset($_POST['tanggal_sewa']) ? sanitize_text_field($_POST['tanggal_sewa']) : '';
+    $jam_sewa = isset($_POST['jam_sewa']) ? sanitize_text_field($_POST['jam_sewa']) : '';
+    $durasi_sewa = isset($_POST['durasi_sewa']) ? sanitize_text_field($_POST['durasi_sewa']) : '';
+    $satuan_durasi = isset($_POST['satuan_durasi']) ? sanitize_text_field($_POST['satuan_durasi']) : '';
+
+    // Dapatkan nama kendaraan
+    $kendaraan_title = get_the_title($kendaraan_id);
+
+    // Ganti placeholder dengan data sebenarnya
+    $message = str_replace(
+        array(
+            '{nama_kendaraan}',
+            '{nama}',
+            '{domisili}',
+            '{tanggal_sewa}',
+            '{jam_sewa}',
+            '{durasi_sewa}',
+            '{satuan_durasi}'
+        ),
+        array(
+            $kendaraan_title,
+            $nama,
+            $domisili,
+            $tanggal_sewa,
+            $jam_sewa,
+            $durasi_sewa,
+            $satuan_durasi
+        ),
+        $message_template
+    );
+
+    wp_send_json_success(array(
+        'whatsapp_number' => $whatsapp_number,
+        'message' => $message
+    ));
+}
