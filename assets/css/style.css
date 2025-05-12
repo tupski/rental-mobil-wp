@@ -904,6 +904,19 @@
     color: #fff;
 }
 
+/* Homepage Section */
+.rental-mobil-homepage-section {
+    margin: 30px 0;
+}
+
+.rental-mobil-homepage-title {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
     .rental-mobil-grid {

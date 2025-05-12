@@ -76,6 +76,17 @@ function rental_mobil_enqueue_scripts() {
     ));
 }
 
+// Enqueue admin scripts and styles
+add_action('admin_enqueue_scripts', 'rental_mobil_enqueue_admin_scripts');
+function rental_mobil_enqueue_admin_scripts($hook) {
+    // Hanya load di halaman plugin rental mobil
+    if (strpos($hook, 'rental-mobil') !== false) {
+        wp_enqueue_style('rental-mobil-admin-style', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/admin.css', array(), RENTAL_MOBIL_VERSION);
+        wp_enqueue_script('wp-color-picker');
+        wp_enqueue_style('wp-color-picker');
+    }
+}
+
 // Tambahkan menu admin
 add_action('admin_menu', 'rental_mobil_admin_menu');
 function rental_mobil_admin_menu() {

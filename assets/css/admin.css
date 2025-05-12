@@ -1,0 +1,135 @@
+/**
+ * Admin CSS untuk plugin Rental Mobil
+ */
+
+/* Settings Page */
+.rental-mobil-settings {
+    margin: 20px 0;
+}
+
+.rental-mobil-settings .nav-tab {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.rental-mobil-settings .nav-tab .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.rental-mobil-settings-content {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-top: none;
+    padding: 20px;
+    margin-top: -1px;
+}
+
+.rental-mobil-settings-tab {
+    margin-bottom: 20px;
+}
+
+/* Homepage Vehicles */
+.rental-mobil-homepage-vehicles-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.rental-mobil-homepage-vehicle-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+    background: #f9f9f9;
+    transition: all 0.3s ease;
+}
+
+.rental-mobil-homepage-vehicle-item:hover {
+    border-color: #0073aa;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.rental-mobil-homepage-vehicle-item label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.rental-mobil-homepage-vehicle-thumbnail {
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 4px;
+    margin-left: auto;
+}
+
+.rental-mobil-homepage-vehicle-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Admin Columns */
+.column-featured,
+.column-popular {
+    width: 60px;
+    text-align: center;
+}
+
+.rental-mobil-toggle-featured,
+.rental-mobil-toggle-popular {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.rental-mobil-toggle-featured .dashicons,
+.rental-mobil-toggle-popular .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    transition: all 0.3s ease;
+}
+
+.rental-mobil-toggle-featured:hover .dashicons-star-empty,
+.rental-mobil-toggle-popular:hover .dashicons-thumbs-down {
+    transform: scale(1.2);
+}
+
+/* Form Fields */
+.rental-mobil-settings input[type="color"] {
+    width: 60px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.rental-mobil-settings input[type="range"] {
+    width: 200px;
+    vertical-align: middle;
+}
+
+.rental-mobil-settings output {
+    display: inline-block;
+    width: 50px;
+    text-align: center;
+    margin-left: 10px;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 782px) {
+    .rental-mobil-homepage-vehicles-list {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    .rental-mobil-settings input[type="range"] {
+        width: 100%;
+        max-width: 300px;
+    }
+}

@@ -15,36 +15,44 @@ add_action('admin_init', 'rental_mobil_register_settings');
 function rental_mobil_register_settings() {
     register_setting('rental_mobil_options', 'rental_mobil_options', 'rental_mobil_validate_options');
 
-    // Pengaturan Umum
+    // Tab Umum
     add_settings_section(
-        'rental_mobil_general',
+        'rental_mobil_general_section',
         __('Pengaturan Umum', 'rental-mobil-wp'),
         'rental_mobil_general_section_callback',
-        'rental_mobil'
+        'rental_mobil_general'
+    );
+
+    // Tab WhatsApp
+    add_settings_section(
+        'rental_mobil_whatsapp_section',
+        __('Pengaturan WhatsApp', 'rental-mobil-wp'),
+        'rental_mobil_whatsapp_section_callback',
+        'rental_mobil_whatsapp'
     );
 
     add_settings_field(
         'whatsapp_number',
         __('Nomor WhatsApp', 'rental-mobil-wp'),
         'rental_mobil_whatsapp_number_callback',
-        'rental_mobil',
-        'rental_mobil_general'
+        'rental_mobil_whatsapp',
+        'rental_mobil_whatsapp_section'
     );
 
     add_settings_field(
         'whatsapp_message',
         __('Template Pesan WhatsApp', 'rental-mobil-wp'),
         'rental_mobil_whatsapp_message_callback',
-        'rental_mobil',
-        'rental_mobil_general'
+        'rental_mobil_whatsapp',
+        'rental_mobil_whatsapp_section'
     );
 
-    // Pengaturan Tampilan
+    // Tab Tampilan
     add_settings_section(
-        'rental_mobil_style',
+        'rental_mobil_style_section',
         __('Pengaturan Tampilan', 'rental-mobil-wp'),
         'rental_mobil_style_section_callback',
-        'rental_mobil'
+        'rental_mobil_style'
     );
 
     // Pengaturan Button
@@ -52,32 +60,32 @@ function rental_mobil_register_settings() {
         'button_color',
         __('Warna Button Utama', 'rental-mobil-wp'),
         'rental_mobil_button_color_callback',
-        'rental_mobil',
-        'rental_mobil_style'
+        'rental_mobil_style',
+        'rental_mobil_style_section'
     );
 
     add_settings_field(
         'button_hover_color',
         __('Warna Hover Button Utama', 'rental-mobil-wp'),
         'rental_mobil_button_hover_color_callback',
-        'rental_mobil',
-        'rental_mobil_style'
+        'rental_mobil_style',
+        'rental_mobil_style_section'
     );
 
     add_settings_field(
         'button_text_color',
         __('Warna Teks Button', 'rental-mobil-wp'),
         'rental_mobil_button_text_color_callback',
-        'rental_mobil',
-        'rental_mobil_style'
+        'rental_mobil_style',
+        'rental_mobil_style_section'
     );
 
     add_settings_field(
         'button_border_radius',
         __('Bentuk Button (Border Radius)', 'rental-mobil-wp'),
         'rental_mobil_button_border_radius_callback',
-        'rental_mobil',
-        'rental_mobil_style'
+        'rental_mobil_style',
+        'rental_mobil_style_section'
     );
 
     // Pengaturan Card
@@ -85,16 +93,16 @@ function rental_mobil_register_settings() {
         'card_border_radius',
         __('Bentuk Card (Border Radius)', 'rental-mobil-wp'),
         'rental_mobil_card_border_radius_callback',
-        'rental_mobil',
-        'rental_mobil_style'
+        'rental_mobil_style',
+        'rental_mobil_style_section'
     );
 
     add_settings_field(
         'card_shadow',
         __('Bayangan Card', 'rental-mobil-wp'),
         'rental_mobil_card_shadow_callback',
-        'rental_mobil',
-        'rental_mobil_style'
+        'rental_mobil_style',
+        'rental_mobil_style_section'
     );
 
     // Pengaturan Filter
@@ -102,16 +110,46 @@ function rental_mobil_register_settings() {
         'filter_options',
         __('Opsi Filter yang Ditampilkan', 'rental-mobil-wp'),
         'rental_mobil_filter_options_callback',
-        'rental_mobil',
-        'rental_mobil_style'
+        'rental_mobil_style',
+        'rental_mobil_style_section'
+    );
+
+    // Tab Homepage
+    add_settings_section(
+        'rental_mobil_homepage_section',
+        __('Pengaturan Homepage', 'rental-mobil-wp'),
+        'rental_mobil_homepage_section_callback',
+        'rental_mobil_homepage'
+    );
+
+    add_settings_field(
+        'homepage_vehicles',
+        __('Kendaraan Pilihan untuk Homepage', 'rental-mobil-wp'),
+        'rental_mobil_homepage_vehicles_callback',
+        'rental_mobil_homepage',
+        'rental_mobil_homepage_section'
     );
 }
 
 /**
- * Section callback
+ * General section callback
  */
 function rental_mobil_general_section_callback() {
     echo '<p>' . __('Pengaturan umum untuk plugin Rental Mobil.', 'rental-mobil-wp') . '</p>';
+}
+
+/**
+ * WhatsApp section callback
+ */
+function rental_mobil_whatsapp_section_callback() {
+    echo '<p>' . __('Pengaturan WhatsApp untuk mengirim pesan booking.', 'rental-mobil-wp') . '</p>';
+}
+
+/**
+ * Homepage section callback
+ */
+function rental_mobil_homepage_section_callback() {
+    echo '<p>' . __('Pengaturan untuk tampilan kendaraan di homepage.', 'rental-mobil-wp') . '</p>';
 }
 
 /**
@@ -301,6 +339,58 @@ function rental_mobil_filter_options_callback() {
 }
 
 /**
+ * Homepage vehicles field callback
+ */
+function rental_mobil_homepage_vehicles_callback() {
+    $options = get_option('rental_mobil_options');
+    $homepage_vehicles = isset($options['homepage_vehicles']) ? $options['homepage_vehicles'] : array();
+
+    // Dapatkan semua kendaraan
+    $args = array(
+        'post_type' => 'kendaraan',
+        'posts_per_page' => -1,
+        'orderby' => 'title',
+        'order' => 'ASC',
+    );
+
+    $kendaraan_query = new WP_Query($args);
+
+    if ($kendaraan_query->have_posts()) :
+    ?>
+    <div class="rental-mobil-homepage-vehicles">
+        <p class="description"><?php _e('Pilih kendaraan yang akan ditampilkan di homepage.', 'rental-mobil-wp'); ?></p>
+
+        <div class="rental-mobil-homepage-vehicles-list">
+            <?php while ($kendaraan_query->have_posts()) : $kendaraan_query->the_post();
+                $post_id = get_the_ID();
+                $checked = in_array($post_id, $homepage_vehicles) ? 'checked' : '';
+            ?>
+            <div class="rental-mobil-homepage-vehicle-item">
+                <label>
+                    <input type="checkbox" name="rental_mobil_options[homepage_vehicles][]" value="<?php echo esc_attr($post_id); ?>" <?php echo $checked; ?>>
+                    <?php the_title(); ?>
+                    <?php if (has_post_thumbnail()) : ?>
+                        <span class="rental-mobil-homepage-vehicle-thumbnail">
+                            <?php the_post_thumbnail('thumbnail'); ?>
+                        </span>
+                    <?php endif; ?>
+                </label>
+            </div>
+            <?php endwhile; ?>
+        </div>
+
+        <p class="description"><?php _e('Gunakan shortcode [kendaraan_pilihan] untuk menampilkan kendaraan pilihan di homepage.', 'rental-mobil-wp'); ?></p>
+    </div>
+    <?php
+    wp_reset_postdata();
+    else :
+    ?>
+    <p><?php _e('Tidak ada kendaraan yang tersedia.', 'rental-mobil-wp'); ?></p>
+    <?php
+    endif;
+}
+
+/**
  * Validate options
  */
 function rental_mobil_validate_options($input) {
@@ -353,6 +443,13 @@ function rental_mobil_validate_options($input) {
         $output['filter_options'] = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun');
     }
 
+    // Sanitize homepage vehicles
+    if (isset($input['homepage_vehicles']) && is_array($input['homepage_vehicles'])) {
+        $output['homepage_vehicles'] = array_map('absint', $input['homepage_vehicles']);
+    } else {
+        $output['homepage_vehicles'] = array();
+    }
+
     return $output;
 }
 
@@ -360,17 +457,113 @@ function rental_mobil_validate_options($input) {
  * Settings page
  */
 function rental_mobil_settings_page() {
+    // Cek tab aktif
+    $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general';
     ?>
-    <div class="wrap">
+    <div class="wrap rental-mobil-settings">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-        <form action="options.php" method="post">
-            <?php
-            settings_fields('rental_mobil_options');
-            do_settings_sections('rental_mobil');
-            submit_button(__('Simpan Pengaturan', 'rental-mobil-wp'));
-            ?>
-        </form>
+
+        <h2 class="nav-tab-wrapper">
+            <a href="?page=rental-mobil&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>">
+                <span class="dashicons dashicons-admin-generic"></span> <?php _e('Umum', 'rental-mobil-wp'); ?>
+            </a>
+            <a href="?page=rental-mobil&tab=whatsapp" class="nav-tab <?php echo $active_tab == 'whatsapp' ? 'nav-tab-active' : ''; ?>">
+                <span class="dashicons dashicons-whatsapp"></span> <?php _e('WhatsApp', 'rental-mobil-wp'); ?>
+            </a>
+            <a href="?page=rental-mobil&tab=style" class="nav-tab <?php echo $active_tab == 'style' ? 'nav-tab-active' : ''; ?>">
+                <span class="dashicons dashicons-admin-appearance"></span> <?php _e('Tampilan', 'rental-mobil-wp'); ?>
+            </a>
+            <a href="?page=rental-mobil&tab=homepage" class="nav-tab <?php echo $active_tab == 'homepage' ? 'nav-tab-active' : ''; ?>">
+                <span class="dashicons dashicons-admin-home"></span> <?php _e('Homepage', 'rental-mobil-wp'); ?>
+            </a>
+        </h2>
+
+        <div class="rental-mobil-settings-content">
+            <form action="options.php" method="post" id="rental-mobil-settings-form">
+                <?php
+                settings_fields('rental_mobil_options');
+
+                // Tampilkan section berdasarkan tab aktif
+                if ($active_tab == 'general') {
+                    echo '<div id="rental-mobil-general-settings" class="rental-mobil-settings-tab">';
+                    do_settings_sections('rental_mobil_general');
+                    echo '</div>';
+                } elseif ($active_tab == 'whatsapp') {
+                    echo '<div id="rental-mobil-whatsapp-settings" class="rental-mobil-settings-tab">';
+                    do_settings_sections('rental_mobil_whatsapp');
+                    echo '</div>';
+                } elseif ($active_tab == 'style') {
+                    echo '<div id="rental-mobil-style-settings" class="rental-mobil-settings-tab">';
+                    do_settings_sections('rental_mobil_style');
+                    echo '</div>';
+                } elseif ($active_tab == 'homepage') {
+                    echo '<div id="rental-mobil-homepage-settings" class="rental-mobil-settings-tab">';
+                    do_settings_sections('rental_mobil_homepage');
+                    echo '</div>';
+                }
+
+                submit_button(__('Simpan Pengaturan', 'rental-mobil-wp'));
+                ?>
+                <input type="hidden" name="rental_mobil_active_tab" value="<?php echo esc_attr($active_tab); ?>">
+            </form>
+        </div>
     </div>
+
+    <script>
+    jQuery(document).ready(function($) {
+        // AJAX save settings
+        $('#rental-mobil-settings-form').on('submit', function(e) {
+            e.preventDefault();
+
+            var form = $(this);
+            var formData = form.serialize();
+            var submitButton = form.find(':submit');
+            var originalText = submitButton.val();
+
+            // Disable button and show loading
+            submitButton.prop('disabled', true).val('<?php _e('Menyimpan...', 'rental-mobil-wp'); ?>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'rental_mobil_save_settings',
+                    nonce: '<?php echo wp_create_nonce('rental_mobil_save_settings'); ?>',
+                    form_data: formData
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Show success message
+                        var message = $('<div class="notice notice-success is-dismissible"><p>' + response.data.message + '</p></div>');
+                        form.before(message);
+
+                        // Auto dismiss after 3 seconds
+                        setTimeout(function() {
+                            message.fadeOut(function() {
+                                $(this).remove();
+                            });
+                        }, 3000);
+                    } else {
+                        // Show error message
+                        var message = $('<div class="notice notice-error is-dismissible"><p>' + response.data.message + '</p></div>');
+                        form.before(message);
+                    }
+
+                    // Re-enable button
+                    submitButton.prop('disabled', false).val(originalText);
+                },
+                error: function() {
+                    // Show error message
+                    var message = $('<div class="notice notice-error is-dismissible"><p><?php _e('Terjadi kesalahan. Silakan coba lagi.', 'rental-mobil-wp'); ?></p></div>');
+                    form.before(message);
+
+                    // Re-enable button
+                    submitButton.prop('disabled', false).val(originalText);
+                }
+            });
+        });
+    });
+    </script>
     <?php
 }
 
@@ -421,6 +614,43 @@ function rental_mobil_get_style_settings() {
     );
 
     return $style_settings;
+}
+
+/**
+ * Get homepage vehicles
+ */
+function rental_mobil_get_homepage_vehicles() {
+    $options = get_option('rental_mobil_options');
+    $homepage_vehicles = isset($options['homepage_vehicles']) ? $options['homepage_vehicles'] : array();
+
+    return $homepage_vehicles;
+}
+
+/**
+ * AJAX handler untuk menyimpan pengaturan
+ */
+add_action('wp_ajax_rental_mobil_save_settings', 'rental_mobil_save_settings_ajax');
+function rental_mobil_save_settings_ajax() {
+    // Verifikasi nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'rental_mobil_save_settings')) {
+        wp_send_json_error(array('message' => __('Verifikasi keamanan gagal.', 'rental-mobil-wp')));
+    }
+
+    // Verifikasi permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(array('message' => __('Anda tidak memiliki izin untuk melakukan tindakan ini.', 'rental-mobil-wp')));
+    }
+
+    // Parse form data
+    parse_str($_POST['form_data'], $form_data);
+
+    // Update options
+    if (isset($form_data['rental_mobil_options'])) {
+        update_option('rental_mobil_options', $form_data['rental_mobil_options']);
+        wp_send_json_success(array('message' => __('Pengaturan berhasil disimpan.', 'rental-mobil-wp')));
+    } else {
+        wp_send_json_error(array('message' => __('Tidak ada data yang disimpan.', 'rental-mobil-wp')));
+    }
 }
 
 /**
