@@ -463,6 +463,16 @@ function rental_mobil_settings_page() {
     <div class="wrap rental-mobil-settings">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
+        <div class="rental-mobil-admin-header">
+            <div class="rental-mobil-admin-title">
+                <h2><?php _e('Plugin oleh Angga Artupas', 'rental-mobil-wp'); ?></h2>
+                <p><?php _e('Traktir saya kopi jika Anda terbantu dengan plugin saya', 'rental-mobil-wp'); ?></p>
+            </div>
+            <div class="rental-mobil-admin-donate">
+                <?php echo rental_mobil_trakteer_button('overlay'); ?>
+            </div>
+        </div>
+
         <h2 class="nav-tab-wrapper">
             <a href="?page=rental-mobil&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>">
                 <span class="dashicons dashicons-admin-generic"></span> <?php _e('Umum', 'rental-mobil-wp'); ?>
@@ -743,4 +753,37 @@ add_action('wp_enqueue_scripts', 'rental_mobil_add_custom_css', 20);
 function rental_mobil_add_custom_css() {
     $custom_css = rental_mobil_get_custom_css();
     wp_add_inline_style('rental-mobil-style', $custom_css);
+}
+
+/**
+ * Fungsi untuk menampilkan tombol donasi Trakteer
+ */
+function rental_mobil_trakteer_button($type = 'overlay') {
+    ob_start();
+    if ($type === 'overlay') {
+        ?>
+        <div class="rental-mobil-trakteer-button">
+            <script type='text/javascript' src='https://edge-cdn.trakteer.id/js/trbtn-overlay.min.js?v=24-01-2025'></script>
+            <script type='text/javascript' class='troverlay'>
+                (function() {
+                    var trbtnId = trbtnOverlay.init('Dukung Saya di Trakteer','#000F9B','https://trakteer.id/tupski/tip/embed/modal','https://trakteer.id/images/mix/coffee.png','40','inline');
+                    trbtnOverlay.draw(trbtnId);
+                })();
+            </script>
+        </div>
+        <?php
+    } else {
+        ?>
+        <div class="rental-mobil-trakteer-button">
+            <script type='text/javascript' src='https://edge-cdn.trakteer.id/js/embed/trbtn.min.js?v=24-01-2025'></script>
+            <script type='text/javascript'>
+                (function(){
+                    var trbtnId=trbtn.init('Dukung Saya di Trakteer','#4075FF','https://trakteer.id/tupski','https://trakteer.id/images/mix/coffee.png','40');
+                    trbtn.draw(trbtnId);
+                })();
+            </script>
+        </div>
+        <?php
+    }
+    return ob_get_clean();
 }

@@ -2,6 +2,8 @@
 
 Plugin WordPress untuk rental mobil dengan fitur menampilkan daftar kendaraan, detail, dan booking via WhatsApp.
 
+<script type='text/javascript' src='https://edge-cdn.trakteer.id/js/trbtn-overlay.min.js?v=24-01-2025'></script><script type='text/javascript' class='troverlay'>(function() {var trbtnId = trbtnOverlay.init('Dukung Saya di Trakteer','#000F9B','https://trakteer.id/tupski/tip/embed/modal','https://trakteer.id/images/mix/coffee.png','40','inline');trbtnOverlay.draw(trbtnId);})();</script>
+
 ## Deskripsi
 
 Rental Mobil WP adalah plugin WordPress yang dirancang khusus untuk bisnis rental mobil. Plugin ini memungkinkan Anda menampilkan daftar kendaraan, detail kendaraan, dan sistem booking yang terintegrasi dengan WhatsApp.

@@ -7,6 +7,38 @@
     margin: 20px 0;
 }
 
+.rental-mobil-admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px 20px;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.rental-mobil-admin-title h2 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 18px;
+    color: #23282d;
+}
+
+.rental-mobil-admin-title p {
+    margin: 0;
+    color: #646970;
+}
+
+.rental-mobil-admin-donate {
+    display: flex;
+    align-items: center;
+}
+
+.rental-mobil-trakteer-button {
+    margin-left: 10px;
+}
+
 .rental-mobil-settings .nav-tab {
     display: flex;
     align-items: center;
@@ -127,7 +159,7 @@
     .rental-mobil-homepage-vehicles-list {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     }
-    
+
     .rental-mobil-settings input[type="range"] {
         width: 100%;
         max-width: 300px;
