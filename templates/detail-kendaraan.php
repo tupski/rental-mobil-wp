@@ -245,7 +245,7 @@ $whatsapp_message = rental_mobil_get_whatsapp_message();
 
                         <div class="rental-mobil-form-group rental-mobil-form-col">
                             <label for="rental-mobil-inline-booking-jam"><?php _e('Jam Sewa', 'rental-mobil-wp'); ?> <span class="required">*</span></label>
-                            <input type="time" id="rental-mobil-inline-booking-jam" name="jam_sewa" required>
+                            <input type="time" id="rental-mobil-inline-booking-jam" name="jam_sewa" step="1800" required>
                         </div>
                     </div>
 
