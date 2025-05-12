@@ -167,6 +167,9 @@ function rental_mobil_daftar_shortcode($atts) {
     // Tampilkan modal booking
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-modal.php';
 
+    // Tampilkan modal quick view
+    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php';
+
     // Tutup container
     echo '</div>';
 
@@ -204,6 +207,9 @@ function rental_mobil_detail_shortcode($atts) {
 
         // Tampilkan modal booking
         include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-modal.php';
+
+        // Tampilkan modal quick view
+        include RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php';
     } else {
         echo '<p>' . __('Kendaraan tidak ditemukan.', 'rental-mobil-wp') . '</p>';
     }
@@ -379,6 +385,9 @@ function rental_mobil_unggulan_shortcode($atts) {
     // Tampilkan modal booking
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-modal.php';
 
+    // Tampilkan modal quick view
+    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php';
+
     // Ambil output buffering dan kembalikan
     return ob_get_clean();
 }
@@ -433,6 +442,9 @@ function rental_mobil_pilihan_shortcode($atts) {
 
         // Tampilkan modal booking
         include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-modal.php';
+
+        // Tampilkan modal quick view
+        include RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php';
     } else {
         echo '<p>' . __('Tidak ada kendaraan yang ditemukan.', 'rental-mobil-wp') . '</p>';
     }
@@ -441,6 +453,48 @@ function rental_mobil_pilihan_shortcode($atts) {
 
     // Ambil output buffering dan kembalikan
     return ob_get_clean();
+}
+
+/**
+ * AJAX handler untuk mendapatkan galeri kendaraan
+ */
+add_action('wp_ajax_rental_mobil_get_gallery', 'rental_mobil_get_gallery_ajax');
+add_action('wp_ajax_nopriv_rental_mobil_get_gallery', 'rental_mobil_get_gallery_ajax');
+function rental_mobil_get_gallery_ajax() {
+    // Verifikasi nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'rental_mobil_nonce')) {
+        wp_send_json_error('Invalid nonce');
+    }
+
+    // Dapatkan ID kendaraan
+    $kendaraan_id = isset($_POST['kendaraan_id']) ? intval($_POST['kendaraan_id']) : 0;
+
+    if (empty($kendaraan_id)) {
+        wp_send_json_error('ID kendaraan tidak valid');
+    }
+
+    // Dapatkan galeri kendaraan
+    $gallery_ids = rental_mobil_get_galeri($kendaraan_id);
+    $gallery = array();
+
+    if (!empty($gallery_ids)) {
+        foreach ($gallery_ids as $attachment_id) {
+            $full_image = wp_get_attachment_image_src($attachment_id, 'large');
+            $thumbnail = wp_get_attachment_image_src($attachment_id, 'thumbnail');
+
+            if ($full_image && $thumbnail) {
+                $gallery[] = array(
+                    'id' => $attachment_id,
+                    'url' => $full_image[0],
+                    'thumbnail' => $thumbnail[0]
+                );
+            }
+        }
+    }
+
+    wp_send_json_success(array(
+        'gallery' => $gallery
+    ));
 }
 
 /**

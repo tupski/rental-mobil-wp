@@ -14,6 +14,10 @@
         const bookingForm = $('#rental-mobil-booking-form');
         const inlineBookingForm = $('#rental-mobil-inline-booking-form');
 
+        // Quick View Modal
+        const quickViewModal = $('#rental-mobil-quick-view-modal');
+        const quickViewTriggers = $('.rental-mobil-quick-view-trigger');
+
         // Filter Form
         const filterForm = $('#rental-mobil-filter-form');
         const resetButton = $('.rental-mobil-button-reset');
@@ -137,6 +141,148 @@
             if (event.target === modal[0]) {
                 modal.css('display', 'none');
             }
+            if (event.target === quickViewModal[0]) {
+                quickViewModal.css('display', 'none');
+            }
+        });
+
+        // Quick View Functionality
+        function openQuickView(kendaraanId) {
+            const card = $(`.rental-mobil-card[data-id="${kendaraanId}"]`);
+
+            if (card.length === 0) {
+                return;
+            }
+
+            // Dapatkan data dari card
+            const title = card.data('title');
+            const permalink = card.data('permalink');
+            const hargaHarian = card.data('harga-harian');
+            const hargaMingguan = card.data('harga-mingguan');
+            const hargaBulanan = card.data('harga-bulanan');
+            const merk = card.data('merk');
+            const transmisi = card.data('transmisi');
+            const bahanBakar = card.data('bahan-bakar');
+            const tahun = card.data('tahun');
+            const isFeatured = card.data('featured') === 1;
+            const isPopular = card.data('popular') === 1;
+
+            // Set data ke quick view modal
+            $('.rental-mobil-quick-view-title').text(title);
+            $('.rental-mobil-quick-view-detail-link').attr('href', permalink);
+            $('.rental-mobil-quick-view-booking').attr('data-id', kendaraanId).attr('data-title', title);
+
+            // Set harga
+            $('.rental-mobil-quick-view-price-daily').text(hargaHarian);
+            $('.rental-mobil-quick-view-price-weekly').text(hargaMingguan);
+            $('.rental-mobil-quick-view-price-monthly').text(hargaBulanan);
+
+            // Set badges
+            $('.rental-mobil-quick-view-badges').empty();
+            if (isFeatured) {
+                $('.rental-mobil-quick-view-badges').append('<div class="rental-mobil-badge rental-mobil-badge-featured">Unggulan</div>');
+            } else if (isPopular) {
+                $('.rental-mobil-quick-view-badges').append('<div class="rental-mobil-badge rental-mobil-badge-popular">Paling Banyak Disewa</div>');
+            }
+
+            // Set meta
+            $('.rental-mobil-quick-view-meta').empty();
+            if (merk) {
+                $('.rental-mobil-quick-view-meta').append(`
+                    <div class="rental-mobil-quick-view-meta-item">
+                        <span class="rental-mobil-quick-view-meta-label">Merk:</span>
+                        <span class="rental-mobil-quick-view-meta-value">${merk}</span>
+                    </div>
+                `);
+            }
+            if (transmisi) {
+                $('.rental-mobil-quick-view-meta').append(`
+                    <div class="rental-mobil-quick-view-meta-item">
+                        <span class="rental-mobil-quick-view-meta-label">Transmisi:</span>
+                        <span class="rental-mobil-quick-view-meta-value">${transmisi}</span>
+                    </div>
+                `);
+            }
+            if (bahanBakar) {
+                $('.rental-mobil-quick-view-meta').append(`
+                    <div class="rental-mobil-quick-view-meta-item">
+                        <span class="rental-mobil-quick-view-meta-label">Bahan Bakar:</span>
+                        <span class="rental-mobil-quick-view-meta-value">${bahanBakar}</span>
+                    </div>
+                `);
+            }
+            if (tahun) {
+                $('.rental-mobil-quick-view-meta').append(`
+                    <div class="rental-mobil-quick-view-meta-item">
+                        <span class="rental-mobil-quick-view-meta-label">Tahun:</span>
+                        <span class="rental-mobil-quick-view-meta-value">${tahun}</span>
+                    </div>
+                `);
+            }
+
+            // Set gambar utama
+            let featuredImageSrc = '';
+            if (card.find('.rental-mobil-card-image img').length > 0) {
+                featuredImageSrc = card.find('.rental-mobil-card-image img').attr('src');
+            }
+            $('.rental-mobil-quick-view-featured-image').attr('src', featuredImageSrc);
+
+            // Dapatkan galeri kendaraan melalui AJAX
+            $.ajax({
+                url: rental_mobil_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'rental_mobil_get_gallery',
+                    nonce: rental_mobil_ajax.nonce,
+                    kendaraan_id: kendaraanId
+                },
+                success: function(response) {
+                    if (response.success && response.data.gallery) {
+                        // Tampilkan galeri
+                        $('.rental-mobil-quick-view-thumbnails').empty();
+
+                        // Tambahkan featured image sebagai thumbnail pertama
+                        if (featuredImageSrc) {
+                            $('.rental-mobil-quick-view-thumbnails').append(`
+                                <div class="rental-mobil-quick-view-thumbnail active" data-src="${featuredImageSrc}">
+                                    <img src="${featuredImageSrc}" alt="${title}">
+                                </div>
+                            `);
+                        }
+
+                        // Tambahkan galeri lainnya
+                        $.each(response.data.gallery, function(index, image) {
+                            $('.rental-mobil-quick-view-thumbnails').append(`
+                                <div class="rental-mobil-quick-view-thumbnail" data-src="${image.url}">
+                                    <img src="${image.thumbnail}" alt="${title}">
+                                </div>
+                            `);
+                        });
+
+                        // Inisialisasi thumbnail click
+                        $('.rental-mobil-quick-view-thumbnail').on('click', function() {
+                            const src = $(this).data('src');
+                            $('.rental-mobil-quick-view-featured-image').attr('src', src);
+                            $('.rental-mobil-quick-view-thumbnail').removeClass('active');
+                            $(this).addClass('active');
+                        });
+                    }
+                }
+            });
+
+            // Tampilkan modal
+            quickViewModal.css('display', 'block');
+        }
+
+        // Buka Quick View saat klik trigger
+        quickViewTriggers.on('click', function() {
+            const kendaraanId = $(this).data('id');
+            openQuickView(kendaraanId);
+        });
+
+        // Tutup Quick View Modal
+        quickViewModal.find('.rental-mobil-modal-close').on('click', function() {
+            quickViewModal.css('display', 'none');
         });
 
         // Submit Form Booking
@@ -238,6 +384,12 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                                     scrollTop: $('#rental-mobil-inline-booking-form').offset().top - 20
                                 }, 500);
                             }
+                        });
+
+                        // Reinitialize quick view triggers
+                        $('.rental-mobil-quick-view-trigger').on('click', function() {
+                            const kendaraanId = $(this).data('id');
+                            openQuickView(kendaraanId);
                         });
 
                         // Sembunyikan filter pada mobile setelah submit

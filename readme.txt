@@ -1,6 +1,6 @@
 === Rental Mobil WP ===
 Contributors: artupski
-Donate link: https://tupski.web.id/donate
+Donate link: https://trakteer.id/tupski/tip
 Tags: car rental, rental, booking, whatsapp, mobil
 Requires at least: 6.0
 Tested up to: 6.8
@@ -145,6 +145,6 @@ Rilis pertama
 
 Plugin ini dikembangkan dengan pendekatan modular agar mudah dikustomisasi dan dikembangkan lebih lanjut. Cocok untuk bisnis rental mobil yang menginginkan sistem sederhana namun efektif untuk mengelola armada kendaraan dan memudahkan calon pelanggan melakukan pemesanan.
 
-Kontribusi, saran, dan laporan bug sangat dihargai. Silakan kunjungi halaman [donasi dan dukungan](https://tupski.web.id/donate) untuk membantu pengembangan plugin ini ke versi yang lebih baik lagi.
+Kontribusi, saran, dan laporan bug sangat dihargai. Silakan kunjungi halaman [Trakteer](https://trakteer.id/tupski/tip) untuk traktir saya kopi jika Anda terbantu dengan plugin ini.
 
 Jika Anda adalah pengembang dan ingin memperluas fitur plugin, Anda dapat memodifikasi file di folder `includes/` untuk menambahkan meta box, shortcode, atau logika tambahan lainnya sesuai kebutuhan proyek Anda.
