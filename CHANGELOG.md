@@ -2,6 +2,20 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.4.0] - 2023-12-20
+
+### Ditambahkan
+- Fitur quick view untuk melihat detail kendaraan tanpa perlu membuka halaman baru
+- Quick view dapat diakses dengan mengklik foto kendaraan, judul kendaraan, atau tombol "Lihat Detail"
+- Quick view menampilkan informasi penting seperti merk, transmisi, bahan bakar, dan tahun kendaraan
+- Quick view menampilkan harga harian, mingguan, dan bulanan dengan fallback "Hubungi Kami" jika tidak diisi
+- Quick view menampilkan galeri kendaraan dengan thumbnail yang bisa diklik
+- AJAX handler untuk memuat galeri kendaraan secara dinamis
+
+### Diubah
+- Tombol "Lihat Detail" sekarang membuka quick view modal alih-alih mengarahkan ke halaman detail
+- Peningkatan pengalaman pengguna dengan memudahkan perbandingan kendaraan
+
 ## [1.3.2] - 2023-12-15
 
 ### Ditambahkan

@@ -20,6 +20,7 @@ Rental Mobil WP adalah plugin WordPress yang dirancang khusus untuk bisnis renta
 * **Pengaturan Kustom** - Konfigurasi nomor WhatsApp dan template pesan
 * **Harga Fleksibel** - Atur harga sewa harian, mingguan, dan bulanan
 * **Floating Filter Button** - Tombol filter yang responsif untuk tampilan mobile
+* **Quick View** - Fitur quick view untuk melihat detail kendaraan tanpa perlu membuka halaman baru
 
 ### Shortcode
 
@@ -89,6 +90,14 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 
 ## Changelog
 
+### 1.4.0
+* Menambahkan fitur quick view untuk melihat detail kendaraan tanpa perlu membuka halaman baru
+* Quick view menampilkan informasi penting seperti merk, transmisi, bahan bakar, dan tahun kendaraan
+* Quick view menampilkan harga harian, mingguan, dan bulanan dengan fallback "Hubungi Kami" jika tidak diisi
+* Quick view menampilkan galeri kendaraan dengan thumbnail yang bisa diklik
+* Quick view responsif dan mobile-friendly
+* Peningkatan pengalaman pengguna dengan memudahkan perbandingan kendaraan
+
 ### 1.3.2
 * Peningkatan persyaratan versi WordPress menjadi 6.0
 * Peningkatan persyaratan versi PHP menjadi 8.0
@@ -127,6 +136,9 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 * Rilis pertama
 
 ## Upgrade Notice
+
+### 1.4.0
+Menambahkan fitur quick view untuk melihat detail kendaraan tanpa perlu membuka halaman baru, meningkatkan pengalaman pengguna dan memudahkan perbandingan kendaraan.
 
 ### 1.3.1
 Perbaikan penting untuk kompatibilitas dengan WordPress 6.8, optimasi performa, dan peningkatan kualitas kode.
