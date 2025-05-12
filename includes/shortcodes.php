@@ -170,6 +170,9 @@ function rental_mobil_daftar_shortcode($atts) {
     // Tampilkan modal quick view
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php';
 
+    // Tampilkan modal zoom
+    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/zoom-modal.php';
+
     // Tutup container
     echo '</div>';
 
@@ -210,6 +213,9 @@ function rental_mobil_detail_shortcode($atts) {
 
         // Tampilkan modal quick view
         include RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php';
+
+        // Tampilkan modal zoom
+        include RENTAL_MOBIL_PLUGIN_DIR . 'templates/zoom-modal.php';
     } else {
         echo '<p>' . __('Kendaraan tidak ditemukan.', 'rental-mobil-wp') . '</p>';
     }
@@ -388,6 +394,9 @@ function rental_mobil_unggulan_shortcode($atts) {
     // Tampilkan modal quick view
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php';
 
+    // Tampilkan modal zoom
+    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/zoom-modal.php';
+
     // Ambil output buffering dan kembalikan
     return ob_get_clean();
 }
@@ -445,6 +454,9 @@ function rental_mobil_pilihan_shortcode($atts) {
 
         // Tampilkan modal quick view
         include RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php';
+
+        // Tampilkan modal zoom
+        include RENTAL_MOBIL_PLUGIN_DIR . 'templates/zoom-modal.php';
     } else {
         echo '<p>' . __('Tidak ada kendaraan yang ditemukan.', 'rental-mobil-wp') . '</p>';
     }

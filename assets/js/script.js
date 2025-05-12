@@ -18,6 +18,10 @@
         const quickViewModal = $('#rental-mobil-quick-view-modal');
         const quickViewTriggers = $('.rental-mobil-quick-view-trigger');
 
+        // Zoom Modal
+        const zoomModal = $('#rental-mobil-zoom-modal');
+        const zoomImage = $('.rental-mobil-zoom-image');
+
         // Filter Form
         const filterForm = $('#rental-mobil-filter-form');
         const resetButton = $('.rental-mobil-button-reset');
@@ -144,6 +148,9 @@
             if (event.target === quickViewModal[0]) {
                 quickViewModal.css('display', 'none');
             }
+            if (event.target === zoomModal[0]) {
+                zoomModal.css('display', 'none');
+            }
         });
 
         // Quick View Functionality
@@ -227,6 +234,12 @@
             }
             $('.rental-mobil-quick-view-featured-image').attr('src', featuredImageSrc);
 
+            // Tambahkan event click untuk zoom gambar
+            $('.rental-mobil-quick-view-main-image').off('click').on('click', function() {
+                const imgSrc = $('.rental-mobil-quick-view-featured-image').attr('src');
+                openZoomModal(imgSrc, title);
+            });
+
             // Dapatkan galeri kendaraan melalui AJAX
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
@@ -265,6 +278,12 @@
                             $('.rental-mobil-quick-view-featured-image').attr('src', src);
                             $('.rental-mobil-quick-view-thumbnail').removeClass('active');
                             $(this).addClass('active');
+
+                            // Tambahkan event click untuk zoom pada thumbnail
+                            $('.rental-mobil-quick-view-thumbnail').off('dblclick').on('dblclick', function() {
+                                const imgSrc = $(this).data('src');
+                                openZoomModal(imgSrc, title);
+                            });
                         });
                     }
                 }
@@ -283,6 +302,20 @@
         // Tutup Quick View Modal
         quickViewModal.find('.rental-mobil-modal-close').on('click', function() {
             quickViewModal.css('display', 'none');
+        });
+
+        // Zoom Modal Functionality
+        function openZoomModal(imgSrc, title) {
+            // Set gambar
+            zoomImage.attr('src', imgSrc).attr('alt', title);
+
+            // Tampilkan modal
+            zoomModal.css('display', 'block');
+        }
+
+        // Tutup Zoom Modal
+        zoomModal.find('.rental-mobil-modal-close').on('click', function() {
+            zoomModal.css('display', 'none');
         });
 
         // Submit Form Booking

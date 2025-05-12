@@ -90,6 +90,13 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 
 ## Changelog
 
+### 1.4.1
+* Perbaikan tampilan quick view pada perangkat mobile
+* Menambahkan fitur zoom pada galeri foto di quick view
+* Menambahkan ikon zoom pada gambar utama
+* Menambahkan efek hover pada gambar untuk menunjukkan bahwa gambar bisa di-zoom
+* Perbaikan layout dan responsivitas quick view
+
 ### 1.4.0
 * Menambahkan fitur quick view untuk melihat detail kendaraan tanpa perlu membuka halaman baru
 * Quick view menampilkan informasi penting seperti merk, transmisi, bahan bakar, dan tahun kendaraan
@@ -136,6 +143,9 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 * Rilis pertama
 
 ## Upgrade Notice
+
+### 1.4.1
+Perbaikan tampilan quick view pada perangkat mobile dan menambahkan fitur zoom pada galeri foto.
 
 ### 1.4.0
 Menambahkan fitur quick view untuk melihat detail kendaraan tanpa perlu membuka halaman baru, meningkatkan pengalaman pengguna dan memudahkan perbandingan kendaraan.

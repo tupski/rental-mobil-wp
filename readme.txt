@@ -4,7 +4,7 @@ Donate link: https://trakteer.id/tupski/tip
 Tags: car rental, rental, booking, whatsapp, mobil
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -85,6 +85,14 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 
 == Changelog ==
 
+= 1.4.1 =
+* Perbaikan tampilan quick view pada perangkat mobile
+* Menambahkan fitur zoom pada galeri foto di quick view
+* Menambahkan ikon zoom pada gambar utama
+* Menambahkan efek hover pada gambar untuk menunjukkan bahwa gambar bisa di-zoom
+* Menambahkan modal zoom untuk melihat gambar dalam ukuran penuh
+* Perbaikan layout dan responsivitas quick view
+
 = 1.4.0 =
 * Menambahkan fitur quick view untuk melihat detail kendaraan tanpa perlu membuka halaman baru
 * Quick view menampilkan informasi penting seperti merk, transmisi, bahan bakar, dan tahun kendaraan
@@ -131,6 +139,9 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 * Rilis pertama
 
 == Upgrade Notice ==
+
+= 1.4.1 =
+Perbaikan tampilan quick view pada perangkat mobile dan menambahkan fitur zoom pada galeri foto.
 
 = 1.4.0 =
 Menambahkan fitur quick view untuk melihat detail kendaraan tanpa perlu membuka halaman baru, meningkatkan pengalaman pengguna dan memudahkan perbandingan kendaraan.

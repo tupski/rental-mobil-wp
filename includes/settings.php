@@ -156,7 +156,7 @@ function rental_mobil_homepage_section_callback() {
  * WhatsApp number field callback
  */
 function rental_mobil_whatsapp_number_callback() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $whatsapp_number = isset($options['whatsapp_number']) ? $options['whatsapp_number'] : '';
     ?>
     <input type="text" id="whatsapp_number" name="rental_mobil_options[whatsapp_number]" value="<?php echo esc_attr($whatsapp_number); ?>" class="regular-text">
@@ -168,7 +168,7 @@ function rental_mobil_whatsapp_number_callback() {
  * WhatsApp message template field callback
  */
 function rental_mobil_whatsapp_message_callback() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $default_message = "Halo, saya ingin menyewa kendaraan *{nama_kendaraan}* dengan detail berikut:\n\nNama: {nama}\nDomisili: {domisili}\nTanggal Sewa: {tanggal_sewa}\nJam Sewa: {jam_sewa}\nDurasi Sewa: {durasi_sewa} {satuan_durasi}\n\nMohon informasi lebih lanjut. Terima kasih.";
     $whatsapp_message = isset($options['whatsapp_message']) ? $options['whatsapp_message'] : $default_message;
     ?>
@@ -204,7 +204,7 @@ function rental_mobil_style_section_callback() {
  * Button color field callback
  */
 function rental_mobil_button_color_callback() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $button_color = isset($options['button_color']) ? $options['button_color'] : '#0073aa';
     ?>
     <input type="color" id="button_color" name="rental_mobil_options[button_color]" value="<?php echo esc_attr($button_color); ?>">
@@ -216,7 +216,7 @@ function rental_mobil_button_color_callback() {
  * Button hover color field callback
  */
 function rental_mobil_button_hover_color_callback() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $button_hover_color = isset($options['button_hover_color']) ? $options['button_hover_color'] : '#005177';
     ?>
     <input type="color" id="button_hover_color" name="rental_mobil_options[button_hover_color]" value="<?php echo esc_attr($button_hover_color); ?>">
@@ -228,7 +228,7 @@ function rental_mobil_button_hover_color_callback() {
  * Button text color field callback
  */
 function rental_mobil_button_text_color_callback() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $button_text_color = isset($options['button_text_color']) ? $options['button_text_color'] : '#ffffff';
     ?>
     <input type="color" id="button_text_color" name="rental_mobil_options[button_text_color]" value="<?php echo esc_attr($button_text_color); ?>">
@@ -240,7 +240,7 @@ function rental_mobil_button_text_color_callback() {
  * Button border radius field callback
  */
 function rental_mobil_button_border_radius_callback() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $button_border_radius = isset($options['button_border_radius']) ? $options['button_border_radius'] : '4';
     ?>
     <input type="range" id="button_border_radius" name="rental_mobil_options[button_border_radius]" min="0" max="50" value="<?php echo esc_attr($button_border_radius); ?>" oninput="this.nextElementSibling.value = this.value + 'px'">
@@ -253,7 +253,7 @@ function rental_mobil_button_border_radius_callback() {
  * Card border radius field callback
  */
 function rental_mobil_card_border_radius_callback() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $card_border_radius = isset($options['card_border_radius']) ? $options['card_border_radius'] : '8';
     ?>
     <input type="range" id="card_border_radius" name="rental_mobil_options[card_border_radius]" min="0" max="50" value="<?php echo esc_attr($card_border_radius); ?>" oninput="this.nextElementSibling.value = this.value + 'px'">
@@ -266,7 +266,7 @@ function rental_mobil_card_border_radius_callback() {
  * Card shadow field callback
  */
 function rental_mobil_card_shadow_callback() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $card_shadow = isset($options['card_shadow']) ? $options['card_shadow'] : 'medium';
     ?>
     <select id="card_shadow" name="rental_mobil_options[card_shadow]">
@@ -283,7 +283,7 @@ function rental_mobil_card_shadow_callback() {
  * Filter options field callback
  */
 function rental_mobil_filter_options_callback() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $filter_options = isset($options['filter_options']) ? $options['filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun');
 
     if (!is_array($filter_options)) {
@@ -342,7 +342,7 @@ function rental_mobil_filter_options_callback() {
  * Homepage vehicles field callback
  */
 function rental_mobil_homepage_vehicles_callback() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $homepage_vehicles = isset($options['homepage_vehicles']) ? $options['homepage_vehicles'] : array();
 
     // Dapatkan semua kendaraan
@@ -547,6 +547,37 @@ function rental_mobil_settings_page() {
                         var message = $('<div class="notice notice-success is-dismissible"><p>' + response.data.message + '</p></div>');
                         form.before(message);
 
+                        // Update form fields with saved values
+                        if (response.data.options) {
+                            // Update text and textarea fields
+                            $.each(response.data.options, function(key, value) {
+                                var field = form.find('[name="rental_mobil_options[' + key + ']"]');
+                                if (field.length > 0) {
+                                    if (field.is('input[type="text"]') || field.is('input[type="color"]') || field.is('textarea') || field.is('input[type="range"]') || field.is('select')) {
+                                        field.val(value);
+                                    } else if (field.is('input[type="checkbox"]')) {
+                                        field.prop('checked', value === '1');
+                                    }
+                                }
+                            });
+
+                            // Update checkbox arrays
+                            if (response.data.options.filter_options) {
+                                form.find('input[name="rental_mobil_options[filter_options][]"]').each(function() {
+                                    var checkbox = $(this);
+                                    checkbox.prop('checked', response.data.options.filter_options.indexOf(checkbox.val()) !== -1);
+                                });
+                            }
+
+                            // Update homepage vehicles
+                            if (response.data.options.homepage_vehicles) {
+                                form.find('input[name="rental_mobil_options[homepage_vehicles][]"]').each(function() {
+                                    var checkbox = $(this);
+                                    checkbox.prop('checked', response.data.options.homepage_vehicles.indexOf(parseInt(checkbox.val())) !== -1);
+                                });
+                            }
+                        }
+
                         // Auto dismiss after 3 seconds
                         setTimeout(function() {
                             message.fadeOut(function() {
@@ -578,10 +609,23 @@ function rental_mobil_settings_page() {
 }
 
 /**
+ * Get plugin options with fresh data
+ */
+function rental_mobil_get_options() {
+    // Hapus cache opsi untuk memastikan data terbaru
+    wp_cache_delete('rental_mobil_options', 'options');
+
+    // Dapatkan opsi dari database
+    $options = get_option('rental_mobil_options', array());
+
+    return $options;
+}
+
+/**
  * Get WhatsApp number
  */
 function rental_mobil_get_whatsapp_number() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     return isset($options['whatsapp_number']) ? $options['whatsapp_number'] : '';
 }
 
@@ -589,7 +633,7 @@ function rental_mobil_get_whatsapp_number() {
  * Get WhatsApp message template
  */
 function rental_mobil_get_whatsapp_message() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $default_message = "Halo, saya ingin menyewa kendaraan *{nama_kendaraan}* dengan detail berikut:\n\nNama: {nama}\nDomisili: {domisili}\nTanggal Sewa: {tanggal_sewa}\nJam Sewa: {jam_sewa}\nDurasi Sewa: {durasi_sewa} {satuan_durasi}\n\nMohon informasi lebih lanjut. Terima kasih.";
     return isset($options['whatsapp_message']) ? $options['whatsapp_message'] : $default_message;
 }
@@ -598,7 +642,7 @@ function rental_mobil_get_whatsapp_message() {
  * Get filter options
  */
 function rental_mobil_get_filter_options() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $filter_options = isset($options['filter_options']) ? $options['filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
 
     if (!is_array($filter_options)) {
@@ -612,7 +656,7 @@ function rental_mobil_get_filter_options() {
  * Get style settings
  */
 function rental_mobil_get_style_settings() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
 
     $style_settings = array(
         'button_color' => isset($options['button_color']) ? $options['button_color'] : '#0073aa',
@@ -630,7 +674,7 @@ function rental_mobil_get_style_settings() {
  * Get homepage vehicles
  */
 function rental_mobil_get_homepage_vehicles() {
-    $options = get_option('rental_mobil_options');
+    $options = rental_mobil_get_options();
     $homepage_vehicles = isset($options['homepage_vehicles']) ? $options['homepage_vehicles'] : array();
 
     return $homepage_vehicles;
@@ -656,8 +700,25 @@ function rental_mobil_save_settings_ajax() {
 
     // Update options
     if (isset($form_data['rental_mobil_options'])) {
-        update_option('rental_mobil_options', $form_data['rental_mobil_options']);
-        wp_send_json_success(array('message' => __('Pengaturan berhasil disimpan.', 'rental-mobil-wp')));
+        // Dapatkan opsi yang sudah ada
+        $existing_options = get_option('rental_mobil_options', array());
+
+        // Validasi dan sanitasi data
+        $validated_options = rental_mobil_validate_options($form_data['rental_mobil_options']);
+
+        // Gabungkan dengan opsi yang sudah ada untuk memastikan tidak ada yang hilang
+        $merged_options = array_merge($existing_options, $validated_options);
+
+        // Simpan opsi dengan autoload=yes untuk memastikan selalu tersedia
+        update_option('rental_mobil_options', $merged_options, 'yes');
+
+        // Refresh opsi dari database untuk memastikan konsistensi
+        wp_cache_delete('rental_mobil_options', 'options');
+
+        wp_send_json_success(array(
+            'message' => __('Pengaturan berhasil disimpan.', 'rental-mobil-wp'),
+            'options' => $merged_options
+        ));
     } else {
         wp_send_json_error(array('message' => __('Tidak ada data yang disimpan.', 'rental-mobil-wp')));
     }

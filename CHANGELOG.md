@@ -2,6 +2,24 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.4.1] - 2023-12-25
+
+### Ditambahkan
+- Fitur zoom pada galeri foto di quick view
+- Ikon zoom pada gambar utama
+- Efek hover pada gambar untuk menunjukkan bahwa gambar bisa di-zoom
+- Modal zoom untuk melihat gambar dalam ukuran penuh
+
+### Diubah
+- Perbaikan tampilan quick view pada perangkat mobile
+- Peningkatan layout dan responsivitas quick view
+- Perbaikan padding dan margin untuk tampilan mobile
+- Perbaikan ukuran font dan elemen untuk tampilan mobile
+
+### Diperbaiki
+- Masalah pengaturan yang tidak tersimpan dengan benar di beberapa tab browser
+- Perbaikan caching pengaturan untuk memastikan konsistensi data
+
 ## [1.4.0] - 2023-12-20
 
 ### Ditambahkan
