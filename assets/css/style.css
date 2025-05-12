@@ -204,10 +204,11 @@
 
 .rental-mobil-sidebar-inner {
     position: sticky;
-    top: 30px;
-    max-height: calc(100vh - 60px);
+    top: 50px; /* Meningkatkan jarak dari atas */
+    max-height: calc(100vh - 100px); /* Menyesuaikan max-height */
     overflow-y: auto;
     padding-right: 10px;
+    padding-top: 10px; /* Tambahkan padding atas */
     scrollbar-width: thin;
     scrollbar-color: #0073aa #f0f0f0;
 }
@@ -312,6 +313,7 @@
     border-radius: 4px;
     font-size: 14px;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box; /* Pastikan padding tidak melebihi lebar container */
 }
 
 .rental-mobil-search-input:focus {
@@ -1407,33 +1409,33 @@
 
     .rental-mobil-quick-view-gallery {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         gap: 10px;
     }
 
     .rental-mobil-quick-view-main-image {
-        flex: 1;
+        width: 100%;
         height: 200px;
-        margin-bottom: 0;
+        margin-bottom: 10px;
     }
 
     .rental-mobil-quick-view-thumbnails-wrapper {
-        flex-direction: column;
-        width: 70px;
+        flex-direction: row;
+        width: 100%;
         margin-top: 0;
     }
 
     .rental-mobil-quick-view-thumbnails {
-        flex-direction: column;
-        max-width: 100%;
-        max-height: 200px;
-        overflow-y: auto;
-        overflow-x: hidden;
+        flex-direction: row;
+        max-width: calc(100% - 80px);
+        overflow-x: auto;
+        overflow-y: hidden;
     }
 
     .rental-mobil-quick-view-thumbnail {
         width: 60px;
         height: 60px;
+        flex-shrink: 0;
     }
 
     .rental-mobil-quick-view-title {

@@ -565,17 +565,20 @@
 
             // Inisialisasi tombol share
             $('.rental-mobil-zoom-share').on('click', function() {
+                // Buat URL untuk berbagi: /daftar-kendaraan/?kata_kunci=judul
+                const shareUrl = window.location.origin + '/daftar-kendaraan/?kata_kunci=' + encodeURIComponent(title);
+
                 if (navigator.share) {
                     navigator.share({
                         title: title,
-                        url: window.location.href
+                        url: shareUrl
                     })
                     .catch(console.error);
                 } else {
                     // Fallback untuk browser yang tidak mendukung Web Share API
                     const tempInput = $('<input>');
                     $('body').append(tempInput);
-                    tempInput.val(window.location.href).select();
+                    tempInput.val(shareUrl).select();
                     document.execCommand('copy');
                     tempInput.remove();
                     alert('URL telah disalin ke clipboard');
@@ -1007,54 +1010,74 @@ Mohon informasi lebih lanjut. Terima kasih.`;
         const nextButton = $('.rental-mobil-quick-view-next');
         const thumbnails = $('.rental-mobil-quick-view-thumbnail');
 
-        // Jika kurang dari 4 thumbnail, sembunyikan navigasi
-        if (thumbnails.length <= 3) {
-            prevButton.hide();
-            nextButton.hide();
+        // Sembunyikan navigasi secara default
+        prevButton.hide();
+        nextButton.hide();
+
+        // Jika tidak ada thumbnail, keluar dari fungsi
+        if (thumbnails.length <= 1) {
             return;
         }
 
-        // Tampilkan maksimal 3 thumbnail
-        if (thumbnails.length > 3) {
-            // Sembunyikan thumbnail ke-4 dan seterusnya
-            thumbnails.slice(3).css('display', 'none');
+        // Tampilkan semua thumbnail terlebih dahulu
+        thumbnails.css('display', 'flex');
+
+        // Periksa apakah container penuh (overflow)
+        const containerWidth = thumbnailsContainer.width();
+        let totalWidth = 0;
+        let visibleCount = 0;
+
+        thumbnails.each(function() {
+            const thumbWidth = $(this).outerWidth(true); // Termasuk margin
+            totalWidth += thumbWidth;
+
+            // Jika total lebar melebihi container, tandai sebagai overflow
+            if (totalWidth <= containerWidth) {
+                visibleCount++;
+            }
+        });
+
+        // Jika total lebar thumbnail melebihi container, tampilkan navigasi
+        if (totalWidth > containerWidth) {
+            // Sembunyikan thumbnail yang tidak muat
+            thumbnails.slice(visibleCount).css('display', 'none');
 
             // Tampilkan tombol navigasi
             prevButton.show();
             nextButton.show();
+
+            // Navigasi ke thumbnail sebelumnya
+            prevButton.off('click').on('click', function() {
+                const firstVisible = thumbnails.filter(':visible').first().index();
+
+                if (firstVisible > 0) {
+                    // Sembunyikan thumbnail terakhir yang terlihat
+                    thumbnails.eq(firstVisible + visibleCount - 1).css('display', 'none');
+                    // Tampilkan thumbnail sebelumnya
+                    thumbnails.eq(firstVisible - 1).css('display', 'flex');
+                } else {
+                    // Loop ke akhir
+                    thumbnails.slice(0, visibleCount).css('display', 'none');
+                    thumbnails.slice(Math.max(0, thumbnails.length - visibleCount)).css('display', 'flex');
+                }
+            });
+
+            // Navigasi ke thumbnail berikutnya
+            nextButton.off('click').on('click', function() {
+                const lastVisible = thumbnails.filter(':visible').last().index();
+
+                if (lastVisible < thumbnails.length - 1) {
+                    // Sembunyikan thumbnail pertama yang terlihat
+                    thumbnails.filter(':visible').first().css('display', 'none');
+                    // Tampilkan thumbnail berikutnya
+                    thumbnails.eq(lastVisible + 1).css('display', 'flex');
+                } else {
+                    // Loop ke awal
+                    thumbnails.slice(Math.max(0, thumbnails.length - visibleCount)).css('display', 'none');
+                    thumbnails.slice(0, visibleCount).css('display', 'flex');
+                }
+            });
         }
-
-        // Navigasi ke thumbnail sebelumnya
-        prevButton.on('click', function() {
-            const firstVisible = thumbnails.filter(':visible').first().index();
-
-            if (firstVisible > 0) {
-                // Sembunyikan thumbnail terakhir yang terlihat
-                thumbnails.eq(firstVisible + 2).css('display', 'none');
-                // Tampilkan thumbnail sebelumnya
-                thumbnails.eq(firstVisible - 1).css('display', 'flex');
-            } else {
-                // Loop ke akhir
-                thumbnails.slice(0, 3).css('display', 'none');
-                thumbnails.slice(Math.max(0, thumbnails.length - 3)).css('display', 'flex');
-            }
-        });
-
-        // Navigasi ke thumbnail berikutnya
-        nextButton.on('click', function() {
-            const lastVisible = thumbnails.filter(':visible').last().index();
-
-            if (lastVisible < thumbnails.length - 1) {
-                // Sembunyikan thumbnail pertama yang terlihat
-                thumbnails.filter(':visible').first().css('display', 'none');
-                // Tampilkan thumbnail berikutnya
-                thumbnails.eq(lastVisible + 1).css('display', 'flex');
-            } else {
-                // Loop ke awal
-                thumbnails.slice(Math.max(0, thumbnails.length - 3)).css('display', 'none');
-                thumbnails.slice(0, 3).css('display', 'flex');
-            }
-        });
     }
 
     // Fungsi untuk menginisialisasi filter dari parameter URL

@@ -9,7 +9,7 @@ Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di fil
 - Overlay dengan ikon mata saat hover pada foto di card kendaraan
 - Galeri dengan navigasi panah untuk foto-foto kendaraan (maksimal 3 foto, dengan navigasi jika lebih)
 - Lightbox yang menampilkan foto-foto lain di bawah saat memperbesar gambar
-- Opsi berbagi di lightbox
+- Opsi berbagi di lightbox dengan URL format /daftar-kendaraan/?kata_kunci=judul
 - Layout modal Detail yang dioptimalkan untuk mobile
 
 ### Diubah
@@ -17,6 +17,10 @@ Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di fil
 - Perbaikan tampilan harga pada modal Detail di mobile (tidak inline)
 - Tombol Booking Sekarang fullwidth di mobile
 - Perbaikan ukuran modal pada mobile agar tidak bisa digeser kanan-kiri
+- Perbaikan layout galeri di mobile dengan foto-foto kecil di bawah foto utama
+- Perbaikan navigasi thumbnail di desktop berdasarkan container yang penuh
+- Perbaikan field keyword agar tidak melebihi border
+- Penambahan padding pada filter saat scroll lock agar tidak terlalu mepet dengan browser
 
 ## [1.4.2] - 2024-01-30
 
