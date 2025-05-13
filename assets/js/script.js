@@ -974,31 +974,96 @@ Mohon informasi lebih lanjut. Terima kasih.`;
             const nextButton = slider.find('.rental-mobil-slider-next');
             const items = slider.find('.rental-mobil-slider-item');
 
+            // Dapatkan pengaturan slider
+            const autoSlide = slider.data('auto-slide') === true || slider.data('auto-slide') === 'true';
+            const loop = slider.data('loop') === true || slider.data('loop') === 'true';
+            const speed = parseInt(slider.data('speed')) || 300;
+            const interval = parseInt(slider.data('interval')) || 5000;
+
+            let autoSlideInterval;
+
             if (items.length <= 0) {
                 return;
             }
 
-            // Scroll ke item berikutnya
-            nextButton.on('click', function() {
+            // Fungsi untuk scroll ke item berikutnya
+            function scrollToNext() {
                 const itemWidth = items.first().outerWidth(true);
                 const scrollLeft = container.scrollLeft();
-                const targetScroll = scrollLeft + itemWidth;
+                const containerWidth = container.width();
+                const scrollWidth = container.get(0).scrollWidth;
 
-                container.animate({
-                    scrollLeft: targetScroll
-                }, 300);
+                // Jika sudah di akhir dan loop diaktifkan, kembali ke awal
+                if (scrollLeft + containerWidth >= scrollWidth - 10) {
+                    if (loop) {
+                        container.animate({
+                            scrollLeft: 0
+                        }, speed);
+                    }
+                } else {
+                    container.animate({
+                        scrollLeft: scrollLeft + itemWidth
+                    }, speed);
+                }
+            }
+
+            // Fungsi untuk scroll ke item sebelumnya
+            function scrollToPrev() {
+                const itemWidth = items.first().outerWidth(true);
+                const scrollLeft = container.scrollLeft();
+                const containerWidth = container.width();
+                const scrollWidth = container.get(0).scrollWidth;
+
+                // Jika sudah di awal dan loop diaktifkan, ke akhir
+                if (scrollLeft <= 10) {
+                    if (loop) {
+                        container.animate({
+                            scrollLeft: scrollWidth - containerWidth
+                        }, speed);
+                    }
+                } else {
+                    container.animate({
+                        scrollLeft: scrollLeft - itemWidth
+                    }, speed);
+                }
+            }
+
+            // Scroll ke item berikutnya
+            nextButton.on('click', function() {
+                scrollToNext();
+
+                // Reset auto slide interval jika auto slide diaktifkan
+                if (autoSlide && autoSlideInterval) {
+                    clearInterval(autoSlideInterval);
+                    autoSlideInterval = setInterval(scrollToNext, interval);
+                }
             });
 
             // Scroll ke item sebelumnya
             prevButton.on('click', function() {
-                const itemWidth = items.first().outerWidth(true);
-                const scrollLeft = container.scrollLeft();
-                const targetScroll = scrollLeft - itemWidth;
+                scrollToPrev();
 
-                container.animate({
-                    scrollLeft: targetScroll
-                }, 300);
+                // Reset auto slide interval jika auto slide diaktifkan
+                if (autoSlide && autoSlideInterval) {
+                    clearInterval(autoSlideInterval);
+                    autoSlideInterval = setInterval(scrollToNext, interval);
+                }
             });
+
+            // Aktifkan auto slide jika diatur
+            if (autoSlide) {
+                autoSlideInterval = setInterval(scrollToNext, interval);
+
+                // Hentikan auto slide saat hover
+                slider.on('mouseenter', function() {
+                    clearInterval(autoSlideInterval);
+                });
+
+                // Lanjutkan auto slide saat mouse keluar
+                slider.on('mouseleave', function() {
+                    autoSlideInterval = setInterval(scrollToNext, interval);
+                });
+            }
         });
     }
 

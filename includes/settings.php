@@ -162,6 +162,14 @@ function rental_mobil_register_settings() {
         'rental_mobil_homepage',
         'rental_mobil_homepage_section'
     );
+
+    add_settings_field(
+        'slider_settings',
+        __('Pengaturan Slider Kendaraan Unggulan', 'rental-mobil-wp'),
+        'rental_mobil_slider_settings_callback',
+        'rental_mobil_homepage',
+        'rental_mobil_homepage_section'
+    );
 }
 
 /**
@@ -279,11 +287,15 @@ function rental_mobil_documentation_section_callback() {
     echo '<div class="rental-mobil-shortcode-item">';
     echo '<h4>[kendaraan_unggulan]</h4>';
     echo '<p>' . __('Menampilkan slider kendaraan unggulan.', 'rental-mobil-wp') . '</p>';
-    echo '<pre>[kendaraan_unggulan jumlah="5" judul="Kendaraan Unggulan"]</pre>';
+    echo '<pre>[kendaraan_unggulan jumlah="5" judul="Kendaraan Unggulan" auto_slide="true" loop="true" speed="300" interval="5000"]</pre>';
     echo '<p><strong>' . __('Parameter:', 'rental-mobil-wp') . '</strong></p>';
     echo '<ul>';
     echo '<li><code>jumlah</code> - ' . __('Jumlah kendaraan yang ditampilkan (default: 5)', 'rental-mobil-wp') . '</li>';
     echo '<li><code>judul</code> - ' . __('Judul slider (default: Kendaraan Unggulan)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>auto_slide</code> - ' . __('Aktifkan auto slide (true/false, default: sesuai pengaturan)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>loop</code> - ' . __('Aktifkan loop slider (true/false, default: sesuai pengaturan)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>speed</code> - ' . __('Kecepatan transisi dalam milidetik (default: sesuai pengaturan)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>interval</code> - ' . __('Interval waktu antar slide dalam milidetik (default: sesuai pengaturan)', 'rental-mobil-wp') . '</li>';
     echo '</ul>';
     echo '</div>';
 
@@ -842,6 +854,29 @@ function rental_mobil_validate_options($input) {
         $output['homepage_vehicles'] = array();
     }
 
+    // Sanitize slider settings
+    if (isset($input['slider_auto_slide'])) {
+        $output['slider_auto_slide'] = (bool) $input['slider_auto_slide'];
+    }
+
+    if (isset($input['slider_loop'])) {
+        $output['slider_loop'] = (bool) $input['slider_loop'];
+    }
+
+    if (isset($input['slider_speed'])) {
+        $output['slider_speed'] = absint($input['slider_speed']);
+        if ($output['slider_speed'] < 100) {
+            $output['slider_speed'] = 300;
+        }
+    }
+
+    if (isset($input['slider_interval'])) {
+        $output['slider_interval'] = absint($input['slider_interval']);
+        if ($output['slider_interval'] < 1000) {
+            $output['slider_interval'] = 5000;
+        }
+    }
+
     // Sanitize license key
     if (isset($input['license_key'])) {
         $output['license_key'] = sanitize_text_field($input['license_key']);
@@ -1102,6 +1137,48 @@ function rental_mobil_get_style_settings() {
 }
 
 /**
+ * Slider settings callback
+ */
+function rental_mobil_slider_settings_callback() {
+    $options = rental_mobil_get_options();
+    $auto_slide = isset($options['slider_auto_slide']) ? $options['slider_auto_slide'] : true;
+    $loop = isset($options['slider_loop']) ? $options['slider_loop'] : true;
+    $speed = isset($options['slider_speed']) ? $options['slider_speed'] : 300;
+    $interval = isset($options['slider_interval']) ? $options['slider_interval'] : 5000;
+    ?>
+    <div class="rental-mobil-slider-settings">
+        <p>
+            <label for="slider_auto_slide">
+                <input type="checkbox" id="slider_auto_slide" name="rental_mobil_options[slider_auto_slide]" value="1" <?php checked($auto_slide, true); ?>>
+                <?php _e('Auto Slide', 'rental-mobil-wp'); ?>
+            </label>
+            <span class="description"><?php _e('Slider akan bergerak otomatis.', 'rental-mobil-wp'); ?></span>
+        </p>
+
+        <p>
+            <label for="slider_loop">
+                <input type="checkbox" id="slider_loop" name="rental_mobil_options[slider_loop]" value="1" <?php checked($loop, true); ?>>
+                <?php _e('Loop', 'rental-mobil-wp'); ?>
+            </label>
+            <span class="description"><?php _e('Slider akan berputar kembali ke awal setelah mencapai slide terakhir.', 'rental-mobil-wp'); ?></span>
+        </p>
+
+        <p>
+            <label for="slider_speed"><?php _e('Kecepatan Transisi (ms)', 'rental-mobil-wp'); ?></label>
+            <input type="number" id="slider_speed" name="rental_mobil_options[slider_speed]" value="<?php echo esc_attr($speed); ?>" min="100" step="100" class="small-text">
+            <span class="description"><?php _e('Kecepatan transisi antar slide dalam milidetik.', 'rental-mobil-wp'); ?></span>
+        </p>
+
+        <p>
+            <label for="slider_interval"><?php _e('Interval (ms)', 'rental-mobil-wp'); ?></label>
+            <input type="number" id="slider_interval" name="rental_mobil_options[slider_interval]" value="<?php echo esc_attr($interval); ?>" min="1000" step="500" class="small-text">
+            <span class="description"><?php _e('Interval waktu antar slide dalam milidetik.', 'rental-mobil-wp'); ?></span>
+        </p>
+    </div>
+    <?php
+}
+
+/**
  * Get homepage vehicles
  */
 function rental_mobil_get_homepage_vehicles() {
@@ -1109,6 +1186,19 @@ function rental_mobil_get_homepage_vehicles() {
     $homepage_vehicles = isset($options['homepage_vehicles']) ? $options['homepage_vehicles'] : array();
 
     return $homepage_vehicles;
+}
+
+/**
+ * Get slider settings
+ */
+function rental_mobil_get_slider_settings() {
+    $options = rental_mobil_get_options();
+    return array(
+        'auto_slide' => isset($options['slider_auto_slide']) ? (bool) $options['slider_auto_slide'] : true,
+        'loop' => isset($options['slider_loop']) ? (bool) $options['slider_loop'] : true,
+        'speed' => isset($options['slider_speed']) ? absint($options['slider_speed']) : 300,
+        'interval' => isset($options['slider_interval']) ? absint($options['slider_interval']) : 5000,
+    );
 }
 
 /**

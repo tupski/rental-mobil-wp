@@ -113,10 +113,17 @@ function rental_mobil_unggulan_shortcode($atts) {
         return rental_mobil_license_notice();
     }
 
+    // Dapatkan pengaturan slider
+    $slider_settings = rental_mobil_get_slider_settings();
+
     $atts = shortcode_atts(array(
         'jumlah' => 5,
         'tipe' => 'featured', // 'featured' atau 'popular'
         'judul' => '',
+        'auto_slide' => $slider_settings['auto_slide'] ? 'true' : 'false',
+        'loop' => $slider_settings['loop'] ? 'true' : 'false',
+        'speed' => $slider_settings['speed'],
+        'interval' => $slider_settings['interval'],
     ), $atts, 'kendaraan_unggulan');
 
     // Mulai output buffering
@@ -126,6 +133,10 @@ function rental_mobil_unggulan_shortcode($atts) {
     $type = $atts['tipe'];
     $limit = $atts['jumlah'];
     $title = !empty($atts['judul']) ? $atts['judul'] : '';
+    $auto_slide = filter_var($atts['auto_slide'], FILTER_VALIDATE_BOOLEAN);
+    $loop = filter_var($atts['loop'], FILTER_VALIDATE_BOOLEAN);
+    $speed = absint($atts['speed']);
+    $interval = absint($atts['interval']);
 
     // Tampilkan slider
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/slider-kendaraan.php';

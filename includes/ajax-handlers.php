@@ -103,6 +103,14 @@ function rental_mobil_filter_ajax() {
     // Jika orderby adalah harga, tambahkan meta_key
     if ($orderby === 'meta_value_num') {
         $args['meta_key'] = '_rental_mobil_harga_sewa';
+    } elseif ($orderby === 'price_high') {
+        $args['meta_key'] = '_rental_mobil_harga_sewa';
+        $args['orderby'] = 'meta_value_num';
+        $args['order'] = 'DESC';
+    } elseif ($orderby === 'price_low') {
+        $args['meta_key'] = '_rental_mobil_harga_sewa';
+        $args['orderby'] = 'meta_value_num';
+        $args['order'] = 'ASC';
     }
 
     // Jika ada keyword, tambahkan pencarian

@@ -12,6 +12,10 @@ if (!defined('WPINC')) {
 $type = isset($type) ? $type : 'featured'; // 'featured' atau 'popular'
 $limit = isset($limit) ? intval($limit) : 5;
 $title = isset($title) ? $title : ($type === 'featured' ? __('Kendaraan Unggulan', 'rental-mobil-wp') : __('Paling Banyak Disewa', 'rental-mobil-wp'));
+$auto_slide = isset($auto_slide) ? (bool) $auto_slide : true;
+$loop = isset($loop) ? (bool) $loop : true;
+$speed = isset($speed) ? absint($speed) : 300;
+$interval = isset($interval) ? absint($interval) : 5000;
 
 // Query kendaraan berdasarkan tipe
 if ($type === 'featured') {
@@ -29,7 +33,11 @@ if (!$query->have_posts()) {
 <div class="rental-mobil-slider-section">
     <h2 class="rental-mobil-slider-title"><?php echo esc_html($title); ?></h2>
 
-    <div class="rental-mobil-slider">
+    <div class="rental-mobil-slider"
+         data-auto-slide="<?php echo $auto_slide ? 'true' : 'false'; ?>"
+         data-loop="<?php echo $loop ? 'true' : 'false'; ?>"
+         data-speed="<?php echo esc_attr($speed); ?>"
+         data-interval="<?php echo esc_attr($interval); ?>">
         <div class="rental-mobil-slider-container">
             <?php while ($query->have_posts()) : $query->the_post();
                 $post_id = get_the_ID();

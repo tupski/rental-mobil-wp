@@ -121,6 +121,8 @@ $tahun_terms = in_array('tahun', $filter_options) ? get_terms(array(
                 <option value="date"><?php _e('Terbaru', 'rental-mobil-wp'); ?></option>
                 <option value="title"><?php _e('Nama', 'rental-mobil-wp'); ?></option>
                 <option value="meta_value_num" data-meta-key="_rental_mobil_harga_sewa"><?php _e('Harga', 'rental-mobil-wp'); ?></option>
+                <option value="price_high" data-meta-key="_rental_mobil_harga_sewa"><?php _e('Harga Tertinggi', 'rental-mobil-wp'); ?></option>
+                <option value="price_low" data-meta-key="_rental_mobil_harga_sewa"><?php _e('Harga Terendah', 'rental-mobil-wp'); ?></option>
             </select>
         </div>
         <?php endif; ?>
