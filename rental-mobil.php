@@ -34,6 +34,14 @@ function rental_mobil_activate() {
 
     // Flush rewrite rules
     flush_rewrite_rules();
+
+    // Periksa lisensi jika sudah ada
+    if (function_exists('rental_mobil_check_license')) {
+        $license_key = rental_mobil_get_license_key();
+        if (!empty($license_key)) {
+            rental_mobil_check_license();
+        }
+    }
 }
 
 // Tambahkan fungsi untuk flush rewrite rules saat plugin diaktifkan

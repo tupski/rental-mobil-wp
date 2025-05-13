@@ -248,6 +248,97 @@
     margin-left: 10px;
 }
 
+/* Detail Lisensi Styles */
+.rental-mobil-license-details {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.rental-mobil-license-details h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+    color: #23282d;
+}
+
+.rental-mobil-license-details p {
+    margin: 8px 0;
+}
+
+.rental-mobil-license-badge {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* License Message Styles */
+.rental-mobil-license-message {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.rental-mobil-license-message p {
+    margin: 8px 0;
+}
+
+.rental-mobil-license-message a {
+    color: #0073aa;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.rental-mobil-license-message a:hover {
+    color: #00a0d2;
+    text-decoration: underline;
+}
+
+/* License Overlay Styles */
+.rental-mobil-license-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rental-mobil-license-overlay-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 5px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+.rental-mobil-license-overlay-content h2 {
+    margin-top: 0;
+    color: #23282d;
+}
+
+.rental-mobil-license-overlay-content p {
+    margin-bottom: 20px;
+}
+
+.rental-mobil-license-overlay-content .button {
+    margin: 0 5px;
+}
+
 /* Responsive */
 @media (max-width: 782px) {
     .rental-mobil-homepage-vehicles-list {
