@@ -243,9 +243,12 @@
     border: 1px solid #faebcc;
 }
 
-#rental-mobil-activate-license,
-#rental-mobil-deactivate-license {
-    margin-left: 10px;
+.rental-mobil-license-buttons {
+    margin-top: 10px;
+}
+
+.rental-mobil-license-buttons button {
+    margin-right: 10px;
 }
 
 /* Detail Lisensi Styles */
