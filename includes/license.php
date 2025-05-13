@@ -69,22 +69,48 @@ function rental_mobil_license_init() {
  * Paksa pemeriksaan status lisensi saat plugin dimuat
  */
 function rental_mobil_force_check_license_status() {
+    // Dapatkan opsi
+    $options = rental_mobil_get_options();
+
+    // Periksa apakah lisensi baru saja dinonaktifkan
+    if (isset($options['license_deactivated']) && $options['license_deactivated'] === 'yes') {
+        // Jika lisensi dinonaktifkan dalam 5 menit terakhir, jangan periksa lagi
+        if (isset($options['license_deactivated_time']) && (time() - $options['license_deactivated_time']) < 300) {
+            rental_mobil_license_debug_log('Melewati pemeriksaan lisensi karena baru saja dinonaktifkan');
+            return;
+        }
+    }
+
     // Dapatkan kunci lisensi
     $license_key = rental_mobil_get_license_key();
 
     // Jika ada kunci lisensi, cek statusnya
     if (!empty($license_key)) {
         // Log debug
-        if (defined('RENTAL_MOBIL_LICENSE_DEBUG') && RENTAL_MOBIL_LICENSE_DEBUG) {
-            error_log('Rental Mobil - Force Check License Status: ' . $license_key);
-        }
+        rental_mobil_license_debug_log('Memulai pemeriksaan paksa status lisensi', array(
+            'license_key' => $license_key
+        ));
 
         // Verifikasi lisensi
         $response = rental_mobil_verify_license($license_key);
 
         // Log hasil verifikasi
-        if (defined('RENTAL_MOBIL_LICENSE_DEBUG') && RENTAL_MOBIL_LICENSE_DEBUG) {
-            error_log('Rental Mobil - Force Check Result: ' . ($response['success'] ? 'success' : 'failed'));
+        rental_mobil_license_debug_log('Hasil pemeriksaan paksa status lisensi', array(
+            'success' => $response['success'] ? 'yes' : 'no',
+            'response' => $response
+        ));
+    } else {
+        // Jika tidak ada kunci lisensi, pastikan status lisensi kosong
+        $options = rental_mobil_get_options();
+        if (!empty($options['license_status'])) {
+            $options['license_status'] = '';
+            update_option('rental_mobil_options', $options, 'yes');
+
+            // Refresh opsi dari database untuk memastikan konsistensi
+            wp_cache_delete('rental_mobil_options', 'options');
+            wp_cache_delete('alloptions', 'options');
+
+            rental_mobil_license_debug_log('Mengosongkan status lisensi karena kunci lisensi kosong');
         }
     }
 }
@@ -250,7 +276,12 @@ function rental_mobil_license_scripts($hook) {
             'invalid_text' => __('Lisensi Salah', 'rental-mobil-wp'),
             'expired_text' => __('Kadaluarsa', 'rental-mobil-wp'),
             'expires_text' => __('Kedaluwarsa pada: %s', 'rental-mobil-wp'),
-            'error' => __('Terjadi kesalahan. Silakan coba lagi.', 'rental-mobil-wp')
+            'error' => __('Terjadi kesalahan. Silakan coba lagi.', 'rental-mobil-wp'),
+            'confirm_title' => __('Konfirmasi Nonaktifkan Lisensi', 'rental-mobil-wp'),
+            'confirm_deactivate' => __('Anda yakin ingin menghapus lisensi?', 'rental-mobil-wp'),
+            'confirm_note' => __('Lisensi tetap aktif, dan Anda dapat menggunakannya di domain lain.', 'rental-mobil-wp'),
+            'confirm' => __('Ya, Nonaktifkan', 'rental-mobil-wp'),
+            'cancel' => __('Batal', 'rental-mobil-wp')
         ));
     }
 }
@@ -269,20 +300,55 @@ function rental_mobil_activate_license_ajax() {
         wp_send_json_error(array('message' => __('Anda tidak memiliki izin untuk melakukan tindakan ini.', 'rental-mobil-wp')));
     }
 
-    // Dapatkan kunci lisensi
-    $license_key = rental_mobil_get_license_key();
+    // Dapatkan kunci lisensi dari POST request
+    $license_key = isset($_POST['license_key']) ? sanitize_text_field($_POST['license_key']) : '';
+
+    // Log semua data POST untuk debugging
+    rental_mobil_license_debug_log('Data POST aktivasi lisensi', array(
+        'post_data' => $_POST,
+        'license_key' => $license_key
+    ));
+
+    // Jika tidak ada di POST, coba ambil dari opsi
+    if (empty($license_key)) {
+        $license_key = rental_mobil_get_license_key();
+        rental_mobil_license_debug_log('Menggunakan kunci lisensi dari opsi', array(
+            'license_key' => $license_key
+        ));
+    }
 
     if (empty($license_key)) {
         wp_send_json_error(array('message' => __('Kunci lisensi tidak boleh kosong.', 'rental-mobil-wp')));
     }
 
+    // Simpan kunci lisensi ke opsi terlebih dahulu
+    $options = rental_mobil_get_options();
+    $options['license_key'] = $license_key;
+    update_option('rental_mobil_options', $options, 'yes');
+
+    // Refresh opsi dari database untuk memastikan konsistensi
+    wp_cache_delete('rental_mobil_options', 'options');
+    wp_cache_delete('alloptions', 'options');
+
+    // Log kunci lisensi untuk debugging
+    rental_mobil_license_debug_log('Mencoba aktivasi lisensi', array(
+        'license_key' => $license_key,
+        'domain' => parse_url(home_url(), PHP_URL_HOST)
+    ));
+
     // Verifikasi lisensi
     $response = rental_mobil_verify_license($license_key);
+
+    // Log respons verifikasi
+    rental_mobil_license_debug_log('Respons verifikasi lisensi', array(
+        'response' => $response
+    ));
 
     if ($response['success']) {
         // Simpan status lisensi dan semua data terkait
         $options = rental_mobil_get_options();
         $options['license_status'] = 'valid';
+        $options['license_key'] = $license_key; // Pastikan kunci lisensi disimpan
 
         // Simpan data dari respons API
         if (isset($response['data'])) {
@@ -334,7 +400,8 @@ function rental_mobil_activate_license_ajax() {
         // Verifikasi bahwa status lisensi telah disimpan dengan benar
         $saved_options = get_option('rental_mobil_options', array(), false);
         rental_mobil_license_debug_log('Status lisensi setelah aktivasi', array(
-            'saved_status' => isset($saved_options['license_status']) ? $saved_options['license_status'] : 'not set'
+            'saved_status' => isset($saved_options['license_status']) ? $saved_options['license_status'] : 'not set',
+            'saved_key' => isset($saved_options['license_key']) ? $saved_options['license_key'] : 'not set'
         ));
 
         wp_send_json_success(array(
@@ -344,17 +411,105 @@ function rental_mobil_activate_license_ajax() {
             'customer' => isset($options['license_customer']) ? $options['license_customer'] : ''
         ));
     } else {
-        // Simpan status lisensi tidak valid
+        // Coba sekali lagi dengan metode alternatif
+        rental_mobil_license_debug_log('Mencoba metode alternatif aktivasi lisensi', array(
+            'license_key' => $license_key
+        ));
+
+        // Coba aktivasi langsung ke API
+        $domain = parse_url(home_url(), PHP_URL_HOST);
+        $url = add_query_arg(
+            array(
+                'license_key' => $license_key,
+                'domain' => $domain,
+                'plugin' => 'rental-mobil-wp',
+                'version' => RENTAL_MOBIL_VERSION
+            ),
+            RENTAL_MOBIL_LICENSE_API_URL . '/activate'
+        );
+
+        $response = wp_remote_get($url, array(
+            'timeout' => 15,
+            'sslverify' => RENTAL_MOBIL_LICENSE_SSL_VERIFY
+        ));
+
+        if (!is_wp_error($response)) {
+            $response_body = wp_remote_retrieve_body($response);
+            $response_data = json_decode($response_body, true);
+
+            rental_mobil_license_debug_log('Respons aktivasi langsung', array(
+                'response' => $response_data
+            ));
+
+            if (isset($response_data['success']) && $response_data['success']) {
+                // Simpan status lisensi dan semua data terkait
+                $options = rental_mobil_get_options();
+                $options['license_status'] = 'valid';
+                $options['license_key'] = $license_key; // Pastikan kunci lisensi disimpan
+
+                // Simpan data dari respons API
+                if (isset($response_data['data'])) {
+                    // Tanggal kedaluwarsa
+                    if (isset($response_data['data']['expires_at'])) {
+                        $options['license_expires'] = $response_data['data']['expires_at'];
+                    }
+
+                    // Nama pelanggan
+                    if (isset($response_data['data']['customer_name'])) {
+                        $options['license_customer'] = $response_data['data']['customer_name'];
+                    }
+
+                    // Domain terdaftar
+                    if (isset($response_data['data']['domain_count'])) {
+                        $options['license_domain_count'] = $response_data['data']['domain_count'];
+                    }
+
+                    // Jumlah maksimal domain
+                    if (isset($response_data['data']['max_domains'])) {
+                        $options['license_max_domains'] = $response_data['data']['max_domains'];
+                    }
+                }
+
+                // Simpan opsi dengan autoload=yes untuk memastikan selalu tersedia
+                $update_result = update_option('rental_mobil_options', $options, 'yes');
+
+                // Refresh opsi dari database untuk memastikan konsistensi
+                wp_cache_delete('rental_mobil_options', 'options');
+                wp_cache_delete('alloptions', 'options');
+
+                // Verifikasi bahwa status lisensi telah disimpan dengan benar
+                $saved_options = get_option('rental_mobil_options', array(), false);
+                rental_mobil_license_debug_log('Status lisensi setelah aktivasi langsung', array(
+                    'saved_status' => isset($saved_options['license_status']) ? $saved_options['license_status'] : 'not set',
+                    'saved_key' => isset($saved_options['license_key']) ? $saved_options['license_key'] : 'not set'
+                ));
+
+                wp_send_json_success(array(
+                    'message' => __('Lisensi berhasil diaktifkan.', 'rental-mobil-wp'),
+                    'status' => 'valid',
+                    'expires' => isset($options['license_expires']) ? $options['license_expires'] : '',
+                    'customer' => isset($options['license_customer']) ? $options['license_customer'] : ''
+                ));
+            }
+        }
+
+        // Jika masih gagal, kirim pesan error tetapi tetap simpan kunci lisensi
         $options = rental_mobil_get_options();
+        $options['license_key'] = $license_key; // Simpan kunci lisensi meskipun gagal
         $options['license_status'] = 'invalid';
 
         // Simpan opsi dengan autoload=yes untuk memastikan selalu tersedia
-        update_option('rental_mobil_options', $options, 'yes');
+        $update_result = update_option('rental_mobil_options', $options, 'yes');
 
         // Refresh opsi dari database untuk memastikan konsistensi
         wp_cache_delete('rental_mobil_options', 'options');
+        wp_cache_delete('alloptions', 'options');
 
-        wp_send_json_error(array('message' => $response['message']));
+        // Kirim respons error dengan flag reload=true
+        wp_send_json_error(array(
+            'message' => $response['message'],
+            'reload' => true // Tambahkan flag untuk me-reload halaman
+        ));
     }
 }
 
@@ -379,30 +534,134 @@ function rental_mobil_deactivate_license_ajax() {
         wp_send_json_error(array('message' => __('Kunci lisensi tidak boleh kosong.', 'rental-mobil-wp')));
     }
 
+    // Log untuk debugging
+    rental_mobil_license_debug_log('Mencoba deaktivasi lisensi via AJAX', array(
+        'license_key' => $license_key,
+        'domain' => parse_url(home_url(), PHP_URL_HOST)
+    ));
+
     // Deaktivasi lisensi
     $response = rental_mobil_deactivate_license($license_key);
 
-    if ($response['success']) {
-        // Hapus status lisensi dan semua data terkait
-        $options = rental_mobil_get_options();
-        $options['license_status'] = '';
-        $options['license_expires'] = '';
-        $options['license_customer'] = '';
-        $options['license_created_at'] = '';
-        $options['license_domain_count'] = '';
-        $options['license_max_domains'] = '';
+    // Log respons deaktivasi
+    rental_mobil_license_debug_log('Respons deaktivasi lisensi', array(
+        'response' => $response
+    ));
 
-        // Simpan opsi dengan autoload=yes untuk memastikan selalu tersedia
-        update_option('rental_mobil_options', $options, 'yes');
+    // Hapus lisensi dari database terlepas dari respons API
+    // Ini memastikan lisensi dihapus bahkan jika API gagal
 
-        // Refresh opsi dari database untuk memastikan konsistensi
+    // Simpan kunci lisensi lama untuk debugging
+    $old_license_key = $license_key;
+
+    // Hapus opsi rental_mobil_options secara langsung
+    delete_option('rental_mobil_options');
+
+    // Log hasil delete untuk debugging
+    rental_mobil_license_debug_log('Hasil delete opsi rental_mobil_options', array(
+        'old_license_key' => $old_license_key
+    ));
+
+    // Buat opsi baru tanpa data lisensi
+    $options = array(
+        'filter_options' => array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun'),
+        'homepage_vehicles' => array(),
+        'license_status' => '',
+        'license_key' => '',
+        'license_expires' => '',
+        'license_customer' => '',
+        'license_created_at' => '',
+        'license_domain_count' => '',
+        'license_max_domains' => '',
+        'license_deactivated' => 'yes',
+        'license_deactivated_time' => time()
+    );
+
+    // Simpan opsi baru
+    $update_result = update_option('rental_mobil_options', $options, 'yes');
+
+    // Log hasil update untuk debugging
+    rental_mobil_license_debug_log('Hasil update opsi baru setelah deaktivasi', array(
+        'update_result' => $update_result ? 'success' : 'failed',
+        'options' => $options
+    ));
+
+    // Pembersihan cache yang agresif
+    wp_cache_delete('rental_mobil_options', 'options');
+    wp_cache_delete('alloptions', 'options');
+    wp_cache_flush();
+
+    // Verifikasi bahwa lisensi benar-benar dihapus
+    $saved_options = get_option('rental_mobil_options', array(), false);
+
+    // Log hasil verifikasi
+    rental_mobil_license_debug_log('Verifikasi lisensi dihapus', array(
+        'saved_options_exists' => !empty($saved_options) ? 'yes' : 'no',
+        'saved_license_key' => isset($saved_options['license_key']) ? $saved_options['license_key'] : 'not set',
+        'saved_license_status' => isset($saved_options['license_status']) ? $saved_options['license_status'] : 'not set'
+    ));
+
+    // Jika masih ada kunci lisensi, coba metode terakhir
+    if (!empty($saved_options['license_key'])) {
+        // Metode terakhir: gunakan SQL langsung
+        global $wpdb;
+        $option_name = 'rental_mobil_options';
+
+        // Dapatkan nilai opsi saat ini
+        $current_value = $wpdb->get_var($wpdb->prepare(
+            "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1",
+            $option_name
+        ));
+
+        if ($current_value) {
+            // Unserialize nilai opsi
+            $unserialized = maybe_unserialize($current_value);
+
+            // Hapus data lisensi
+            if (is_array($unserialized)) {
+                $unserialized['license_key'] = '';
+                $unserialized['license_status'] = '';
+                $unserialized['license_expires'] = '';
+                $unserialized['license_customer'] = '';
+                $unserialized['license_created_at'] = '';
+                $unserialized['license_domain_count'] = '';
+                $unserialized['license_max_domains'] = '';
+                $unserialized['license_deactivated'] = 'yes';
+                $unserialized['license_deactivated_time'] = time();
+
+                // Serialize kembali dan update
+                $serialized = maybe_serialize($unserialized);
+                $result = $wpdb->update(
+                    $wpdb->options,
+                    array('option_value' => $serialized),
+                    array('option_name' => $option_name)
+                );
+
+                // Log hasil update SQL
+                rental_mobil_license_debug_log('Hasil update SQL langsung', array(
+                    'result' => $result !== false ? 'success' : 'failed',
+                    'rows_affected' => $result
+                ));
+            }
+        }
+
+        // Pembersihan cache lagi
         wp_cache_delete('rental_mobil_options', 'options');
+        wp_cache_delete('alloptions', 'options');
+        wp_cache_flush();
+    }
 
+    // Kirim respons sukses
+    if ($response['success']) {
         wp_send_json_success(array(
-            'message' => __('Lisensi berhasil dinonaktifkan dan domain dihapus dari lisensi.', 'rental-mobil-wp')
+            'message' => __('Lisensi berhasil dinonaktifkan. Plugin tidak akan berfungsi sampai Anda mengaktifkan lisensi lagi.', 'rental-mobil-wp'),
+            'reload' => true
         ));
     } else {
-        wp_send_json_error(array('message' => $response['message']));
+        wp_send_json_success(array(
+            'message' => __('Lisensi berhasil dinonaktifkan secara lokal. Plugin tidak akan berfungsi sampai Anda mengaktifkan lisensi lagi.', 'rental-mobil-wp'),
+            'reload' => true
+        ));
     }
 }
 
@@ -412,6 +671,15 @@ function rental_mobil_deactivate_license_ajax() {
 function rental_mobil_verify_license($license_key) {
     // Dapatkan domain saat ini
     $domain = parse_url(home_url(), PHP_URL_HOST);
+
+    // Pastikan kunci lisensi tidak kosong
+    if (empty($license_key)) {
+        rental_mobil_license_debug_log('Kunci lisensi kosong');
+        return array(
+            'success' => false,
+            'message' => __('Kunci lisensi tidak boleh kosong.', 'rental-mobil-wp')
+        );
+    }
 
     // Log debug
     rental_mobil_license_debug_log('Memulai verifikasi lisensi', array(
@@ -493,6 +761,38 @@ function rental_mobil_verify_license($license_key) {
         // Simpan data tambahan seperti tanggal kedaluwarsa dan nama pelanggan
         $options = rental_mobil_get_options();
 
+        // Log data respons untuk debugging
+        rental_mobil_license_debug_log('Data respons API', array(
+            'response_data' => $response_data
+        ));
+
+        // Periksa status lisensi dari respons API
+        $api_status = isset($response_data['data']['status']) ? $response_data['data']['status'] : '';
+
+        // Log status dari API
+        rental_mobil_license_debug_log('Status lisensi dari API', array(
+            'api_status' => $api_status
+        ));
+
+        // Jika status dari API adalah 'active', set status lisensi ke 'valid'
+        if ($api_status === 'active') {
+            $options['license_status'] = 'valid';
+        } else {
+            // Jika status bukan 'active', set status lisensi ke 'invalid'
+            $options['license_status'] = 'invalid';
+
+            // Log status tidak aktif
+            rental_mobil_license_debug_log('Status lisensi dari API tidak aktif', array(
+                'api_status' => $api_status
+            ));
+
+            // Return dengan pesan error
+            return array(
+                'success' => false,
+                'message' => __('Lisensi tidak aktif di server.', 'rental-mobil-wp')
+            );
+        }
+
         // Tanggal kedaluwarsa (periksa kedua format yang mungkin)
         if (isset($response_data['data']['expires_at'])) {
             $options['license_expires'] = $response_data['data']['expires_at'];
@@ -523,8 +823,8 @@ function rental_mobil_verify_license($license_key) {
             $options['license_max_domains'] = $response_data['data']['max_domains'];
         }
 
-        // Simpan status lisensi
-        $options['license_status'] = 'valid';
+        // Simpan kunci lisensi
+        $options['license_key'] = isset($response_data['data']['license_key']) ? $response_data['data']['license_key'] : $license_key;
 
         // Simpan opsi dengan autoload=yes untuk memastikan selalu tersedia
         $update_result = update_option('rental_mobil_options', $options, 'yes');
@@ -533,12 +833,16 @@ function rental_mobil_verify_license($license_key) {
         wp_cache_delete('rental_mobil_options', 'options');
         wp_cache_delete('alloptions', 'options');
 
+        // Verifikasi bahwa status lisensi telah disimpan dengan benar
+        $saved_options = get_option('rental_mobil_options', array(), false);
+
         rental_mobil_license_debug_log('Lisensi valid', array(
             'customer' => isset($options['license_customer']) ? $options['license_customer'] : 'tidak diketahui',
             'expires' => isset($options['license_expires']) ? $options['license_expires'] : 'tidak diketahui',
             'created_at' => isset($options['license_created_at']) ? $options['license_created_at'] : 'tidak diketahui',
             'domain' => parse_url(home_url(), PHP_URL_HOST),
-            'update_result' => $update_result ? 'success' : 'failed'
+            'update_result' => $update_result ? 'success' : 'failed',
+            'saved_status' => isset($saved_options['license_status']) ? $saved_options['license_status'] : 'not set'
         ));
     } else {
         // Jika tidak sukses, simpan status lisensi tidak valid
@@ -552,10 +856,14 @@ function rental_mobil_verify_license($license_key) {
         wp_cache_delete('rental_mobil_options', 'options');
         wp_cache_delete('alloptions', 'options');
 
+        // Verifikasi bahwa status lisensi telah disimpan dengan benar
+        $saved_options = get_option('rental_mobil_options', array(), false);
+
         rental_mobil_license_debug_log('Lisensi tidak valid', array(
             'response' => $response_data,
             'domain' => parse_url(home_url(), PHP_URL_HOST),
-            'update_result' => $update_result ? 'success' : 'failed'
+            'update_result' => $update_result ? 'success' : 'failed',
+            'saved_status' => isset($saved_options['license_status']) ? $saved_options['license_status'] : 'not set'
         ));
     }
 
@@ -698,49 +1006,48 @@ function rental_mobil_deactivate_license($license_key) {
         'api_url' => RENTAL_MOBIL_LICENSE_API_URL
     ));
 
-    // Coba metode GET terlebih dahulu (untuk kompatibilitas dengan plugin WordPress)
+    // Gunakan URL yang benar untuk deaktivasi lisensi
+    // Format: https://verifikasi.tupski.web.id/api/deactivate/?license_key=XXX&domain=XXX
+    $url = RENTAL_MOBIL_LICENSE_API_URL . '/deactivate/';
     $url = add_query_arg(
         array(
             'license_key' => $license_key,
-            'domain' => $domain,
-            'plugin' => 'rental-mobil-wp'
+            'domain' => $domain
         ),
-        RENTAL_MOBIL_LICENSE_API_URL . '/deactivate'
+        $url
     );
 
-    rental_mobil_license_debug_log('Mencoba metode GET untuk deaktivasi', array('url' => $url));
+    rental_mobil_license_debug_log('Mencoba deaktivasi dengan URL', array('url' => $url));
 
+    // Gunakan metode GET untuk deaktivasi
     $response = wp_remote_get($url, array(
         'timeout' => 15,
         'sslverify' => RENTAL_MOBIL_LICENSE_SSL_VERIFY
     ));
 
-    // Jika metode GET gagal, coba metode POST sebagai fallback
-    if (is_wp_error($response)) {
-        rental_mobil_license_debug_log('Metode GET untuk deaktivasi gagal, mencoba metode POST', array(
-            'error' => $response->get_error_message()
-        ));
-
-        $response = wp_remote_post(RENTAL_MOBIL_LICENSE_API_URL . '/deactivate', array(
-            'timeout' => 15,
-            'sslverify' => RENTAL_MOBIL_LICENSE_SSL_VERIFY,
-            'body' => array(
-                'license_key' => $license_key,
-                'domain' => $domain,
-                'plugin' => 'rental-mobil-wp'
-            )
-        ));
-    }
-
     // Cek error
     if (is_wp_error($response)) {
         $error_message = $response->get_error_message();
-        rental_mobil_license_debug_log('Kedua metode deaktivasi gagal', array('error' => $error_message));
+        rental_mobil_license_debug_log('Deaktivasi gagal', array('error' => $error_message));
 
-        return array(
-            'success' => false,
-            'message' => $error_message
-        );
+        // Coba metode alternatif dengan URL yang berbeda
+        $alt_url = 'https://verifikasi.tupski.web.id/api/deactivate/?license_key=' . urlencode($license_key) . '&domain=' . urlencode($domain);
+        rental_mobil_license_debug_log('Mencoba metode alternatif', array('url' => $alt_url));
+
+        $response = wp_remote_get($alt_url, array(
+            'timeout' => 15,
+            'sslverify' => RENTAL_MOBIL_LICENSE_SSL_VERIFY
+        ));
+
+        if (is_wp_error($response)) {
+            $error_message = $response->get_error_message();
+            rental_mobil_license_debug_log('Metode alternatif juga gagal', array('error' => $error_message));
+
+            return array(
+                'success' => false,
+                'message' => $error_message
+            );
+        }
     }
 
     // Dapatkan response body
@@ -757,6 +1064,17 @@ function rental_mobil_deactivate_license($license_key) {
     // Cek response
     if (!isset($response_data['success'])) {
         rental_mobil_license_debug_log('Respons API deaktivasi tidak valid', array('response' => $response_data));
+
+        // Jika respons tidak valid, coba parse respons sebagai string
+        if (strpos($response_body, 'success') !== false) {
+            rental_mobil_license_debug_log('Mencoba parse respons sebagai string', array('body' => $response_body));
+
+            // Jika respons berisi "success", anggap deaktivasi berhasil
+            return array(
+                'success' => true,
+                'message' => __('Lisensi berhasil dinonaktifkan.', 'rental-mobil-wp')
+            );
+        }
 
         return array(
             'success' => false,
@@ -777,17 +1095,61 @@ function rental_mobil_deactivate_license($license_key) {
  * Cek status lisensi
  */
 function rental_mobil_check_license() {
+    // Dapatkan opsi
+    $options = rental_mobil_get_options();
+
+    // Periksa apakah lisensi baru saja dinonaktifkan
+    if (isset($options['license_deactivated']) && $options['license_deactivated'] === 'yes') {
+        // Jika lisensi dinonaktifkan dalam 5 menit terakhir, jangan periksa lagi
+        if (isset($options['license_deactivated_time']) && (time() - $options['license_deactivated_time']) < 300) {
+            rental_mobil_license_debug_log('Melewati pemeriksaan berkala lisensi karena baru saja dinonaktifkan');
+            return;
+        } else {
+            // Jika sudah lebih dari 5 menit, hapus flag deaktivasi
+            unset($options['license_deactivated']);
+            unset($options['license_deactivated_time']);
+            update_option('rental_mobil_options', $options, 'yes');
+
+            // Refresh opsi dari database untuk memastikan konsistensi
+            wp_cache_delete('rental_mobil_options', 'options');
+            wp_cache_delete('alloptions', 'options');
+        }
+    }
+
     // Dapatkan kunci lisensi
     $license_key = rental_mobil_get_license_key();
     $license_status = rental_mobil_get_license_status();
 
-    // Jika tidak ada kunci lisensi atau status tidak valid, tidak perlu cek
-    if (empty($license_key) || $license_status !== 'valid') {
+    // Jika tidak ada kunci lisensi, tidak perlu cek
+    if (empty($license_key)) {
+        // Pastikan status lisensi kosong
+        if (!empty($license_status)) {
+            $options = rental_mobil_get_options();
+            $options['license_status'] = '';
+            update_option('rental_mobil_options', $options, 'yes');
+
+            // Refresh opsi dari database untuk memastikan konsistensi
+            wp_cache_delete('rental_mobil_options', 'options');
+            wp_cache_delete('alloptions', 'options');
+
+            rental_mobil_license_debug_log('Mengosongkan status lisensi dari pengecekan berkala karena kunci lisensi kosong');
+        }
+        return;
+    }
+
+    // Jika status tidak valid, tidak perlu cek
+    if ($license_status !== 'valid') {
         return;
     }
 
     // Verifikasi lisensi
     $response = rental_mobil_verify_license($license_key);
+
+    // Log hasil verifikasi
+    rental_mobil_license_debug_log('Hasil verifikasi lisensi dari pengecekan berkala', array(
+        'response' => $response,
+        'domain' => parse_url(home_url(), PHP_URL_HOST)
+    ));
 
     // Update status lisensi dan semua data terkait
     $options = rental_mobil_get_options();
@@ -818,6 +1180,14 @@ function rental_mobil_check_license() {
             if (isset($response['data']['max_domains'])) {
                 $options['license_max_domains'] = $response['data']['max_domains'];
             }
+
+            // Hapus flag deaktivasi jika ada
+            if (isset($options['license_deactivated'])) {
+                unset($options['license_deactivated']);
+            }
+            if (isset($options['license_deactivated_time'])) {
+                unset($options['license_deactivated_time']);
+            }
         }
     } else {
         $options['license_status'] = 'invalid';
@@ -839,7 +1209,8 @@ function rental_mobil_check_license() {
     // Verifikasi bahwa status lisensi telah disimpan dengan benar
     $saved_options = get_option('rental_mobil_options', array(), false);
     rental_mobil_license_debug_log('Status lisensi setelah pengecekan berkala', array(
-        'saved_status' => isset($saved_options['license_status']) ? $saved_options['license_status'] : 'not set'
+        'saved_status' => isset($saved_options['license_status']) ? $saved_options['license_status'] : 'not set',
+        'saved_key' => isset($saved_options['license_key']) ? $saved_options['license_key'] : 'not set'
     ));
 }
 
@@ -850,6 +1221,38 @@ function rental_mobil_maybe_check_license() {
     // Cek apakah kita berada di halaman pengaturan lisensi
     if (isset($_GET['page']) && $_GET['page'] === 'rental-mobil' &&
         isset($_GET['tab']) && $_GET['tab'] === 'license') {
+
+        // Dapatkan opsi
+        $options = rental_mobil_get_options();
+
+        // Periksa apakah lisensi baru saja dinonaktifkan
+        if (isset($options['license_deactivated']) && $options['license_deactivated'] === 'yes') {
+            // Jika lisensi dinonaktifkan dalam 5 menit terakhir, jangan periksa lagi
+            if (isset($options['license_deactivated_time']) && (time() - $options['license_deactivated_time']) < 300) {
+                rental_mobil_license_debug_log('Melewati pemeriksaan lisensi dari halaman pengaturan karena baru saja dinonaktifkan');
+
+                // Pastikan status lisensi kosong
+                if (!empty($options['license_status'])) {
+                    $options['license_status'] = '';
+                    update_option('rental_mobil_options', $options, 'yes');
+
+                    // Refresh opsi dari database untuk memastikan konsistensi
+                    wp_cache_delete('rental_mobil_options', 'options');
+                    wp_cache_delete('alloptions', 'options');
+                }
+
+                return;
+            } else {
+                // Jika sudah lebih dari 5 menit, hapus flag deaktivasi
+                unset($options['license_deactivated']);
+                unset($options['license_deactivated_time']);
+                update_option('rental_mobil_options', $options, 'yes');
+
+                // Refresh opsi dari database untuk memastikan konsistensi
+                wp_cache_delete('rental_mobil_options', 'options');
+                wp_cache_delete('alloptions', 'options');
+            }
+        }
 
         // Dapatkan kunci lisensi
         $license_key = rental_mobil_get_license_key();
@@ -875,16 +1278,44 @@ function rental_mobil_maybe_check_license() {
 
             if ($response['success']) {
                 $options['license_status'] = 'valid';
+
+                // Hapus flag deaktivasi jika ada
+                if (isset($options['license_deactivated'])) {
+                    unset($options['license_deactivated']);
+                }
+                if (isset($options['license_deactivated_time'])) {
+                    unset($options['license_deactivated_time']);
+                }
             } else {
                 $options['license_status'] = 'invalid';
             }
 
             // Simpan opsi dengan autoload=yes untuk memastikan selalu tersedia
-            update_option('rental_mobil_options', $options, 'yes');
+            $update_result = update_option('rental_mobil_options', $options, 'yes');
 
             // Refresh opsi dari database untuk memastikan konsistensi
             wp_cache_delete('rental_mobil_options', 'options');
             wp_cache_delete('alloptions', 'options');
+
+            // Verifikasi bahwa status lisensi telah disimpan dengan benar
+            $saved_options = get_option('rental_mobil_options', array(), false);
+            rental_mobil_license_debug_log('Status lisensi setelah pengecekan dari halaman pengaturan', array(
+                'saved_status' => isset($saved_options['license_status']) ? $saved_options['license_status'] : 'not set',
+                'saved_key' => isset($saved_options['license_key']) ? $saved_options['license_key'] : 'not set'
+            ));
+        } else {
+            // Jika tidak ada kunci lisensi, pastikan status lisensi kosong
+            $options = rental_mobil_get_options();
+            if (!empty($options['license_status'])) {
+                $options['license_status'] = '';
+                update_option('rental_mobil_options', $options, 'yes');
+
+                // Refresh opsi dari database untuk memastikan konsistensi
+                wp_cache_delete('rental_mobil_options', 'options');
+                wp_cache_delete('alloptions', 'options');
+
+                rental_mobil_license_debug_log('Mengosongkan status lisensi dari halaman pengaturan karena kunci lisensi kosong');
+            }
         }
     }
 }
@@ -893,18 +1324,70 @@ function rental_mobil_maybe_check_license() {
  * Cek apakah lisensi valid
  */
 function rental_mobil_is_license_valid() {
-    // Hapus cache opsi untuk memastikan data terbaru
+    // Pembersihan cache yang agresif
     wp_cache_delete('rental_mobil_options', 'options');
     wp_cache_delete('alloptions', 'options');
+    wp_cache_flush();
 
     // Dapatkan opsi langsung dari database dengan force refresh
-    $options = get_option('rental_mobil_options', array(), false);
+    global $wpdb;
+    $option_name = 'rental_mobil_options';
+
+    // Dapatkan nilai opsi langsung dari database
+    $option_value = $wpdb->get_var($wpdb->prepare(
+        "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1",
+        $option_name
+    ));
+
+    if (empty($option_value)) {
+        rental_mobil_license_debug_log('Opsi rental_mobil_options tidak ditemukan di database');
+        return false;
+    }
+
+    // Unserialize nilai opsi
+    $options = maybe_unserialize($option_value);
+
+    if (!is_array($options)) {
+        rental_mobil_license_debug_log('Opsi rental_mobil_options bukan array yang valid');
+        return false;
+    }
+
+    // Log opsi untuk debugging
+    rental_mobil_license_debug_log('Opsi rental_mobil_options dari database', array(
+        'has_license_key' => isset($options['license_key']) ? 'yes' : 'no',
+        'has_license_status' => isset($options['license_status']) ? 'yes' : 'no',
+        'license_key_empty' => isset($options['license_key']) && empty($options['license_key']) ? 'yes' : 'no',
+        'license_status_valid' => isset($options['license_status']) && $options['license_status'] === 'valid' ? 'yes' : 'no'
+    ));
+
+    // Periksa apakah lisensi baru saja dinonaktifkan
+    if (isset($options['license_deactivated']) && $options['license_deactivated'] === 'yes') {
+        // Jika lisensi dinonaktifkan, anggap tidak valid
+        rental_mobil_license_debug_log('Lisensi dianggap tidak valid karena baru saja dinonaktifkan');
+        return false;
+    }
+
+    // Periksa apakah kunci lisensi kosong
+    $license_key = isset($options['license_key']) ? $options['license_key'] : '';
+    if (empty($license_key)) {
+        rental_mobil_license_debug_log('Lisensi dianggap tidak valid karena kunci lisensi kosong');
+        return false;
+    }
+
     $license_status = isset($options['license_status']) ? $options['license_status'] : '';
 
-    // Log status lisensi untuk debugging
-    if (defined('RENTAL_MOBIL_LICENSE_DEBUG') && RENTAL_MOBIL_LICENSE_DEBUG) {
-        error_log('Rental Mobil - Is License Valid Check: ' . ($license_status === 'valid' ? 'yes' : 'no') . ' (status: ' . $license_status . ')');
+    // Jika status lisensi kosong, anggap tidak valid
+    if (empty($license_status)) {
+        rental_mobil_license_debug_log('Lisensi dianggap tidak valid karena status lisensi kosong');
+        return false;
     }
+
+    // Log status lisensi untuk debugging
+    rental_mobil_license_debug_log('Pemeriksaan status lisensi', array(
+        'license_key' => $license_key,
+        'license_status' => $license_status,
+        'is_valid' => $license_status === 'valid' ? 'yes' : 'no'
+    ));
 
     return $license_status === 'valid';
 }
@@ -966,19 +1449,54 @@ function rental_mobil_license_debug_log($message, $data = array()) {
     $log_entry = '[' . date('Y-m-d H:i:s') . '] ' . $message;
 
     if (!empty($data)) {
+        // Sanitasi data sensitif
+        $sanitized_data = $data;
+
         // Sembunyikan kunci lisensi dalam log
-        if (isset($data['license_key'])) {
-            $license_key = $data['license_key'];
+        if (isset($sanitized_data['license_key'])) {
+            $license_key = $sanitized_data['license_key'];
             if (strlen($license_key) > 4) {
-                $data['license_key'] = str_repeat('*', strlen($license_key) - 4) . substr($license_key, -4);
+                $sanitized_data['license_key'] = '****-****-****-' . substr($license_key, -4);
+            }
+        }
+
+        // Sanitasi data POST
+        if (isset($sanitized_data['post_data']) && isset($sanitized_data['post_data']['license_key'])) {
+            $license_key = $sanitized_data['post_data']['license_key'];
+            if (strlen($license_key) > 4) {
+                $sanitized_data['post_data']['license_key'] = '****-****-****-' . substr($license_key, -4);
+            }
+        }
+
+        // Sanitasi data respons
+        if (isset($sanitized_data['response']) && isset($sanitized_data['response']['data']) && isset($sanitized_data['response']['data']['license_key'])) {
+            $license_key = $sanitized_data['response']['data']['license_key'];
+            if (strlen($license_key) > 4) {
+                $sanitized_data['response']['data']['license_key'] = '****-****-****-' . substr($license_key, -4);
+            }
+        }
+
+        // Sanitasi data opsi
+        if (isset($sanitized_data['options']) && isset($sanitized_data['options']['license_key'])) {
+            $license_key = $sanitized_data['options']['license_key'];
+            if (strlen($license_key) > 4) {
+                $sanitized_data['options']['license_key'] = '****-****-****-' . substr($license_key, -4);
+            }
+        }
+
+        // Sanitasi data saved_key
+        if (isset($sanitized_data['saved_key'])) {
+            $license_key = $sanitized_data['saved_key'];
+            if (strlen($license_key) > 4) {
+                $sanitized_data['saved_key'] = '****-****-****-' . substr($license_key, -4);
             }
         }
 
         // Encode data sebagai JSON
-        $json_data = json_encode($data, JSON_PRETTY_PRINT);
+        $json_data = json_encode($sanitized_data, JSON_PRETTY_PRINT);
         if ($json_data === false) {
             // Jika gagal encode, gunakan var_export
-            $json_data = var_export($data, true);
+            $json_data = var_export($sanitized_data, true);
         }
 
         $log_entry .= ' | Data: ' . $json_data;
@@ -1001,4 +1519,7 @@ function rental_mobil_license_debug_log($message, $data = array()) {
         // Jika gagal menulis ke file, coba tulis ke error log PHP
         error_log('Rental Mobil License Debug: ' . $log_entry);
     }
+
+    // Selalu log ke error_log untuk debugging lebih mudah
+    error_log('RENTAL MOBIL LICENSE: ' . $message);
 }

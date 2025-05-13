@@ -161,9 +161,80 @@ function rental_mobil_register_settings() {
 function rental_mobil_documentation_section_callback() {
     $plugin_data = get_plugin_data(RENTAL_MOBIL_PLUGIN_FILE);
     $version = $plugin_data['Version'];
+    $license_status = rental_mobil_get_license_status();
+    $status_text = '';
+    $status_class = '';
+    $domain = parse_url(home_url(), PHP_URL_HOST);
+
+    if (empty($license_status)) {
+        $status_text = __('Tidak Aktif', 'rental-mobil-wp');
+        $status_class = 'rental-mobil-license-inactive';
+    } elseif ($license_status === 'valid') {
+        $status_text = __('Aktif', 'rental-mobil-wp');
+        $status_class = 'rental-mobil-license-active';
+    } elseif ($license_status === 'invalid') {
+        $status_text = __('Lisensi Salah', 'rental-mobil-wp');
+        $status_class = 'rental-mobil-license-invalid';
+    } elseif ($license_status === 'expired') {
+        $status_text = __('Kadaluarsa', 'rental-mobil-wp');
+        $status_class = 'rental-mobil-license-expired';
+    }
+
+    echo '<style>
+        .rental-mobil-version {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .rental-mobil-license-badge-doc {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: normal;
+        }
+        .rental-mobil-license-active-doc {
+            background-color: #46b450;
+            color: white;
+        }
+        .rental-mobil-license-inactive-doc {
+            background-color: #dc3232;
+            color: white;
+        }
+        .rental-mobil-buy-license {
+            margin-top: 10px;
+        }
+        .rental-mobil-buy-license .button {
+            background-color: #0073aa;
+            border-color: #0073aa;
+            color: white;
+        }
+        .rental-mobil-buy-license .button:hover {
+            background-color: #005f8a;
+            border-color: #005f8a;
+        }
+    </style>';
 
     echo '<div class="rental-mobil-documentation">';
-    echo '<div class="rental-mobil-version"><strong>' . __('Versi Plugin:', 'rental-mobil-wp') . '</strong> ' . esc_html($version) . '</div>';
+    echo '<div class="rental-mobil-version"><strong>' . __('Versi Plugin:', 'rental-mobil-wp') . '</strong> ' . esc_html($version) . ' <span class="rental-mobil-license-badge-doc rental-mobil-license-' . esc_attr($status_class) . '-doc">' . esc_html($status_text) . '</span></div>';
+
+    // Tampilkan tombol beli lisensi jika status tidak aktif
+    if ($license_status !== 'valid') {
+        $whatsapp_message = 'Halo, saya ingin membeli lisensi plugin Rental Mobil WP dengan detail berikut:' . "\n\n";
+        $whatsapp_message .= 'Nama: ' . "\n";
+        $whatsapp_message .= 'No HP/WhatsApp: ' . "\n";
+        $whatsapp_message .= 'Email Aktif: ' . "\n";
+        $whatsapp_message .= 'Nama Domain: ' . $domain . "\n";
+        $whatsapp_message .= 'Durasi: ' . "\n\n";
+        $whatsapp_message .= 'Harga paket: 65ribu per bulan, atau 500rb per tahun.';
+
+        $whatsapp_url = 'https://wa.me/6282211219993?text=' . urlencode($whatsapp_message);
+
+        echo '<div class="rental-mobil-buy-license">';
+        echo '<a href="' . esc_url($whatsapp_url) . '" class="button button-primary" target="_blank">' . __('Beli Lisensi', 'rental-mobil-wp') . '</a>';
+        echo '</div>';
+    }
 
     echo '<h3>' . __('Penggunaan Shortcode', 'rental-mobil-wp') . '</h3>';
     echo '<div class="rental-mobil-shortcode-docs">';
@@ -230,6 +301,9 @@ function rental_mobil_license_key_callback() {
     $license_key = isset($options['license_key']) ? $options['license_key'] : '';
     $license_status = rental_mobil_get_license_status();
 
+    // Log untuk debugging
+    error_log('License Key Callback - Key: ' . $license_key . ', Status: ' . $license_status);
+
     if ($license_status === 'valid') {
         // Jika lisensi valid, tampilkan hanya 4 karakter terakhir
         $masked_key = '';
@@ -239,28 +313,33 @@ function rental_mobil_license_key_callback() {
             $masked_key = $license_key;
         }
         ?>
-        <input type="text" id="license_key" name="rental_mobil_options[license_key]" value="<?php echo esc_attr($masked_key); ?>" class="regular-text" disabled>
-        <input type="hidden" name="rental_mobil_options[license_key]" value="<?php echo esc_attr($license_key); ?>">
+        <input type="text" id="license_key" value="<?php echo esc_attr($masked_key); ?>" class="regular-text" disabled>
+        <input type="hidden" id="license_key_hidden" name="rental_mobil_options[license_key]" value="<?php echo esc_attr($license_key); ?>">
         <div class="rental-mobil-license-buttons">
             <?php
             echo '<button type="button" id="rental-mobil-deactivate-license" class="button button-secondary">' . __('Nonaktifkan Lisensi', 'rental-mobil-wp') . '</button>';
-            echo '<button type="button" id="rental-mobil-check-license" class="button button-secondary">' . __('Periksa Status Lisensi', 'rental-mobil-wp') . '</button>';
             ?>
         </div>
         <?php
     } else {
         // Jika lisensi tidak valid, tampilkan field untuk input lisensi
         ?>
-        <input type="text" id="license_key" name="rental_mobil_options[license_key]" value="<?php echo esc_attr($license_key); ?>" class="regular-text">
+        <input type="text" id="license_key" value="<?php echo esc_attr($license_key); ?>" class="regular-text" placeholder="RM-WP-XXXX-XXXX-XXXX-XXXX">
+        <input type="hidden" id="license_key_hidden" name="rental_mobil_options[license_key]" value="<?php echo esc_attr($license_key); ?>">
         <p class="description"><?php _e('Masukkan kunci lisensi yang Anda dapatkan saat membeli plugin.', 'rental-mobil-wp'); ?></p>
         <div class="rental-mobil-license-buttons">
             <?php
-            echo '<button type="button" id="rental-mobil-activate-license" class="button button-secondary">' . __('Aktivasi Lisensi', 'rental-mobil-wp') . '</button>';
-            if (!empty($license_key)) {
-                echo '<button type="button" id="rental-mobil-check-license" class="button button-secondary">' . __('Periksa Status Lisensi', 'rental-mobil-wp') . '</button>';
-            }
+            echo '<button type="button" id="rental-mobil-activate-license" class="button button-primary">' . __('Aktivasi Lisensi', 'rental-mobil-wp') . '</button>';
             ?>
         </div>
+        <script>
+            // Update hidden input saat nilai input berubah
+            jQuery(document).ready(function($) {
+                $('#license_key').on('input', function() {
+                    $('#license_key_hidden').val($(this).val());
+                });
+            });
+        </script>
         <?php
     }
 }
@@ -291,45 +370,119 @@ function rental_mobil_license_status_callback() {
     echo '<div class="rental-mobil-license-status ' . esc_attr($status_class) . '">' . esc_html($status_text) . '</div>';
 
     if ($license_status === 'valid') {
+        // Tambahkan style untuk border
+        echo '<style>
+            .rental-mobil-license-details {
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 15px;
+                margin-top: 15px;
+                background-color: #f9f9f9;
+            }
+            .rental-mobil-license-details h3 {
+                margin-top: 0;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 10px;
+            }
+            .rental-mobil-license-badge {
+                background-color: #46b450;
+                color: white;
+                padding: 3px 8px;
+                border-radius: 3px;
+                font-size: 12px;
+                font-weight: normal;
+            }
+            .rental-mobil-license-expired {
+                color: #dc3232;
+                font-weight: bold;
+            }
+            .rental-mobil-extend-button {
+                margin-top: 15px;
+            }
+            .rental-mobil-extend-button .button {
+                background-color: #46b450;
+                border-color: #46b450;
+                color: white;
+            }
+            .rental-mobil-extend-button .button:hover {
+                background-color: #389e42;
+                border-color: #389e42;
+            }
+        </style>';
+
         // Tampilkan detail lisensi jika aktif
         echo '<div class="rental-mobil-license-details">';
         echo '<h3>' . __('Detail Lisensi', 'rental-mobil-wp') . '</h3>';
-
-        // Nama pelanggan
-        $customer_name = isset($options['license_customer']) ? $options['license_customer'] : '';
-        if (!empty($customer_name)) {
-            echo '<p><strong>' . __('Nama Pelanggan:', 'rental-mobil-wp') . '</strong> ' . esc_html($customer_name) . '</p>';
-        }
 
         // Domain terdaftar
         $domain = parse_url(home_url(), PHP_URL_HOST);
         echo '<p><strong>' . __('Domain Terdaftar:', 'rental-mobil-wp') . '</strong> ' . esc_html($domain) . '</p>';
 
+        // Jumlah domain
+        $domain_count = isset($options['license_domain_count']) ? intval($options['license_domain_count']) : 0;
+        $max_domains = isset($options['license_max_domains']) ? intval($options['license_max_domains']) : 1;
+        echo '<p><strong>' . __('Lisensi untuk:', 'rental-mobil-wp') . '</strong> ' . esc_html($max_domains) . ' ' . __('Domain', 'rental-mobil-wp') . ' (' . __('digunakan', 'rental-mobil-wp') . ' ' . esc_html($domain_count) . '/' . esc_html($max_domains) . ' ' . __('Domain', 'rental-mobil-wp') . ')</p>';
+
         // Status dengan badge
         echo '<p><strong>' . __('Status:', 'rental-mobil-wp') . '</strong> <span class="rental-mobil-license-badge">' . __('Aktif', 'rental-mobil-wp') . '</span></p>';
 
-        // Tanggal lisensi dibuat (jika tersedia)
-        if (isset($options['license_created_at']) && !empty($options['license_created_at'])) {
-            echo '<p><strong>' . __('Tanggal Lisensi Dibuat:', 'rental-mobil-wp') . '</strong> ' . esc_html($options['license_created_at']) . '</p>';
+        // Nama pelanggan
+        $customer_name = isset($options['license_customer']) ? $options['license_customer'] : '';
+        if (!empty($customer_name)) {
+            echo '<p><strong>' . __('Lisensi untuk:', 'rental-mobil-wp') . '</strong> ' . esc_html($customer_name) . '</p>';
         }
 
         // Tanggal kedaluwarsa
         $license_expires = rental_mobil_get_license_expires();
         if (!empty($license_expires)) {
-            echo '<p><strong>' . __('Tanggal Kedaluwarsa:', 'rental-mobil-wp') . '</strong> ' . esc_html($license_expires) . '</p>';
+            // Format tanggal dalam bahasa Indonesia
+            $expires_date = new DateTime($license_expires);
+            $months_id = array(
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            );
+            $formatted_date = $expires_date->format('j') . ' ' . $months_id[$expires_date->format('n') - 1] . ' ' . $expires_date->format('Y');
 
-            // Hitung sisa hari
+            echo '<p><strong>' . __('Tanggal Kedaluwarsa:', 'rental-mobil-wp') . '</strong> ' . esc_html($formatted_date) . '</p>';
+
+            // Hitung sisa waktu
             $today = new DateTime();
             $expires = new DateTime($license_expires);
             $interval = $today->diff($expires);
-            $days_remaining = $interval->days;
 
             if ($expires > $today) {
-                echo '<p><strong>' . __('Sisa Hari:', 'rental-mobil-wp') . '</strong> ' . $days_remaining . ' ' . __('hari', 'rental-mobil-wp') . '</p>';
+                $remaining_text = '';
+
+                if ($interval->y > 0) {
+                    $remaining_text .= $interval->y . ' ' . __('tahun', 'rental-mobil-wp') . ' ';
+                }
+
+                if ($interval->m > 0) {
+                    $remaining_text .= $interval->m . ' ' . __('bulan', 'rental-mobil-wp') . ' ';
+                }
+
+                if ($interval->d > 0 || ($interval->y == 0 && $interval->m == 0)) {
+                    $remaining_text .= $interval->d . ' ' . __('hari', 'rental-mobil-wp');
+                }
+
+                echo '<p><strong>' . __('Berakhir dalam:', 'rental-mobil-wp') . '</strong> ' . trim($remaining_text) . '</p>';
             } else {
-                echo '<p><strong>' . __('Sisa Hari:', 'rental-mobil-wp') . '</strong> <span class="rental-mobil-license-expired">0 ' . __('hari (kedaluwarsa)', 'rental-mobil-wp') . '</span></p>';
+                echo '<p><strong>' . __('Berakhir dalam:', 'rental-mobil-wp') . '</strong> <span class="rental-mobil-license-expired">' . __('Lisensi telah kedaluwarsa', 'rental-mobil-wp') . '</span></p>';
             }
         }
+
+        // Tombol perpanjang lisensi
+        $whatsapp_message = 'Halo, saya ingin memperpanjang lisensi plugin Rental Mobil WP dengan detail berikut:' . "\n\n";
+        $whatsapp_message .= 'Domain: ' . $domain . "\n";
+        $whatsapp_message .= 'Nama Pelanggan: ' . $customer_name . "\n";
+        $whatsapp_message .= 'Tanggal Kedaluwarsa: ' . $license_expires . "\n\n";
+        $whatsapp_message .= 'Mohon informasi untuk perpanjangan lisensi. Terima kasih.';
+
+        $whatsapp_url = 'https://wa.me/6282211219993?text=' . urlencode($whatsapp_message);
+
+        echo '<div class="rental-mobil-extend-button">';
+        echo '<a href="' . esc_url($whatsapp_url) . '" id="rental-mobil-extend-license" class="button button-primary">' . __('Perpanjang Lisensi', 'rental-mobil-wp') . '</a>';
+        echo '</div>';
 
         echo '</div>';
     } else {
@@ -337,10 +490,10 @@ function rental_mobil_license_status_callback() {
         echo '<div class="rental-mobil-license-message">';
         echo '<p>' . __('Butuh lisensi untuk plugin Rental Mobil WP?', 'rental-mobil-wp') . '</p>';
         echo '<p>' . sprintf(
-            __('Hubungi WhatsApp <a href="%s" target="_blank">0822-1121-9993</a> atau <a href="%s" target="_blank">0819-1191-9993</a>', 'rental-mobil-wp'),
-            'https://wa.me/6282211219993?text=Halo,%20saya%20ingin%20membeli%20lisensi%20plugin%20Rental%20Mobil%20WP%20untuk%20domain%20' . urlencode($domain),
-            'https://wa.me/6281911919993?text=Halo,%20saya%20ingin%20membeli%20lisensi%20plugin%20Rental%20Mobil%20WP%20untuk%20domain%20' . urlencode($domain)
+            __('Hubungi WhatsApp <a href="%s" target="_blank">0822-1121-9993</a>', 'rental-mobil-wp'),
+            'https://wa.me/6282211219993?text=Halo,%20saya%20ingin%20membeli%20lisensi%20plugin%20Rental%20Mobil%20WP%20untuk%20domain%20' . urlencode($domain) . '%0A%0AHarga%20paket:%2065ribu%20per%20bulan,%20atau%20500rb%20per%20tahun.'
         ) . '</p>';
+        echo '<p>' . __('Harga paket: 65ribu per bulan, atau 500rb per tahun.', 'rental-mobil-wp') . '</p>';
         echo '</div>';
     }
 }
@@ -922,7 +1075,43 @@ function rental_mobil_get_homepage_vehicles() {
  * Get license key
  */
 function rental_mobil_get_license_key() {
-    $options = rental_mobil_get_options();
+    // Pembersihan cache yang agresif
+    wp_cache_delete('rental_mobil_options', 'options');
+    wp_cache_delete('alloptions', 'options');
+    wp_cache_flush();
+
+    // Dapatkan opsi langsung dari database dengan force refresh
+    global $wpdb;
+    $option_name = 'rental_mobil_options';
+
+    // Dapatkan nilai opsi langsung dari database
+    $option_value = $wpdb->get_var($wpdb->prepare(
+        "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1",
+        $option_name
+    ));
+
+    if (empty($option_value)) {
+        if (defined('RENTAL_MOBIL_LICENSE_DEBUG') && RENTAL_MOBIL_LICENSE_DEBUG) {
+            error_log('Rental Mobil - Get License Key: Opsi rental_mobil_options tidak ditemukan di database');
+        }
+        return '';
+    }
+
+    // Unserialize nilai opsi
+    $options = maybe_unserialize($option_value);
+
+    if (!is_array($options)) {
+        if (defined('RENTAL_MOBIL_LICENSE_DEBUG') && RENTAL_MOBIL_LICENSE_DEBUG) {
+            error_log('Rental Mobil - Get License Key: Opsi rental_mobil_options bukan array yang valid');
+        }
+        return '';
+    }
+
+    // Log untuk debugging
+    if (defined('RENTAL_MOBIL_LICENSE_DEBUG') && RENTAL_MOBIL_LICENSE_DEBUG) {
+        error_log('Rental Mobil - Get License Key: ' . (isset($options['license_key']) ? substr($options['license_key'], 0, 4) . '...' . substr($options['license_key'], -4) : 'empty'));
+    }
+
     return isset($options['license_key']) ? $options['license_key'] : '';
 }
 
