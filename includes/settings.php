@@ -138,6 +138,15 @@ function rental_mobil_register_settings() {
         'rental_mobil_style_section'
     );
 
+    // Pengaturan Posisi Ikon Filter di Mobile
+    add_settings_field(
+        'filter_icon_position',
+        __('Posisi Ikon Filter di Mobile', 'rental-mobil-wp'),
+        'rental_mobil_filter_icon_position_callback',
+        'rental_mobil_style',
+        'rental_mobil_style_section'
+    );
+
     // Tab Homepage
     add_settings_section(
         'rental_mobil_homepage_section',
@@ -699,6 +708,23 @@ function rental_mobil_filter_options_callback() {
 }
 
 /**
+ * Filter icon position field callback
+ */
+function rental_mobil_filter_icon_position_callback() {
+    $options = rental_mobil_get_options();
+    $filter_icon_position = isset($options['filter_icon_position']) ? $options['filter_icon_position'] : 'bottom-right';
+    ?>
+    <select id="filter_icon_position" name="rental_mobil_options[filter_icon_position]">
+        <option value="bottom-right" <?php selected($filter_icon_position, 'bottom-right'); ?>><?php _e('Kanan Bawah', 'rental-mobil-wp'); ?></option>
+        <option value="bottom-left" <?php selected($filter_icon_position, 'bottom-left'); ?>><?php _e('Kiri Bawah', 'rental-mobil-wp'); ?></option>
+        <option value="middle-right" <?php selected($filter_icon_position, 'middle-right'); ?>><?php _e('Tengah Kanan', 'rental-mobil-wp'); ?></option>
+        <option value="middle-left" <?php selected($filter_icon_position, 'middle-left'); ?>><?php _e('Tengah Kiri', 'rental-mobil-wp'); ?></option>
+    </select>
+    <p class="description"><?php _e('Pilih posisi ikon filter pada tampilan mobile.', 'rental-mobil-wp'); ?></p>
+    <?php
+}
+
+/**
  * Homepage vehicles field callback
  */
 function rental_mobil_homepage_vehicles_callback() {
@@ -801,6 +827,12 @@ function rental_mobil_validate_options($input) {
         $output['filter_options'] = array_map('sanitize_text_field', $input['filter_options']);
     } else {
         $output['filter_options'] = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun');
+    }
+
+    // Sanitize filter icon position
+    if (isset($input['filter_icon_position'])) {
+        $valid_positions = array('bottom-right', 'bottom-left', 'middle-right', 'middle-left');
+        $output['filter_icon_position'] = in_array($input['filter_icon_position'], $valid_positions) ? $input['filter_icon_position'] : 'bottom-right';
     }
 
     // Sanitize homepage vehicles
@@ -1044,6 +1076,14 @@ function rental_mobil_get_filter_options() {
 }
 
 /**
+ * Get filter icon position
+ */
+function rental_mobil_get_filter_icon_position() {
+    $options = rental_mobil_get_options();
+    return isset($options['filter_icon_position']) ? $options['filter_icon_position'] : 'bottom-right';
+}
+
+/**
  * Get style settings
  */
 function rental_mobil_get_style_settings() {
@@ -1223,6 +1263,7 @@ function rental_mobil_save_settings_ajax() {
  */
 function rental_mobil_get_custom_css() {
     $style_settings = rental_mobil_get_style_settings();
+    $filter_icon_position = rental_mobil_get_filter_icon_position();
 
     // Get values from settings
     $button_color = $style_settings['button_color'];
@@ -1242,6 +1283,16 @@ function rental_mobil_get_custom_css() {
         $shadow_value = '0 4px 8px rgba(0, 0, 0, 0.15)';
     } elseif ($card_shadow === 'none') {
         $shadow_value = 'none';
+    }
+
+    // Set posisi ikon filter
+    $filter_position = 'bottom: 20px; right: 20px;';
+    if ($filter_icon_position === 'bottom-left') {
+        $filter_position = 'bottom: 20px; left: 20px;';
+    } elseif ($filter_icon_position === 'middle-right') {
+        $filter_position = 'top: 50%; right: 20px; transform: translateY(-50%);';
+    } elseif ($filter_icon_position === 'middle-left') {
+        $filter_position = 'top: 50%; left: 20px; transform: translateY(-50%);';
     }
 
     // Generate CSS
@@ -1270,6 +1321,9 @@ function rental_mobil_get_custom_css() {
     .rental-mobil-filter-toggle {
         background-color: {$button_color};
         border-radius: 50%;
+        position: fixed;
+        {$filter_position}
+        z-index: 999;
     }
 
     .rental-mobil-filter-toggle:hover {
@@ -1295,6 +1349,17 @@ function rental_mobil_get_custom_css() {
 
     .rental-mobil-floating-booking:hover {
         background-color: {$button_hover_color};
+    }
+
+    /* Perbaikan untuk modal agar tidak tertutup menu sticky */
+    .rental-mobil-modal-content {
+        margin-top: 100px;
+    }
+
+    @media (max-width: 768px) {
+        .rental-mobil-modal-content {
+            margin-top: 70px;
+        }
     }
     ";
 

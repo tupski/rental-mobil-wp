@@ -4,7 +4,7 @@ Donate link: https://trakteer.id/tupski/tip
 Tags: car rental, rental, booking, whatsapp, mobil
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.4.2
+Stable tag: 1.4.4
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -85,6 +85,23 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 
 == Changelog ==
 
+= 1.4.4 =
+* Menambahkan pengaturan posisi ikon filter di mobile (kanan bawah, kiri bawah, tengah kanan, tengah kiri)
+* Memperbaiki padding/margin atas untuk modal agar tidak tertutup menu sticky
+* Menyederhanakan tombol filter dengan tampilan yang lebih ringkas
+* Perbaikan tampilan responsif untuk berbagai ukuran layar
+* Optimasi CSS untuk performa yang lebih baik
+
+= 1.4.3 =
+* Perbaikan bug pada tampilan filter di perangkat mobile
+* Peningkatan kompatibilitas dengan tema WordPress terbaru
+* Optimasi performa dan perbaikan minor
+
+= 1.4.2 =
+* Perbaikan bug pada tampilan quick view
+* Peningkatan kompatibilitas dengan WordPress 6.8
+* Optimasi performa dan perbaikan minor
+
 = 1.4.1 =
 * Perbaikan tampilan quick view pada perangkat mobile
 * Menambahkan fitur zoom pada galeri foto di quick view
@@ -146,6 +163,15 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 * Rilis pertama
 
 == Upgrade Notice ==
+
+= 1.4.4 =
+Peningkatan UI dengan pengaturan posisi ikon filter yang dapat dikonfigurasi, perbaikan modal agar tidak tertutup menu sticky, dan tombol filter yang lebih ringkas.
+
+= 1.4.3 =
+Perbaikan bug pada tampilan filter di perangkat mobile dan peningkatan kompatibilitas dengan tema WordPress terbaru.
+
+= 1.4.2 =
+Perbaikan bug pada tampilan quick view dan peningkatan kompatibilitas dengan WordPress 6.8.
 
 = 1.4.1 =
 Perbaikan tampilan quick view pada perangkat mobile, menambahkan fitur zoom pada galeri foto, fitur pencarian dengan AJAX dan autocomplete, serta layout baru dengan filter di sebelah kiri.

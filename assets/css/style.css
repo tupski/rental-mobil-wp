@@ -514,6 +514,8 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
+    padding: 8px 15px;
+    font-size: 14px;
 }
 
 .rental-mobil-button-reset {

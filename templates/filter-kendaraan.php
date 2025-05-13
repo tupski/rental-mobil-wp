@@ -137,10 +137,10 @@ $tahun_terms = in_array('tahun', $filter_options) ? get_terms(array(
 
         <div class="rental-mobil-filter-actions">
             <button type="submit" class="rental-mobil-button rental-mobil-button-filter">
-                <span class="dashicons dashicons-filter"></span> <?php _e('Terapkan Filter', 'rental-mobil-wp'); ?>
+                <span class="dashicons dashicons-filter"></span> <?php _e('Terapkan', 'rental-mobil-wp'); ?>
             </button>
             <button type="button" id="rental-mobil-reset-filter" class="rental-mobil-button rental-mobil-button-reset">
-                <span class="dashicons dashicons-dismiss"></span> <?php _e('Reset Filter', 'rental-mobil-wp'); ?>
+                <span class="dashicons dashicons-dismiss"></span> <?php _e('Reset', 'rental-mobil-wp'); ?>
             </button>
         </div>
     </form>
