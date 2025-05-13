@@ -13,6 +13,11 @@ if (!defined('WPINC')) {
  */
 add_shortcode('daftar_kendaraan', 'rental_mobil_daftar_shortcode');
 function rental_mobil_daftar_shortcode($atts) {
+    // Cek lisensi
+    if (!rental_mobil_is_license_valid()) {
+        return rental_mobil_license_notice();
+    }
+
     $atts = shortcode_atts(array(
         'jumlah' => -1,
         'merk' => '',
@@ -54,6 +59,11 @@ function rental_mobil_daftar_shortcode($atts) {
  */
 add_shortcode('detail_kendaraan', 'rental_mobil_detail_shortcode');
 function rental_mobil_detail_shortcode($atts) {
+    // Cek lisensi
+    if (!rental_mobil_is_license_valid()) {
+        return rental_mobil_license_notice();
+    }
+
     $atts = shortcode_atts(array(
         'id' => 0,
     ), $atts, 'detail_kendaraan');
@@ -98,6 +108,11 @@ function rental_mobil_detail_shortcode($atts) {
  */
 add_shortcode('kendaraan_unggulan', 'rental_mobil_unggulan_shortcode');
 function rental_mobil_unggulan_shortcode($atts) {
+    // Cek lisensi
+    if (!rental_mobil_is_license_valid()) {
+        return rental_mobil_license_notice();
+    }
+
     $atts = shortcode_atts(array(
         'jumlah' => 5,
         'tipe' => 'featured', // 'featured' atau 'popular'
@@ -133,6 +148,11 @@ function rental_mobil_unggulan_shortcode($atts) {
  */
 add_shortcode('kendaraan_pilihan', 'rental_mobil_pilihan_shortcode');
 function rental_mobil_pilihan_shortcode($atts) {
+    // Cek lisensi
+    if (!rental_mobil_is_license_valid()) {
+        return rental_mobil_license_notice();
+    }
+
     $atts = shortcode_atts(array(
         'judul' => __('Kendaraan Pilihan', 'rental-mobil-wp'),
         'jumlah' => -1,
@@ -192,4 +212,17 @@ function rental_mobil_pilihan_shortcode($atts) {
 
     // Ambil output buffering dan kembalikan
     return ob_get_clean();
+}
+
+/**
+ * Fungsi untuk menampilkan pesan lisensi tidak valid
+ */
+function rental_mobil_license_notice() {
+    $message = '<div class="rental-mobil-license-notice">';
+    $message .= '<h3>' . __('Lisensi Tidak Valid', 'rental-mobil-wp') . '</h3>';
+    $message .= '<p>' . __('Plugin Rental Mobil WP memerlukan lisensi yang valid untuk berfungsi. Silakan aktivasi lisensi Anda di halaman pengaturan plugin.', 'rental-mobil-wp') . '</p>';
+    $message .= '<p><a href="' . admin_url('admin.php?page=rental-mobil&tab=license') . '" class="button button-primary">' . __('Aktivasi Lisensi', 'rental-mobil-wp') . '</a></p>';
+    $message .= '</div>';
+
+    return $message;
 }

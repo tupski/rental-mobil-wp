@@ -210,6 +210,44 @@
     font-weight: 600;
 }
 
+/* License Styles */
+.rental-mobil-license-status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.rental-mobil-license-active {
+    background-color: #dff0d8;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
+}
+
+.rental-mobil-license-inactive {
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+.rental-mobil-license-invalid {
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+.rental-mobil-license-expired {
+    background-color: #fcf8e3;
+    color: #8a6d3b;
+    border: 1px solid #faebcc;
+}
+
+#rental-mobil-activate-license,
+#rental-mobil-deactivate-license {
+    margin-left: 10px;
+}
+
 /* Responsive */
 @media (max-width: 782px) {
     .rental-mobil-homepage-vehicles-list {
