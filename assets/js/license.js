@@ -69,7 +69,7 @@ jQuery(document).ready(function($) {
                     button.text(rental_mobil_license.deactivate)
                         .attr('id', 'rental-mobil-deactivate-license');
 
-                    // Auto dismiss pesan setelah 3 detik
+                    // Auto dismiss pesan setelah 5 detik
                     setTimeout(function() {
                         message.fadeOut(function() {
                             $(this).remove();
@@ -77,7 +77,7 @@ jQuery(document).ready(function($) {
 
                         // Reload halaman untuk memperbarui tampilan
                         location.reload();
-                    }, 3000);
+                    }, 5000);
                 } else {
                     // Tampilkan pesan error
                     var message = $('<div class="notice notice-error is-dismissible"><p>' + response.data.message + '</p></div>');
@@ -261,12 +261,17 @@ jQuery(document).ready(function($) {
                     // Re-enable tombol
                     button.prop('disabled', false).text(originalText);
 
-                    // Auto dismiss pesan setelah 3 detik
+                    // Auto dismiss pesan setelah 5 detik
                     setTimeout(function() {
                         message.fadeOut(function() {
                             $(this).remove();
                         });
-                    }, 3000);
+
+                        // Reload halaman jika respons berisi reload=true
+                        if (response.data && response.data.reload) {
+                            location.reload();
+                        }
+                    }, 5000);
                 }
             },
             error: function(xhr, status, error) {

@@ -408,7 +408,8 @@ function rental_mobil_activate_license_ajax() {
             'message' => __('Lisensi berhasil diaktifkan.', 'rental-mobil-wp'),
             'status' => 'valid',
             'expires' => isset($options['license_expires']) ? $options['license_expires'] : '',
-            'customer' => isset($options['license_customer']) ? $options['license_customer'] : ''
+            'customer' => isset($options['license_customer']) ? $options['license_customer'] : '',
+            'reload' => true // Tambahkan flag untuk me-reload halaman
         ));
     } else {
         // Coba sekali lagi dengan metode alternatif
@@ -488,7 +489,8 @@ function rental_mobil_activate_license_ajax() {
                     'message' => __('Lisensi berhasil diaktifkan.', 'rental-mobil-wp'),
                     'status' => 'valid',
                     'expires' => isset($options['license_expires']) ? $options['license_expires'] : '',
-                    'customer' => isset($options['license_customer']) ? $options['license_customer'] : ''
+                    'customer' => isset($options['license_customer']) ? $options['license_customer'] : '',
+                    'reload' => true // Tambahkan flag untuk me-reload halaman
                 ));
             }
         }
@@ -505,9 +507,20 @@ function rental_mobil_activate_license_ajax() {
         wp_cache_delete('rental_mobil_options', 'options');
         wp_cache_delete('alloptions', 'options');
 
+        // Simpan kunci lisensi meskipun verifikasi gagal
+        $options = rental_mobil_get_options();
+        $options['license_key'] = $license_key;
+        $options['license_status'] = 'invalid';
+        update_option('rental_mobil_options', $options, 'yes');
+
+        // Refresh opsi dari database untuk memastikan konsistensi
+        wp_cache_delete('rental_mobil_options', 'options');
+        wp_cache_delete('alloptions', 'options');
+        wp_cache_flush();
+
         // Kirim respons error dengan flag reload=true
         wp_send_json_error(array(
-            'message' => $response['message'],
+            'message' => isset($response['message']) ? $response['message'] : __('Lisensi tidak valid.', 'rental-mobil-wp'),
             'reload' => true // Tambahkan flag untuk me-reload halaman
         ));
     }
@@ -757,39 +770,58 @@ function rental_mobil_verify_license($license_key) {
     }
 
     // Jika sukses, simpan data tambahan
-    if ($response_data['success'] && isset($response_data['data'])) {
+    if (isset($response_data['success'])) {
+        // Log data respons untuk debugging
+        rental_mobil_license_debug_log('Data respons API', array(
+            'response_data' => $response_data,
+            'success' => $response_data['success'] ? 'yes' : 'no'
+        ));
+
         // Simpan data tambahan seperti tanggal kedaluwarsa dan nama pelanggan
         $options = rental_mobil_get_options();
 
-        // Log data respons untuk debugging
-        rental_mobil_license_debug_log('Data respons API', array(
-            'response_data' => $response_data
-        ));
+        // Jika respons sukses dan ada data
+        if ($response_data['success'] && isset($response_data['data'])) {
+            // Periksa status lisensi dari respons API
+            $api_status = isset($response_data['data']['status']) ? $response_data['data']['status'] : '';
 
-        // Periksa status lisensi dari respons API
-        $api_status = isset($response_data['data']['status']) ? $response_data['data']['status'] : '';
-
-        // Log status dari API
-        rental_mobil_license_debug_log('Status lisensi dari API', array(
-            'api_status' => $api_status
-        ));
-
-        // Jika status dari API adalah 'active', set status lisensi ke 'valid'
-        if ($api_status === 'active') {
-            $options['license_status'] = 'valid';
-        } else {
-            // Jika status bukan 'active', set status lisensi ke 'invalid'
-            $options['license_status'] = 'invalid';
-
-            // Log status tidak aktif
-            rental_mobil_license_debug_log('Status lisensi dari API tidak aktif', array(
+            // Log status dari API
+            rental_mobil_license_debug_log('Status lisensi dari API', array(
                 'api_status' => $api_status
             ));
 
-            // Return dengan pesan error
+            // Jika status dari API adalah 'active', set status lisensi ke 'valid'
+            if ($api_status === 'active') {
+                $options['license_status'] = 'valid';
+            } else {
+                // Jika status bukan 'active', set status lisensi ke 'invalid'
+                $options['license_status'] = 'invalid';
+
+                // Log status tidak aktif
+                rental_mobil_license_debug_log('Status lisensi dari API tidak aktif', array(
+                    'api_status' => $api_status
+                ));
+
+                // Return dengan pesan error
+                return array(
+                    'success' => false,
+                    'message' => __('Lisensi tidak aktif di server.', 'rental-mobil-wp')
+                );
+            }
+        } else {
+            // Jika respons tidak sukses, set status lisensi ke 'invalid'
+            $options['license_status'] = 'invalid';
+
+            // Log status tidak valid
+            rental_mobil_license_debug_log('Respons API tidak sukses', array(
+                'success' => $response_data['success'] ? 'yes' : 'no',
+                'message' => isset($response_data['message']) ? $response_data['message'] : 'tidak ada pesan'
+            ));
+
+            // Return dengan pesan error dari API atau pesan default
             return array(
                 'success' => false,
-                'message' => __('Lisensi tidak aktif di server.', 'rental-mobil-wp')
+                'message' => isset($response_data['message']) ? $response_data['message'] : __('Lisensi tidak valid.', 'rental-mobil-wp')
             );
         }
 
