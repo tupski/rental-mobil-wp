@@ -4,7 +4,7 @@ Donate link: https://trakteer.id/tupski/tip
 Tags: car rental, rental, booking, whatsapp, mobil
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.4.5
+Stable tag: 1.4.7
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -84,6 +84,18 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 4. Pengaturan Plugin
 
 == Changelog ==
+
+= 1.4.7 =
+* Perbaikan posisi modal agar tidak tertutup oleh menu sticky
+* Memindahkan modal ke footer untuk meningkatkan kompatibilitas dengan tema
+* Meningkatkan margin atas modal untuk tampilan yang lebih baik
+* Perbaikan bug dan optimasi kode
+
+= 1.4.6 =
+* Perbaikan paginasi agar berfungsi dengan benar
+* Menambahkan parameter halaman ke URL untuk mempertahankan posisi halaman saat refresh
+* Mengubah parameter paginasi menjadi 'halaman' untuk SEO yang lebih baik
+* Perbaikan bug dan optimasi kode
 
 = 1.4.5 =
 * Menambahkan pengaturan sortir berdasarkan harga (mahal ke murah atau murah ke mahal)
@@ -170,6 +182,12 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 * Rilis pertama
 
 == Upgrade Notice ==
+
+= 1.4.7 =
+Perbaikan posisi modal agar tidak tertutup oleh menu sticky dan memindahkan modal ke footer untuk meningkatkan kompatibilitas dengan tema.
+
+= 1.4.6 =
+Perbaikan paginasi agar berfungsi dengan benar dan menambahkan parameter halaman ke URL untuk mempertahankan posisi halaman saat refresh.
 
 = 1.4.5 =
 Menambahkan pengaturan sortir berdasarkan harga dan pengaturan kendaraan unggulan (auto slide, loop, speed, interval) untuk meningkatkan pengalaman pengguna.

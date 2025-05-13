@@ -3,7 +3,7 @@
  * Plugin Name: Rental Mobil WP
  * Plugin URI: https://tupski.web.id/rental-mobil-wp
  * Description: Plugin WordPress untuk rental mobil dengan fitur menampilkan daftar kendaraan, detail, dan booking.
- * Version: 1.4.5
+ * Version: 1.4.7
  * Author: Angga Artupas
  * Author URI: https://tupski.web.id
  * Text Domain: rental-mobil-wp
@@ -20,7 +20,7 @@ if (!defined('WPINC')) {
 }
 
 // Definisikan konstanta plugin
-define('RENTAL_MOBIL_VERSION', '1.4.5');
+define('RENTAL_MOBIL_VERSION', '1.4.7');
 define('RENTAL_MOBIL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('RENTAL_MOBIL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('RENTAL_MOBIL_PLUGIN_FILE', __FILE__);
@@ -122,4 +122,28 @@ function rental_mobil_init() {
 
     // Load translations
     load_plugin_textdomain('rental-mobil-wp', false, dirname(plugin_basename(__FILE__)) . '/languages');
+
+    // Inisialisasi variabel global untuk melacak shortcode yang digunakan
+    global $rental_mobil_shortcodes_used;
+    $rental_mobil_shortcodes_used = array();
+}
+
+// Tambahkan modal ke footer
+add_action('wp_footer', 'rental_mobil_add_modals_to_footer', 20);
+function rental_mobil_add_modals_to_footer() {
+    global $rental_mobil_shortcodes_used;
+
+    // Jika tidak ada shortcode yang digunakan, tidak perlu menambahkan modal
+    if (empty($rental_mobil_shortcodes_used)) {
+        return;
+    }
+
+    // Tampilkan modal booking
+    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-modal.php';
+
+    // Tampilkan modal quick view
+    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php';
+
+    // Tampilkan modal zoom
+    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/zoom-modal.php';
 }

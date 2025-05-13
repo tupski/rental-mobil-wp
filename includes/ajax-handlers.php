@@ -29,7 +29,14 @@ function rental_mobil_filter_ajax() {
     $orderby = isset($_POST['orderby']) ? sanitize_text_field($_POST['orderby']) : 'date';
     $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'DESC';
     $jumlah = isset($_POST['jumlah']) ? intval($_POST['jumlah']) : 9; // Default 9 kendaraan per halaman
-    $paged = isset($_POST['paged']) ? intval($_POST['paged']) : 1; // Halaman saat ini
+
+    // Cek parameter halaman dari POST
+    $paged = 1; // Default halaman 1
+    if (isset($_POST['halaman'])) {
+        $paged = intval($_POST['halaman']);
+    } elseif (isset($_POST['paged'])) {
+        $paged = intval($_POST['paged']);
+    }
 
     // Buat array untuk menyimpan filter aktif
     $active_filters = array();

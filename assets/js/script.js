@@ -738,8 +738,11 @@ Mohon informasi lebih lanjut. Terima kasih.`;
             if (formValues.bahan_bakar) urlParams.set('bahan_bakar', formValues.bahan_bakar);
             if (formValues.tipe) urlParams.set('tipe', formValues.tipe);
             if (formValues.tahun) urlParams.set('tahun', formValues.tahun);
-            if (formValues.orderby) urlParams.set('urutkan', formValues.orderby);
-            if (formValues.order) urlParams.set('urutan', formValues.order);
+            if (formValues.orderby) urlParams.set('orderby', formValues.orderby);
+            if (formValues.order) urlParams.set('order', formValues.order);
+
+            // Tambahkan parameter halaman=1 karena ini adalah filter baru
+            urlParams.set('halaman', 1);
 
             // Update URL tanpa reload halaman
             const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
@@ -751,8 +754,28 @@ Mohon informasi lebih lanjut. Terima kasih.`;
 
         // Fungsi untuk memuat kendaraan dengan AJAX
         function loadKendaraan(formData, page) {
-            // Tambahkan parameter paged
-            const data = formData ? formData + '&paged=' + page : 'paged=' + page;
+            // Tambahkan parameter halaman
+            const data = formData ? formData + '&halaman=' + page : 'halaman=' + page;
+
+            // Update URL dengan parameter halaman
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Dapatkan parameter filter dari formData
+            const formParams = new URLSearchParams(formData);
+
+            // Tambahkan atau perbarui parameter filter ke URL
+            formParams.forEach((value, key) => {
+                if (value) {
+                    urlParams.set(key, value);
+                }
+            });
+
+            // Tambahkan parameter halaman ke URL
+            urlParams.set('halaman', page);
+
+            // Update URL tanpa reload halaman
+            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+            window.history.pushState({ path: newUrl }, '', newUrl);
 
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
@@ -1150,6 +1173,7 @@ Mohon informasi lebih lanjut. Terima kasih.`;
         const $ = jQuery;
         const urlParams = new URLSearchParams(window.location.search);
         let hasFilter = false;
+        let currentPage = 1;
 
         // Mapping parameter URL ke field form
         if (urlParams.has('kata_kunci')) {
@@ -1182,19 +1206,30 @@ Mohon informasi lebih lanjut. Terima kasih.`;
             hasFilter = true;
         }
 
-        if (urlParams.has('urutkan')) {
-            $('#rental-mobil-filter-orderby').val(urlParams.get('urutkan'));
+        if (urlParams.has('orderby')) {
+            $('#rental-mobil-filter-orderby').val(urlParams.get('orderby'));
             hasFilter = true;
         }
 
-        if (urlParams.has('urutan')) {
-            $('#rental-mobil-filter-order').val(urlParams.get('urutan'));
+        if (urlParams.has('order')) {
+            $('#rental-mobil-filter-order').val(urlParams.get('order'));
             hasFilter = true;
         }
 
-        // Jika ada parameter filter, submit form
+        // Cek parameter halaman
+        if (urlParams.has('halaman')) {
+            currentPage = parseInt(urlParams.get('halaman')) || 1;
+            hasFilter = true;
+        } else if (urlParams.has('paged')) {
+            // Untuk kompatibilitas dengan parameter lama
+            currentPage = parseInt(urlParams.get('paged')) || 1;
+            hasFilter = true;
+        }
+
+        // Jika ada parameter filter, submit form dan muat halaman yang benar
         if (hasFilter) {
-            $('#rental-mobil-filter-form').submit();
+            const formData = $('#rental-mobil-filter-form').serialize();
+            loadKendaraan(formData, currentPage);
         }
     }
 
