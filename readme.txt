@@ -4,7 +4,7 @@ Donate link:
 Tags: car rental, rental, booking, whatsapp, mobil
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.4.8
+Stable tag: 1.4.9
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -84,6 +84,11 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 4. Pengaturan Plugin
 
 == Changelog ==
+
+= 1.4.9 =
+* Perbaikan filter sticky yang tidak berfungsi
+* Memperbaiki nama fungsi untuk menambahkan custom CSS
+* Optimasi kode dan perbaikan bug
 
 = 1.4.8 =
 * Perbaikan tampilan harga mingguan dan bulanan pada card kendaraan unggulan
@@ -188,6 +193,9 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 * Rilis pertama
 
 == Upgrade Notice ==
+
+= 1.4.9 =
+Perbaikan filter sticky yang tidak berfungsi dan memperbaiki nama fungsi untuk menambahkan custom CSS.
 
 = 1.4.8 =
 Perbaikan tampilan harga mingguan dan bulanan pada card kendaraan unggulan dan perbaikan konflik nama fungsi dengan plugin lain.

@@ -1459,8 +1459,8 @@ function rental_mobil_get_custom_css() {
 /**
  * Add custom CSS to frontend
  */
-add_action('wp_enqueue_scripts', 'rental_mobil_add_custom_css', 20);
-function rental_mobil_add_custom_css() {
+add_action('wp_enqueue_scripts', 'rental_mobil_wp_add_custom_css', 20);
+function rental_mobil_wp_add_custom_css() {
     $custom_css = rental_mobil_get_custom_css();
     wp_add_inline_style('rental-mobil-style', $custom_css);
 }

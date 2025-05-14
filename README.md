@@ -107,6 +107,11 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 
 ## Changelog
 
+### 1.4.9
+* Perbaikan filter sticky yang tidak berfungsi
+* Memperbaiki nama fungsi untuk menambahkan custom CSS
+* Optimasi kode dan perbaikan bug
+
 ### 1.4.8
 * Perbaikan tampilan harga mingguan dan bulanan pada card kendaraan unggulan
 * Memastikan harga mingguan dan bulanan ditampilkan dengan benar jika sudah diisi
@@ -210,6 +215,9 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 * Rilis pertama
 
 ## Upgrade Notice
+
+### 1.4.9
+Perbaikan filter sticky yang tidak berfungsi dan memperbaiki nama fungsi untuk menambahkan custom CSS.
 
 ### 1.4.8
 Perbaikan tampilan harga mingguan dan bulanan pada card kendaraan unggulan dan perbaikan konflik nama fungsi dengan plugin lain.
