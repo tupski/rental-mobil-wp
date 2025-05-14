@@ -1,10 +1,10 @@
 === Rental Mobil WP ===
 Contributors: artupski
-Donate link: https://trakteer.id/tupski/tip
+Donate link:
 Tags: car rental, rental, booking, whatsapp, mobil
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.4.7
+Stable tag: 1.4.8
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -84,6 +84,12 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 4. Pengaturan Plugin
 
 == Changelog ==
+
+= 1.4.8 =
+* Perbaikan tampilan harga mingguan dan bulanan pada card kendaraan unggulan
+* Memastikan harga mingguan dan bulanan ditampilkan dengan benar jika sudah diisi
+* Perbaikan konflik nama fungsi dengan plugin lain
+* Optimasi kode dan perbaikan bug
 
 = 1.4.7 =
 * Perbaikan posisi modal agar tidak tertutup oleh menu sticky
@@ -183,6 +189,9 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 
 == Upgrade Notice ==
 
+= 1.4.8 =
+Perbaikan tampilan harga mingguan dan bulanan pada card kendaraan unggulan dan perbaikan konflik nama fungsi dengan plugin lain.
+
 = 1.4.7 =
 Perbaikan posisi modal agar tidak tertutup oleh menu sticky dan memindahkan modal ke footer untuk meningkatkan kompatibilitas dengan tema.
 
@@ -229,6 +238,6 @@ Rilis pertama
 
 Plugin ini dikembangkan dengan pendekatan modular agar mudah dikustomisasi dan dikembangkan lebih lanjut. Cocok untuk bisnis rental mobil yang menginginkan sistem sederhana namun efektif untuk mengelola armada kendaraan dan memudahkan calon pelanggan melakukan pemesanan.
 
-Kontribusi, saran, dan laporan bug sangat dihargai. Silakan kunjungi halaman [Trakteer](https://trakteer.id/tupski/tip) untuk traktir saya kopi jika Anda terbantu dengan plugin ini.
+Kontribusi, saran, dan laporan bug sangat dihargai. Plugin ini memerlukan lisensi untuk menggunakan semua fitur premium.
 
 Jika Anda adalah pengembang dan ingin memperluas fitur plugin, Anda dapat memodifikasi file di folder `includes/` untuk menambahkan meta box, shortcode, atau logika tambahan lainnya sesuai kebutuhan proyek Anda.

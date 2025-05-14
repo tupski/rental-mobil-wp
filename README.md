@@ -2,9 +2,7 @@
 
 Plugin WordPress untuk rental mobil dengan fitur menampilkan daftar kendaraan, detail, dan booking via WhatsApp.
 
-[![Trakteer Saya](https://cdn.trakteer.id/images/embed/trbtn-red-1.png)](https://trakteer.id/tupski/tip)
-
-> Traktir saya kopi jika Anda terbantu dengan plugin saya
+> Plugin ini memerlukan lisensi untuk menggunakan semua fitur premium
 
 ## Deskripsi
 
@@ -12,15 +10,21 @@ Rental Mobil WP adalah plugin WordPress yang dirancang khusus untuk bisnis renta
 
 ### Fitur Utama
 
+#### Fitur Gratis
 * **Custom Post Type untuk Kendaraan** - Mengelola kendaraan dengan mudah
 * **Tampilan Responsif** - Kompatibel dengan semua tema WordPress, termasuk Divi
+* **Shortcode Dasar** - Tampilkan daftar kendaraan dan detail kendaraan di mana saja
+* **Pengaturan Dasar** - Konfigurasi dasar plugin
+
+#### Fitur Premium (Memerlukan Lisensi)
 * **Filter Kendaraan** - Filter berdasarkan merk, transmisi, bahan bakar, tipe, dan tahun kendaraan
-* **Shortcode** - Tampilkan daftar kendaraan dan detail kendaraan di mana saja
 * **Booking via WhatsApp** - Form booking yang mengirim pesan langsung ke WhatsApp
 * **Pengaturan Kustom** - Konfigurasi nomor WhatsApp dan template pesan
 * **Harga Fleksibel** - Atur harga sewa harian, mingguan, dan bulanan
 * **Floating Filter Button** - Tombol filter yang responsif untuk tampilan mobile
 * **Quick View** - Fitur quick view untuk melihat detail kendaraan tanpa perlu membuka halaman baru
+* **Sortir Berdasarkan Harga** - Urutkan kendaraan dari harga tertinggi ke terendah atau sebaliknya
+* **Slider Kendaraan Unggulan** - Tampilkan kendaraan unggulan dengan slider yang dapat dikonfigurasi
 
 ### Shortcode
 
@@ -38,9 +42,14 @@ Plugin ini menyediakan dua shortcode utama:
 
 1. Unggah folder `rental-mobil-wp` ke direktori `/wp-content/plugins/`
 2. Aktifkan plugin melalui menu 'Plugins' di WordPress
-3. Buka menu 'Rental Mobil' untuk mengatur nomor WhatsApp dan template pesan
-4. Tambahkan kendaraan melalui menu 'Kendaraan'
-5. Gunakan shortcode untuk menampilkan daftar kendaraan dan detail kendaraan
+3. Buka menu 'Rental Mobil' dan masuk ke tab 'Lisensi'
+4. Masukkan kunci lisensi yang Anda dapatkan saat membeli plugin
+5. Klik tombol 'Aktivasi Lisensi' untuk mengaktifkan fitur premium
+6. Buka menu 'Rental Mobil' untuk mengatur nomor WhatsApp dan template pesan
+7. Tambahkan kendaraan melalui menu 'Kendaraan'
+8. Gunakan shortcode untuk menampilkan daftar kendaraan dan detail kendaraan
+
+> **Catatan**: Tanpa lisensi yang valid, beberapa fitur premium tidak akan tersedia.
 
 ## Penggunaan
 
@@ -73,13 +82,21 @@ Tambahkan shortcode `[detail_kendaraan id="ID"]` ke halaman atau post untuk mena
 
 Ya, plugin ini dirancang untuk kompatibel dengan semua tema WordPress, termasuk Divi. Tampilan responsif memastikan plugin terlihat baik di semua perangkat.
 
+### Bagaimana cara mendapatkan lisensi?
+
+Anda dapat membeli lisensi melalui website resmi kami. Lisensi tersedia dalam beberapa paket dengan jumlah domain yang berbeda.
+
+### Apa yang terjadi jika lisensi saya kedaluwarsa?
+
+Jika lisensi Anda kedaluwarsa, fitur premium akan dinonaktifkan. Anda masih dapat menggunakan fitur dasar, tetapi fitur premium seperti filter kendaraan, booking via WhatsApp, dan quick view tidak akan tersedia.
+
 ### Bagaimana cara menambahkan filter kendaraan?
 
-Filter kendaraan otomatis ditampilkan saat Anda menggunakan shortcode `[daftar_kendaraan]`. Anda dapat menambahkan merk, transmisi, bahan bakar, tipe, dan tahun kendaraan melalui menu 'Kendaraan'.
+Filter kendaraan otomatis ditampilkan saat Anda menggunakan shortcode `[daftar_kendaraan]`. Anda dapat menambahkan merk, transmisi, bahan bakar, tipe, dan tahun kendaraan melalui menu 'Kendaraan'. Fitur ini memerlukan lisensi yang valid.
 
 ### Apakah saya bisa mengubah template pesan WhatsApp?
 
-Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di dashboard admin.
+Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di dashboard admin. Fitur ini memerlukan lisensi yang valid.
 
 ## Screenshots
 
@@ -89,6 +106,49 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 4. Pengaturan Plugin
 
 ## Changelog
+
+### 1.4.8
+* Perbaikan tampilan harga mingguan dan bulanan pada card kendaraan unggulan
+* Memastikan harga mingguan dan bulanan ditampilkan dengan benar jika sudah diisi
+* Perbaikan konflik nama fungsi dengan plugin lain
+* Optimasi kode dan perbaikan bug
+
+### 1.4.7
+* Perbaikan posisi modal agar tidak tertutup oleh menu sticky
+* Memindahkan modal ke footer untuk meningkatkan kompatibilitas dengan tema
+* Meningkatkan margin atas modal untuk tampilan yang lebih baik
+* Perbaikan bug dan optimasi kode
+* Menambahkan sistem lisensi untuk fitur premium
+
+### 1.4.6
+* Perbaikan paginasi agar berfungsi dengan benar
+* Menambahkan parameter halaman ke URL untuk mempertahankan posisi halaman saat refresh
+* Mengubah parameter paginasi menjadi 'halaman' untuk SEO yang lebih baik
+* Perbaikan bug dan optimasi kode
+
+### 1.4.5
+* Menambahkan pengaturan sortir berdasarkan harga (mahal ke murah atau murah ke mahal)
+* Menambahkan pengaturan kendaraan unggulan (auto slide, loop, speed, interval)
+* Menambahkan parameter baru untuk shortcode kendaraan_unggulan
+* Peningkatan performa slider kendaraan unggulan
+* Perbaikan bug dan optimasi kode
+
+### 1.4.4
+* Menambahkan pengaturan posisi ikon filter di mobile (kanan bawah, kiri bawah, tengah kanan, tengah kiri)
+* Memperbaiki padding/margin atas untuk modal agar tidak tertutup menu sticky
+* Menyederhanakan tombol filter dengan tampilan yang lebih ringkas
+* Perbaikan tampilan responsif untuk berbagai ukuran layar
+* Optimasi CSS untuk performa yang lebih baik
+
+### 1.4.3
+* Perbaikan bug pada tampilan filter di perangkat mobile
+* Peningkatan kompatibilitas dengan tema WordPress terbaru
+* Optimasi performa dan perbaikan minor
+
+### 1.4.2
+* Perbaikan bug pada tampilan quick view
+* Peningkatan kompatibilitas dengan WordPress 6.8
+* Optimasi performa dan perbaikan minor
 
 ### 1.4.1
 * Perbaikan tampilan quick view pada perangkat mobile
@@ -151,6 +211,27 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 
 ## Upgrade Notice
 
+### 1.4.8
+Perbaikan tampilan harga mingguan dan bulanan pada card kendaraan unggulan dan perbaikan konflik nama fungsi dengan plugin lain.
+
+### 1.4.7
+Perbaikan posisi modal agar tidak tertutup oleh menu sticky, memindahkan modal ke footer untuk meningkatkan kompatibilitas dengan tema, dan menambahkan sistem lisensi untuk fitur premium.
+
+### 1.4.6
+Perbaikan paginasi agar berfungsi dengan benar dan menambahkan parameter halaman ke URL untuk mempertahankan posisi halaman saat refresh.
+
+### 1.4.5
+Menambahkan pengaturan sortir berdasarkan harga dan pengaturan kendaraan unggulan (auto slide, loop, speed, interval) untuk meningkatkan pengalaman pengguna.
+
+### 1.4.4
+Peningkatan UI dengan pengaturan posisi ikon filter yang dapat dikonfigurasi, perbaikan modal agar tidak tertutup menu sticky, dan tombol filter yang lebih ringkas.
+
+### 1.4.3
+Perbaikan bug pada tampilan filter di perangkat mobile dan peningkatan kompatibilitas dengan tema WordPress terbaru.
+
+### 1.4.2
+Perbaikan bug pada tampilan quick view dan peningkatan kompatibilitas dengan WordPress 6.8.
+
 ### 1.4.1
 Perbaikan tampilan quick view pada perangkat mobile, menambahkan fitur zoom pada galeri foto, fitur pencarian dengan AJAX dan autocomplete, serta layout baru dengan filter di sebelah kiri.
 
@@ -172,16 +253,10 @@ Menambahkan fitur tahun kendaraan dan filter berdasarkan tahun kendaraan.
 ### 1.0.0
 Rilis pertama
 
-## Kontribusi
+## Lisensi
 
-Kontribusi sangat diterima! Jika Anda ingin berkontribusi, silakan fork repository dan buat pull request.
-
-## License
-
-Plugin ini dilisensikan di bawah [GPL v2 atau yang lebih baru](https://www.gnu.org/licenses/gpl-2.0.html).
+Plugin ini memerlukan lisensi untuk menggunakan semua fitur premium. Kode sumber plugin dilisensikan di bawah [GPL v2 atau yang lebih baru](https://www.gnu.org/licenses/gpl-2.0.html), tetapi fitur premium hanya tersedia dengan lisensi yang valid.
 
 ## Dukungan
 
-Jika Anda menyukai plugin ini dan ingin mendukung pengembangan lebih lanjut, silakan traktir saya kopi:
-
-[![Trakteer Saya](https://cdn.trakteer.id/images/embed/trbtn-red-1.png)](https://trakteer.id/tupski/tip)
+Jika Anda memiliki pertanyaan atau membutuhkan bantuan, silakan hubungi kami melalui email dukungan yang disediakan saat pembelian lisensi.

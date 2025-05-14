@@ -3,7 +3,7 @@
  * Plugin Name: Rental Mobil WP
  * Plugin URI: https://tupski.web.id/rental-mobil-wp
  * Description: Plugin WordPress untuk rental mobil dengan fitur menampilkan daftar kendaraan, detail, dan booking.
- * Version: 1.4.7
+ * Version: 1.4.8
  * Author: Angga Artupas
  * Author URI: https://tupski.web.id
  * Text Domain: rental-mobil-wp
@@ -20,14 +20,14 @@ if (!defined('WPINC')) {
 }
 
 // Definisikan konstanta plugin
-define('RENTAL_MOBIL_VERSION', '1.4.7');
+define('RENTAL_MOBIL_VERSION', '1.4.8');
 define('RENTAL_MOBIL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('RENTAL_MOBIL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('RENTAL_MOBIL_PLUGIN_FILE', __FILE__);
 
 // Aktifkan plugin
-register_activation_hook(__FILE__, 'rental_mobil_activate');
-function rental_mobil_activate() {
+register_activation_hook(__FILE__, 'rental_mobil_wp_activate');
+function rental_mobil_wp_activate() {
     // Buat custom post type dan taxonomies
     require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/post-types.php';
     rental_mobil_register_post_types();
@@ -45,8 +45,8 @@ function rental_mobil_activate() {
 }
 
 // Tambahkan fungsi untuk flush rewrite rules saat plugin diaktifkan
-add_action('init', 'rental_mobil_rewrite_flush', 20);
-function rental_mobil_rewrite_flush() {
+add_action('init', 'rental_mobil_wp_rewrite_flush', 20);
+function rental_mobil_wp_rewrite_flush() {
     // Cek apakah perlu flush rewrite rules
     if (get_option('rental_mobil_flush_rewrite_rules')) {
         flush_rewrite_rules();
@@ -55,14 +55,14 @@ function rental_mobil_rewrite_flush() {
 }
 
 // Set option untuk flush rewrite rules saat plugin diaktifkan
-function rental_mobil_set_flush_rewrite_rules() {
+function rental_mobil_wp_set_flush_rewrite_rules() {
     update_option('rental_mobil_flush_rewrite_rules', true);
 }
-register_activation_hook(__FILE__, 'rental_mobil_set_flush_rewrite_rules');
+register_activation_hook(__FILE__, 'rental_mobil_wp_set_flush_rewrite_rules');
 
 // Deaktifasi plugin
-register_deactivation_hook(__FILE__, 'rental_mobil_deactivate');
-function rental_mobil_deactivate() {
+register_deactivation_hook(__FILE__, 'rental_mobil_wp_deactivate');
+function rental_mobil_wp_deactivate() {
     // Flush rewrite rules
     flush_rewrite_rules();
 }
@@ -77,8 +77,8 @@ require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/ajax-handlers.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/license.php';
 
 // Enqueue scripts and styles
-add_action('wp_enqueue_scripts', 'rental_mobil_enqueue_scripts');
-function rental_mobil_enqueue_scripts() {
+add_action('wp_enqueue_scripts', 'rental_mobil_wp_enqueue_scripts');
+function rental_mobil_wp_enqueue_scripts() {
     wp_enqueue_style('rental-mobil-style', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/style.css', array(), RENTAL_MOBIL_VERSION);
     wp_enqueue_script('rental-mobil-script', RENTAL_MOBIL_PLUGIN_URL . 'assets/js/script.js', array('jquery'), RENTAL_MOBIL_VERSION, true);
 
@@ -90,8 +90,8 @@ function rental_mobil_enqueue_scripts() {
 }
 
 // Enqueue admin scripts and styles
-add_action('admin_enqueue_scripts', 'rental_mobil_enqueue_admin_scripts');
-function rental_mobil_enqueue_admin_scripts($hook) {
+add_action('admin_enqueue_scripts', 'rental_mobil_wp_enqueue_admin_scripts');
+function rental_mobil_wp_enqueue_admin_scripts($hook) {
     // Load di halaman plugin rental mobil dan halaman edit kendaraan
     if (strpos($hook, 'rental-mobil') !== false || (get_current_screen()->post_type === 'kendaraan' && get_current_screen()->base === 'edit')) {
         wp_enqueue_style('rental-mobil-admin-style', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/admin.css', array(), RENTAL_MOBIL_VERSION);
@@ -101,8 +101,8 @@ function rental_mobil_enqueue_admin_scripts($hook) {
 }
 
 // Tambahkan menu admin
-add_action('admin_menu', 'rental_mobil_admin_menu');
-function rental_mobil_admin_menu() {
+add_action('admin_menu', 'rental_mobil_wp_admin_menu');
+function rental_mobil_wp_admin_menu() {
     add_menu_page(
         __('Rental Mobil', 'rental-mobil-wp'),
         __('Rental Mobil', 'rental-mobil-wp'),
@@ -115,8 +115,8 @@ function rental_mobil_admin_menu() {
 }
 
 // Inisialisasi plugin
-add_action('init', 'rental_mobil_init');
-function rental_mobil_init() {
+add_action('init', 'rental_mobil_wp_init');
+function rental_mobil_wp_init() {
     // Register post types dan taxonomies
     rental_mobil_register_post_types();
 
@@ -129,8 +129,8 @@ function rental_mobil_init() {
 }
 
 // Tambahkan modal ke footer
-add_action('wp_footer', 'rental_mobil_add_modals_to_footer', 20);
-function rental_mobil_add_modals_to_footer() {
+add_action('wp_footer', 'rental_mobil_wp_add_modals_to_footer', 20);
+function rental_mobil_wp_add_modals_to_footer() {
     global $rental_mobil_shortcodes_used;
 
     // Jika tidak ada shortcode yang digunakan, tidak perlu menambahkan modal

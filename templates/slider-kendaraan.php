@@ -44,6 +44,12 @@ if (!$query->have_posts()) {
                 $harga_sewa = rental_mobil_get_harga_sewa($post_id);
                 $harga_formatted = rental_mobil_format_rupiah($harga_sewa);
 
+                // Dapatkan harga mingguan dan bulanan
+                $harga_mingguan = rental_mobil_get_harga_mingguan($post_id);
+                $harga_mingguan_formatted = !empty($harga_mingguan) ? rental_mobil_format_rupiah($harga_mingguan) : __('Hubungi Kami', 'rental-mobil-wp');
+                $harga_bulanan = rental_mobil_get_harga_bulanan($post_id);
+                $harga_bulanan_formatted = !empty($harga_bulanan) ? rental_mobil_format_rupiah($harga_bulanan) : __('Hubungi Kami', 'rental-mobil-wp');
+
                 // Dapatkan terms
                 $merk_terms = get_the_terms($post_id, 'merk_kendaraan');
                 $merk = !empty($merk_terms) ? $merk_terms[0]->name : '';
@@ -60,8 +66,8 @@ if (!$query->have_posts()) {
                          data-title="<?php the_title_attribute(); ?>"
                          data-permalink="<?php the_permalink(); ?>"
                          data-harga-harian="<?php echo esc_attr($harga_formatted); ?>"
-                         data-harga-mingguan="<?php echo isset($harga_mingguan) ? esc_attr(rental_mobil_format_rupiah($harga_mingguan)) : __('Hubungi Kami', 'rental-mobil-wp'); ?>"
-                         data-harga-bulanan="<?php echo isset($harga_bulanan) ? esc_attr(rental_mobil_format_rupiah($harga_bulanan)) : __('Hubungi Kami', 'rental-mobil-wp'); ?>"
+                         data-harga-mingguan="<?php echo esc_attr($harga_mingguan_formatted); ?>"
+                         data-harga-bulanan="<?php echo esc_attr($harga_bulanan_formatted); ?>"
                          data-merk="<?php echo esc_attr($merk); ?>"
                          data-transmisi="<?php echo esc_attr($transmisi); ?>"
                          data-bahan-bakar="<?php echo isset($bahan_bakar) ? esc_attr($bahan_bakar) : ''; ?>"
