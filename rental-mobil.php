@@ -75,6 +75,8 @@ require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/settings.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/admin-columns.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/ajax-handlers.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/license.php';
+require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/form-builder.php';
+require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/custom-form.php';
 
 // Enqueue scripts and styles
 add_action('wp_enqueue_scripts', 'rental_mobil_wp_enqueue_scripts');
@@ -89,6 +91,7 @@ function rental_mobil_wp_enqueue_scripts() {
     // wp_enqueue_style('rental-mobil-icons', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/icons.css', array('font-awesome'), RENTAL_MOBIL_VERSION);
 
     wp_enqueue_style('rental-mobil-style', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/style.css', array(), RENTAL_MOBIL_VERSION);
+    wp_enqueue_style('rental-mobil-custom-form', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/custom-form.css', array(), RENTAL_MOBIL_VERSION);
     wp_enqueue_script('rental-mobil-script', RENTAL_MOBIL_PLUGIN_URL . 'assets/js/script.js', array('jquery'), RENTAL_MOBIL_VERSION, true);
 
     // Localize script untuk AJAX
@@ -104,8 +107,15 @@ function rental_mobil_wp_enqueue_admin_scripts($hook) {
     // Load di halaman plugin rental mobil dan halaman edit kendaraan
     if (strpos($hook, 'rental-mobil') !== false || (get_current_screen()->post_type === 'kendaraan' && get_current_screen()->base === 'edit')) {
         wp_enqueue_style('rental-mobil-admin-style', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/admin.css', array(), RENTAL_MOBIL_VERSION);
+        wp_enqueue_style('rental-mobil-form-builder', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/form-builder.css', array(), RENTAL_MOBIL_VERSION);
         wp_enqueue_script('wp-color-picker');
         wp_enqueue_style('wp-color-picker');
+
+        // Load jQuery UI untuk sortable
+        wp_enqueue_script('jquery-ui-sortable');
+
+        // Load form builder script
+        wp_enqueue_script('rental-mobil-form-builder', RENTAL_MOBIL_PLUGIN_URL . 'assets/js/form-builder.js', array('jquery', 'jquery-ui-sortable'), RENTAL_MOBIL_VERSION, true);
     }
 }
 

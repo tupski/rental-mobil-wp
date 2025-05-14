@@ -695,7 +695,7 @@ function rental_mobil_button_border_radius_callback() {
     $options = rental_mobil_get_options();
     $button_border_radius = isset($options['button_border_radius']) ? $options['button_border_radius'] : '4';
     ?>
-    <input type="range" id="button_border_radius" name="rental_mobil_options[button_border_radius]" min="0" max="50" value="<?php echo esc_attr($button_border_radius); ?>" oninput="this.nextElementSibling.value = this.value + 'px'">
+    <input type="number" id="button_border_radius" name="rental_mobil_options[button_border_radius]" min="0" max="50" value="<?php echo esc_attr($button_border_radius); ?>" style="width: 70px;">
     <output><?php echo esc_html($button_border_radius); ?>px</output>
     <p class="description"><?php _e('Atur bentuk sudut button (0px = kotak, 50px = bulat).', 'rental-mobil-wp'); ?></p>
     <?php
@@ -708,7 +708,7 @@ function rental_mobil_card_border_radius_callback() {
     $options = rental_mobil_get_options();
     $card_border_radius = isset($options['card_border_radius']) ? $options['card_border_radius'] : '8';
     ?>
-    <input type="range" id="card_border_radius" name="rental_mobil_options[card_border_radius]" min="0" max="50" value="<?php echo esc_attr($card_border_radius); ?>" oninput="this.nextElementSibling.value = this.value + 'px'">
+    <input type="number" id="card_border_radius" name="rental_mobil_options[card_border_radius]" min="0" max="50" value="<?php echo esc_attr($card_border_radius); ?>" style="width: 70px;">
     <output><?php echo esc_html($card_border_radius); ?>px</output>
     <p class="description"><?php _e('Atur bentuk sudut card (0px = kotak, 50px = bulat).', 'rental-mobil-wp'); ?></p>
     <?php
@@ -950,7 +950,7 @@ function rental_mobil_validate_options($input) {
 
     // Sanitize homepage order settings
     if (isset($input['homepage_orderby'])) {
-        $valid_orderby = array('date', 'title', 'meta_value_num', 'rand');
+        $valid_orderby = array('date', 'title', 'meta_value_num', 'harga_harian', 'rand');
         $output['homepage_orderby'] = in_array($input['homepage_orderby'], $valid_orderby) ? $input['homepage_orderby'] : 'date';
     }
 
@@ -986,11 +986,7 @@ function rental_mobil_settings_page() {
     <div class="wrap rental-mobil-settings">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
-        <div class="rental-mobil-admin-header">
-            <div class="rental-mobil-admin-title">
-                <h2><?php _e('Plugin oleh Angga Artupas', 'rental-mobil-wp'); ?></h2>
-            </div>
-        </div>
+        <!-- Header removed -->
 
         <h2 class="nav-tab-wrapper">
             <a href="?page=rental-mobil&tab=documentation" class="nav-tab <?php echo $active_tab == 'documentation' ? 'nav-tab-active' : ''; ?>">
@@ -1309,6 +1305,7 @@ function rental_mobil_homepage_vehicle_order_callback() {
                 <option value="date" <?php selected($default_orderby, 'date'); ?>><?php _e('Tanggal', 'rental-mobil-wp'); ?></option>
                 <option value="title" <?php selected($default_orderby, 'title'); ?>><?php _e('Judul', 'rental-mobil-wp'); ?></option>
                 <option value="meta_value_num" <?php selected($default_orderby, 'meta_value_num'); ?>><?php _e('Harga', 'rental-mobil-wp'); ?></option>
+                <option value="harga_harian" <?php selected($default_orderby, 'harga_harian'); ?>><?php _e('Harga Harian', 'rental-mobil-wp'); ?></option>
                 <option value="rand" <?php selected($default_orderby, 'rand'); ?>><?php _e('Acak', 'rental-mobil-wp'); ?></option>
             </select>
             <span class="description"><?php _e('Pilih cara mengurutkan kendaraan di homepage.', 'rental-mobil-wp'); ?></span>

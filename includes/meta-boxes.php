@@ -405,9 +405,12 @@ function rental_mobil_get_featured_vehicles($limit = -1, $orderby = 'date', $ord
         'order' => $order
     );
 
-    // Jika orderby adalah harga, gunakan meta_value_num
+    // Jika orderby adalah harga atau harga harian, gunakan meta_value_num
     if ($orderby === 'meta_value_num') {
         $args['meta_key'] = '_rental_mobil_harga_sewa';
+    } elseif ($orderby === 'harga_harian') {
+        $args['meta_key'] = '_rental_mobil_harga_sewa'; // Menggunakan harga sewa per hari
+        $args['orderby'] = 'meta_value_num';
     }
 
     return new WP_Query($args);
@@ -431,9 +434,12 @@ function rental_mobil_get_popular_vehicles($limit = -1, $orderby = 'date', $orde
         'order' => $order
     );
 
-    // Jika orderby adalah harga, gunakan meta_value_num
+    // Jika orderby adalah harga atau harga harian, gunakan meta_value_num
     if ($orderby === 'meta_value_num') {
         $args['meta_key'] = '_rental_mobil_harga_sewa';
+    } elseif ($orderby === 'harga_harian') {
+        $args['meta_key'] = '_rental_mobil_harga_sewa'; // Menggunakan harga sewa per hari
+        $args['orderby'] = 'meta_value_num';
     }
 
     return new WP_Query($args);

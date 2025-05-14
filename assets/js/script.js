@@ -867,12 +867,7 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                 e.preventDefault();
                 const page = $(this).data('page');
 
-                // Scroll ke atas hasil
-                $('html, body').animate({
-                    scrollTop: $('#rental-mobil-results').offset().top - 50
-                }, 500);
-
-                // Muat kendaraan dengan halaman yang dipilih
+                // Muat kendaraan dengan halaman yang dipilih tanpa scroll
                 loadKendaraan(formData, page);
             });
         }

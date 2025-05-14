@@ -248,6 +248,7 @@
     padding-top: 10px; /* Tambahkan padding atas */
     scrollbar-width: thin;
     scrollbar-color: #0073aa #f0f0f0;
+    z-index: 100; /* Pastikan filter tetap di atas konten lain */
 }
 
 .rental-mobil-sidebar-inner::-webkit-scrollbar {

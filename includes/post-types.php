@@ -182,3 +182,11 @@ function rental_mobil_register_post_types() {
 
     register_taxonomy('tahun_kendaraan', array('kendaraan'), $args);
 }
+
+/**
+ * Atur jumlah kendaraan per halaman di admin
+ */
+add_filter('edit_kendaraan_per_page', 'rental_mobil_set_kendaraan_per_page');
+function rental_mobil_set_kendaraan_per_page($per_page) {
+    return 10; // Menampilkan 10 kendaraan per halaman
+}

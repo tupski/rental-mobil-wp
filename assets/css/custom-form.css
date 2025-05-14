@@ -1,0 +1,104 @@
+/**
+ * Custom Form Booking CSS
+ */
+
+.rental-mobil-custom-booking-form {
+    margin-top: 20px;
+}
+
+.rental-mobil-custom-booking-field {
+    margin-bottom: 15px;
+}
+
+.rental-mobil-custom-booking-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.rental-mobil-custom-booking-field label .required {
+    color: #e32;
+    margin-left: 3px;
+}
+
+.rental-mobil-custom-booking-field input[type="text"],
+.rental-mobil-custom-booking-field input[type="email"],
+.rental-mobil-custom-booking-field input[type="tel"],
+.rental-mobil-custom-booking-field input[type="number"],
+.rental-mobil-custom-booking-field input[type="date"],
+.rental-mobil-custom-booking-field select,
+.rental-mobil-custom-booking-field textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: var(--rental-mobil-button-border-radius, 4px);
+    font-size: 14px;
+}
+
+.rental-mobil-custom-booking-field select {
+    height: 36px;
+}
+
+.rental-mobil-custom-booking-field textarea {
+    height: 100px;
+}
+
+.rental-mobil-custom-booking-field input.error,
+.rental-mobil-custom-booking-field select.error,
+.rental-mobil-custom-booking-field textarea.error {
+    border-color: #e32;
+}
+
+.rental-mobil-custom-booking-submit {
+    margin-top: 20px;
+}
+
+.rental-mobil-custom-booking-submit button {
+    padding: 10px 20px;
+    background-color: var(--rental-mobil-primary-color, #0073aa);
+    color: #fff;
+    border: none;
+    border-radius: var(--rental-mobil-button-border-radius, 4px);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.rental-mobil-custom-booking-submit button:hover {
+    background-color: var(--rental-mobil-primary-color-hover, #005177);
+}
+
+/* Time picker styles */
+.rental-mobil-time-picker {
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.rental-mobil-time-picker-options {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.rental-mobil-time-picker-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.rental-mobil-time-picker-option:hover {
+    background-color: #f0f0f0;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+    .rental-mobil-custom-booking-form {
+        padding: 15px;
+    }
+}

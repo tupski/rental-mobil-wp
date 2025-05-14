@@ -51,29 +51,8 @@ function rental_mobil_populate_admin_columns($column, $post_id) {
 }
 
 /**
- * Tambahkan header donasi di halaman admin kendaraan
+ * Header donasi dihapus
  */
-add_action('admin_notices', 'rental_mobil_admin_kendaraan_header');
-function rental_mobil_admin_kendaraan_header() {
-    $screen = get_current_screen();
-
-    // Hanya tampilkan di halaman daftar kendaraan
-    if ($screen->post_type !== 'kendaraan' || $screen->base !== 'edit') {
-        return;
-    }
-
-    ?>
-    <div class="rental-mobil-admin-header">
-        <div class="rental-mobil-admin-title">
-            <h2><?php _e('Plugin oleh Angga Artupas', 'rental-mobil-wp'); ?></h2>
-            <p><?php _e('Traktir saya kopi jika Anda terbantu dengan plugin saya', 'rental-mobil-wp'); ?></p>
-        </div>
-        <div class="rental-mobil-admin-donate">
-            <?php echo rental_mobil_trakteer_button('overlay'); ?>
-        </div>
-    </div>
-    <?php
-}
 
 /**
  * Tambahkan JavaScript untuk toggle status

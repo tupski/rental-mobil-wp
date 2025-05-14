@@ -188,9 +188,13 @@ function rental_mobil_pilihan_shortcode($atts) {
         'post__in' => $homepage_vehicles,
     );
 
-    // Jika orderby adalah meta_value_num (harga), tambahkan meta_key
+    // Jika orderby adalah meta_value_num (harga) atau harga_harian, tambahkan meta_key
     if ($atts['orderby'] === 'meta_value_num') {
-        $args['meta_key'] = 'harga';
+        $args['meta_key'] = '_rental_mobil_harga_sewa';
+        $args['orderby'] = 'meta_value_num';
+        $args['order'] = $atts['order'];
+    } elseif ($atts['orderby'] === 'harga_harian') {
+        $args['meta_key'] = '_rental_mobil_harga_sewa';
         $args['orderby'] = 'meta_value_num';
         $args['order'] = $atts['order'];
     } elseif ($atts['orderby'] !== 'post__in') {
