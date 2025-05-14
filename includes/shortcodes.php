@@ -106,6 +106,9 @@ function rental_mobil_unggulan_shortcode($atts) {
     // Dapatkan pengaturan slider
     $slider_settings = rental_mobil_get_slider_settings();
 
+    // Dapatkan pengaturan urutan kendaraan
+    $order_settings = rental_mobil_get_homepage_order_settings();
+
     $atts = shortcode_atts(array(
         'jumlah' => 5,
         'tipe' => 'featured', // 'featured' atau 'popular'
@@ -114,6 +117,8 @@ function rental_mobil_unggulan_shortcode($atts) {
         'loop' => $slider_settings['loop'] ? 'true' : 'false',
         'speed' => $slider_settings['speed'],
         'interval' => $slider_settings['interval'],
+        'orderby' => $order_settings['orderby'],
+        'order' => $order_settings['order'],
     ), $atts, 'kendaraan_unggulan');
 
     // Mulai output buffering
@@ -127,6 +132,8 @@ function rental_mobil_unggulan_shortcode($atts) {
     $loop = filter_var($atts['loop'], FILTER_VALIDATE_BOOLEAN);
     $speed = absint($atts['speed']);
     $interval = absint($atts['interval']);
+    $orderby = $atts['orderby'];
+    $order = $atts['order'];
 
     // Tampilkan slider
     include RENTAL_MOBIL_PLUGIN_DIR . 'templates/slider-kendaraan.php';
@@ -149,9 +156,14 @@ function rental_mobil_pilihan_shortcode($atts) {
         return rental_mobil_license_notice();
     }
 
+    // Dapatkan pengaturan urutan kendaraan
+    $order_settings = rental_mobil_get_homepage_order_settings();
+
     $atts = shortcode_atts(array(
         'judul' => __('Kendaraan Pilihan', 'rental-mobil-wp'),
         'jumlah' => -1,
+        'orderby' => $order_settings['orderby'],
+        'order' => $order_settings['order'],
     ), $atts, 'kendaraan_pilihan');
 
     // Mulai output buffering
@@ -174,8 +186,18 @@ function rental_mobil_pilihan_shortcode($atts) {
         'post_type' => 'kendaraan',
         'posts_per_page' => -1,
         'post__in' => $homepage_vehicles,
-        'orderby' => 'post__in', // Mempertahankan urutan dari array
     );
+
+    // Jika orderby adalah meta_value_num (harga), tambahkan meta_key
+    if ($atts['orderby'] === 'meta_value_num') {
+        $args['meta_key'] = 'harga';
+        $args['orderby'] = 'meta_value_num';
+        $args['order'] = $atts['order'];
+    } elseif ($atts['orderby'] !== 'post__in') {
+        // Gunakan pengaturan urutan kecuali jika orderby adalah post__in
+        $args['orderby'] = $atts['orderby'];
+        $args['order'] = $atts['order'];
+    }
 
     $query = new WP_Query($args);
 

@@ -565,8 +565,35 @@
 
             // Inisialisasi tombol share
             $('.rental-mobil-zoom-share').on('click', function() {
-                // Buat URL untuk berbagi: /daftar-kendaraan/?kata_kunci=judul
-                const shareUrl = window.location.origin + '/daftar-kendaraan/?kata_kunci=' + encodeURIComponent(title);
+                // Dapatkan path URL saat ini (tanpa domain dan query string)
+                const currentPath = window.location.pathname;
+
+                // Dapatkan parameter URL saat ini
+                const urlParams = new URLSearchParams(window.location.search);
+
+                // Tentukan base URL berdasarkan halaman saat ini
+                let baseUrl;
+                if (currentPath.includes('daftar-kendaraan')) {
+                    baseUrl = window.location.origin + '/daftar-kendaraan/';
+                } else if (currentPath.includes('daftar-mobil-rental')) {
+                    baseUrl = window.location.origin + '/daftar-mobil-rental/';
+                } else {
+                    // Gunakan path saat ini jika bukan salah satu di atas
+                    baseUrl = window.location.origin + currentPath;
+                }
+
+                // Buat URL untuk berbagi dengan parameter kata_kunci
+                urlParams.set('kata_kunci', title);
+                urlParams.set('halaman', '1');
+
+                // Tambahkan nonce jika ada di URL saat ini
+                const nonceParam = urlParams.get('rental_mobil_filter_nonce');
+                if (nonceParam) {
+                    urlParams.set('rental_mobil_filter_nonce', nonceParam);
+                }
+
+                // Buat URL lengkap
+                const shareUrl = baseUrl + '?' + urlParams.toString();
 
                 if (navigator.share) {
                     navigator.share({

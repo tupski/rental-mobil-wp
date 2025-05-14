@@ -16,12 +16,14 @@ $auto_slide = isset($auto_slide) ? (bool) $auto_slide : true;
 $loop = isset($loop) ? (bool) $loop : true;
 $speed = isset($speed) ? absint($speed) : 300;
 $interval = isset($interval) ? absint($interval) : 5000;
+$orderby = isset($orderby) ? $orderby : 'date';
+$order = isset($order) ? $order : 'DESC';
 
 // Query kendaraan berdasarkan tipe
 if ($type === 'featured') {
-    $query = rental_mobil_get_featured_vehicles($limit);
+    $query = rental_mobil_get_featured_vehicles($limit, $orderby, $order);
 } else {
-    $query = rental_mobil_get_popular_vehicles($limit);
+    $query = rental_mobil_get_popular_vehicles($limit, $orderby, $order);
 }
 
 // Jika tidak ada kendaraan, keluar

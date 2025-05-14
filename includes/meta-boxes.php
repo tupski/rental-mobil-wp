@@ -390,7 +390,7 @@ function rental_mobil_is_popular($post_id) {
 /**
  * Dapatkan semua kendaraan unggulan
  */
-function rental_mobil_get_featured_vehicles($limit = -1) {
+function rental_mobil_get_featured_vehicles($limit = -1, $orderby = 'date', $order = 'DESC') {
     $args = array(
         'post_type' => 'kendaraan',
         'posts_per_page' => $limit,
@@ -400,8 +400,15 @@ function rental_mobil_get_featured_vehicles($limit = -1) {
                 'value' => '1',
                 'compare' => '='
             )
-        )
+        ),
+        'orderby' => $orderby,
+        'order' => $order
     );
+
+    // Jika orderby adalah harga, gunakan meta_value_num
+    if ($orderby === 'meta_value_num') {
+        $args['meta_key'] = '_rental_mobil_harga_sewa';
+    }
 
     return new WP_Query($args);
 }
@@ -409,7 +416,7 @@ function rental_mobil_get_featured_vehicles($limit = -1) {
 /**
  * Dapatkan semua kendaraan paling banyak disewa
  */
-function rental_mobil_get_popular_vehicles($limit = -1) {
+function rental_mobil_get_popular_vehicles($limit = -1, $orderby = 'date', $order = 'DESC') {
     $args = array(
         'post_type' => 'kendaraan',
         'posts_per_page' => $limit,
@@ -419,8 +426,15 @@ function rental_mobil_get_popular_vehicles($limit = -1) {
                 'value' => '1',
                 'compare' => '='
             )
-        )
+        ),
+        'orderby' => $orderby,
+        'order' => $order
     );
+
+    // Jika orderby adalah harga, gunakan meta_value_num
+    if ($orderby === 'meta_value_num') {
+        $args['meta_key'] = '_rental_mobil_harga_sewa';
+    }
 
     return new WP_Query($args);
 }

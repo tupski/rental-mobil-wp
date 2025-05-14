@@ -170,6 +170,14 @@ function rental_mobil_register_settings() {
         'rental_mobil_homepage',
         'rental_mobil_homepage_section'
     );
+
+    add_settings_field(
+        'homepage_vehicle_order',
+        __('Pengaturan Urutan Kendaraan', 'rental-mobil-wp'),
+        'rental_mobil_homepage_vehicle_order_callback',
+        'rental_mobil_homepage',
+        'rental_mobil_homepage_section'
+    );
 }
 
 /**
@@ -531,6 +539,69 @@ function rental_mobil_whatsapp_section_callback() {
  */
 function rental_mobil_homepage_section_callback() {
     echo '<p>' . __('Pengaturan untuk tampilan kendaraan di homepage.', 'rental-mobil-wp') . '</p>';
+
+    echo '<div class="rental-mobil-homepage-shortcodes">';
+    echo '<h3>' . __('Cara Penggunaan Shortcode untuk Homepage', 'rental-mobil-wp') . '</h3>';
+
+    echo '<div class="rental-mobil-shortcode-item">';
+    echo '<h4>[kendaraan_pilihan]</h4>';
+    echo '<p>' . __('Menampilkan kendaraan pilihan yang telah Anda pilih di pengaturan ini.', 'rental-mobil-wp') . '</p>';
+    echo '<pre>[kendaraan_pilihan judul="Kendaraan Pilihan" jumlah="6"]</pre>';
+    echo '<p><strong>' . __('Parameter:', 'rental-mobil-wp') . '</strong></p>';
+    echo '<ul>';
+    echo '<li><code>judul</code> - ' . __('Judul section (default: "Kendaraan Pilihan")', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>jumlah</code> - ' . __('Jumlah kendaraan yang ditampilkan (default: semua kendaraan pilihan)', 'rental-mobil-wp') . '</li>';
+    echo '</ul>';
+    echo '</div>';
+
+    echo '<div class="rental-mobil-shortcode-item">';
+    echo '<h4>[kendaraan_unggulan]</h4>';
+    echo '<p>' . __('Menampilkan slider kendaraan unggulan.', 'rental-mobil-wp') . '</p>';
+    echo '<pre>[kendaraan_unggulan jumlah="5" judul="Kendaraan Unggulan" auto_slide="true" loop="true" speed="300" interval="5000"]</pre>';
+    echo '<p><strong>' . __('Parameter:', 'rental-mobil-wp') . '</strong></p>';
+    echo '<ul>';
+    echo '<li><code>jumlah</code> - ' . __('Jumlah kendaraan yang ditampilkan (default: 5)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>judul</code> - ' . __('Judul slider (default: Kendaraan Unggulan)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>auto_slide</code> - ' . __('Aktifkan auto slide (true/false, default: sesuai pengaturan)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>loop</code> - ' . __('Aktifkan loop slider (true/false, default: sesuai pengaturan)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>speed</code> - ' . __('Kecepatan transisi dalam milidetik (default: sesuai pengaturan)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>interval</code> - ' . __('Interval waktu antar slide dalam milidetik (default: sesuai pengaturan)', 'rental-mobil-wp') . '</li>';
+    echo '</ul>';
+    echo '</div>';
+
+    echo '</div>';
+
+    echo '<style>
+    .rental-mobil-homepage-shortcodes {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 4px;
+        border-left: 4px solid #0073aa;
+        margin-bottom: 20px;
+    }
+    .rental-mobil-homepage-shortcodes h3 {
+        margin-top: 0;
+    }
+    .rental-mobil-shortcode-item {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    .rental-mobil-shortcode-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    .rental-mobil-shortcode-item h4 {
+        margin-bottom: 5px;
+    }
+    .rental-mobil-shortcode-item pre {
+        background: #f0f0f0;
+        padding: 10px;
+        border-radius: 3px;
+        overflow: auto;
+    }
+    </style>';
 }
 
 /**
@@ -877,6 +948,17 @@ function rental_mobil_validate_options($input) {
         }
     }
 
+    // Sanitize homepage order settings
+    if (isset($input['homepage_orderby'])) {
+        $valid_orderby = array('date', 'title', 'meta_value_num', 'rand');
+        $output['homepage_orderby'] = in_array($input['homepage_orderby'], $valid_orderby) ? $input['homepage_orderby'] : 'date';
+    }
+
+    if (isset($input['homepage_order'])) {
+        $valid_order = array('ASC', 'DESC');
+        $output['homepage_order'] = in_array($input['homepage_order'], $valid_order) ? $input['homepage_order'] : 'DESC';
+    }
+
     // Sanitize license key
     if (isset($input['license_key'])) {
         $output['license_key'] = sanitize_text_field($input['license_key']);
@@ -1189,6 +1271,17 @@ function rental_mobil_get_homepage_vehicles() {
 }
 
 /**
+ * Get homepage vehicle order settings
+ */
+function rental_mobil_get_homepage_order_settings() {
+    $options = rental_mobil_get_options();
+    return array(
+        'orderby' => isset($options['homepage_orderby']) ? $options['homepage_orderby'] : 'date',
+        'order' => isset($options['homepage_order']) ? $options['homepage_order'] : 'DESC',
+    );
+}
+
+/**
  * Get slider settings
  */
 function rental_mobil_get_slider_settings() {
@@ -1199,6 +1292,40 @@ function rental_mobil_get_slider_settings() {
         'speed' => isset($options['slider_speed']) ? absint($options['slider_speed']) : 300,
         'interval' => isset($options['slider_interval']) ? absint($options['slider_interval']) : 5000,
     );
+}
+
+/**
+ * Homepage vehicle order callback
+ */
+function rental_mobil_homepage_vehicle_order_callback() {
+    $options = rental_mobil_get_options();
+    $default_orderby = isset($options['homepage_orderby']) ? $options['homepage_orderby'] : 'date';
+    $default_order = isset($options['homepage_order']) ? $options['homepage_order'] : 'DESC';
+    ?>
+    <div class="rental-mobil-homepage-order-settings">
+        <p>
+            <label for="homepage_orderby"><?php _e('Urutkan Berdasarkan', 'rental-mobil-wp'); ?></label>
+            <select id="homepage_orderby" name="rental_mobil_options[homepage_orderby]">
+                <option value="date" <?php selected($default_orderby, 'date'); ?>><?php _e('Tanggal', 'rental-mobil-wp'); ?></option>
+                <option value="title" <?php selected($default_orderby, 'title'); ?>><?php _e('Judul', 'rental-mobil-wp'); ?></option>
+                <option value="meta_value_num" <?php selected($default_orderby, 'meta_value_num'); ?>><?php _e('Harga', 'rental-mobil-wp'); ?></option>
+                <option value="rand" <?php selected($default_orderby, 'rand'); ?>><?php _e('Acak', 'rental-mobil-wp'); ?></option>
+            </select>
+            <span class="description"><?php _e('Pilih cara mengurutkan kendaraan di homepage.', 'rental-mobil-wp'); ?></span>
+        </p>
+
+        <p>
+            <label for="homepage_order"><?php _e('Urutan', 'rental-mobil-wp'); ?></label>
+            <select id="homepage_order" name="rental_mobil_options[homepage_order]">
+                <option value="ASC" <?php selected($default_order, 'ASC'); ?>><?php _e('Naik (A-Z, Lama-Baru, Murah-Mahal)', 'rental-mobil-wp'); ?></option>
+                <option value="DESC" <?php selected($default_order, 'DESC'); ?>><?php _e('Turun (Z-A, Baru-Lama, Mahal-Murah)', 'rental-mobil-wp'); ?></option>
+            </select>
+            <span class="description"><?php _e('Pilih arah pengurutan kendaraan.', 'rental-mobil-wp'); ?></span>
+        </p>
+
+        <p class="description"><?php _e('Pengaturan ini akan diterapkan pada shortcode [kendaraan_pilihan] dan [kendaraan_unggulan] di homepage.', 'rental-mobil-wp'); ?></p>
+    </div>
+    <?php
 }
 
 /**
