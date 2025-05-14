@@ -1,0 +1,112 @@
+/**
+ * Rental Mobil WP - Icon Replacements
+ * Mengganti dashicons dengan Font Awesome
+ */
+
+/* Mapping dashicons ke Font Awesome */
+.rental-mobil-icon-filter:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f0b0"; /* fa-filter */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-close:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f00d"; /* fa-times */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-visibility:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f06e"; /* fa-eye */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-star-filled:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f005"; /* fa-star */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-star-empty:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f005"; /* fa-star */
+    font-weight: 400;
+}
+
+.rental-mobil-icon-thumbs-up:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f164"; /* fa-thumbs-up */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-thumbs-down:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f165"; /* fa-thumbs-down */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-arrow-left:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f104"; /* fa-angle-left */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-arrow-right:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f105"; /* fa-angle-right */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-share:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f1e0"; /* fa-share-alt */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-book:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f02d"; /* fa-book */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-lock:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f023"; /* fa-lock */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-whatsapp:before {
+    font-family: 'Font Awesome 5 Brands';
+    content: "\f232"; /* fa-whatsapp */
+}
+
+.rental-mobil-icon-appearance:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f53f"; /* fa-palette */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-home:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f015"; /* fa-home */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-car:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f1b9"; /* fa-car */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-search:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f002"; /* fa-search */
+    font-weight: 900;
+}
+
+.rental-mobil-icon-zoom:before {
+    font-family: 'Font Awesome 5 Free';
+    content: "\f00e"; /* fa-search-plus */
+    font-weight: 900;
+}
