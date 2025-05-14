@@ -1004,6 +1004,7 @@ function rental_mobil_settings_page() {
             <a href="?page=rental-mobil&tab=homepage" class="nav-tab <?php echo $active_tab == 'homepage' ? 'nav-tab-active' : ''; ?>">
                 <span class="dashicons dashicons-admin-home"></span> <?php _e('Homepage', 'rental-mobil-wp'); ?>
             </a>
+            <?php do_action('rental_mobil_settings_tabs', $active_tab); ?>
         </h2>
 
         <div class="rental-mobil-settings-content">
@@ -1031,6 +1032,10 @@ function rental_mobil_settings_page() {
                 } elseif ($active_tab == 'homepage') {
                     echo '<div id="rental-mobil-homepage-settings" class="rental-mobil-settings-tab">';
                     do_settings_sections('rental_mobil_homepage');
+                    echo '</div>';
+                } elseif ($active_tab == 'form_builder') {
+                    echo '<div id="rental-mobil-form-builder-settings" class="rental-mobil-settings-tab">';
+                    do_settings_sections('rental_mobil_form_builder');
                     echo '</div>';
                 }
 

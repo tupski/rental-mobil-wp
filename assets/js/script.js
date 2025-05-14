@@ -813,6 +813,7 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                 },
                 success: function(response) {
                     if (response.success) {
+                        // Perbarui konten hasil
                         $('#rental-mobil-results').html(response.data.html);
 
                         // Tampilkan filter aktif
@@ -1251,7 +1252,14 @@ Mohon informasi lebih lanjut. Terima kasih.`;
         // Jika ada parameter filter, submit form dan muat halaman yang benar
         if (hasFilter) {
             const formData = $('#rental-mobil-filter-form').serialize();
-            loadKendaraan(formData, currentPage);
+
+            // Jika halaman lebih dari 1, muat halaman tersebut tanpa scroll
+            if (currentPage > 1) {
+                loadKendaraan(formData, currentPage);
+            } else {
+                // Jika halaman 1, muat dengan scroll normal
+                loadKendaraan(formData, currentPage);
+            }
         }
     }
 
