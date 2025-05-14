@@ -155,6 +155,8 @@ function rental_mobil_register_settings() {
         'rental_mobil_homepage'
     );
 
+
+
     add_settings_field(
         'homepage_vehicles',
         __('Kendaraan Pilihan untuk Homepage', 'rental-mobil-wp'),
@@ -812,7 +814,7 @@ function rental_mobil_filter_icon_position_callback() {
  */
 function rental_mobil_homepage_vehicles_callback() {
     $options = rental_mobil_get_options();
-    $homepage_vehicles = isset($options['homepage_vehicles']) ? $options['homepage_vehicles'] : array();
+    $homepage_vehicles  = isset($options['homepage_vehicles']) ? $options['homepage_vehicles'] : array();
 
     // Dapatkan semua kendaraan
     $args = array(
@@ -971,6 +973,56 @@ function rental_mobil_validate_options($input) {
     }
     if (isset($options['license_expires'])) {
         $output['license_expires'] = $options['license_expires'];
+    }
+
+    // Sanitize form fields
+    if (isset($input['form_fields'])) {
+        // Jika form_fields adalah string JSON, decode terlebih dahulu
+        if (is_string($input['form_fields'])) {
+            $form_fields = json_decode($input['form_fields'], true);
+        } else {
+            $form_fields = $input['form_fields'];
+        }
+
+        // Pastikan form_fields adalah array
+        if (is_array($form_fields)) {
+            // Sanitize setiap field
+            foreach ($form_fields as $key => $field) {
+                if (isset($field['id'])) {
+                    $form_fields[$key]['id'] = sanitize_text_field($field['id']);
+                }
+                if (isset($field['label'])) {
+                    $form_fields[$key]['label'] = sanitize_text_field($field['label']);
+                }
+                if (isset($field['type'])) {
+                    $form_fields[$key]['type'] = sanitize_text_field($field['type']);
+                }
+                if (isset($field['placeholder'])) {
+                    $form_fields[$key]['placeholder'] = sanitize_text_field($field['placeholder']);
+                }
+                if (isset($field['required'])) {
+                    $form_fields[$key]['required'] = (bool) $field['required'];
+                }
+                if (isset($field['order'])) {
+                    $form_fields[$key]['order'] = absint($field['order']);
+                }
+                if (isset($field['options']) && is_array($field['options'])) {
+                    $sanitized_options = array();
+                    foreach ($field['options'] as $option_key => $option_value) {
+                        $sanitized_options[sanitize_text_field($option_key)] = sanitize_text_field($option_value);
+                    }
+                    $form_fields[$key]['options'] = $sanitized_options;
+                }
+            }
+
+            $output['form_fields'] = $form_fields;
+        } else {
+            // Jika bukan array, gunakan form_fields yang sudah ada
+            $output['form_fields'] = isset($options['form_fields']) ? $options['form_fields'] : array();
+        }
+    } else {
+        // Jika tidak ada form_fields di input, gunakan yang sudah ada
+        $output['form_fields'] = isset($options['form_fields']) ? $options['form_fields'] : array();
     }
 
     return $output;
@@ -1155,8 +1207,14 @@ function rental_mobil_get_options() {
             'license_customer' => '',
             'license_created_at' => '',
             'license_domain_count' => '',
-            'license_max_domains' => ''
+            'license_max_domains' => '',
+            'form_fields' => array()
         );
+    }
+
+    // Pastikan form_fields selalu ada
+    if (!isset($options['form_fields'])) {
+        $options['form_fields'] = array();
     }
 
     return $options;
@@ -1431,6 +1489,24 @@ function rental_mobil_get_license_domain_count() {
 function rental_mobil_get_license_max_domains() {
     $options = rental_mobil_get_options();
     return isset($options['license_max_domains']) ? $options['license_max_domains'] : 0;
+}
+
+/**
+ * Get form fields
+ */
+function rental_mobil_get_form_fields() {
+    $options = rental_mobil_get_options();
+    return isset($options['form_fields']) ? $options['form_fields'] : array();
+}
+
+/**
+ * Form Builder section callback
+ */
+function rental_mobil_form_builder_section_callback() {
+    echo '<p>' . __('Gunakan Form Builder untuk membuat dan mengelola field pada form booking kendaraan.', 'rental-mobil-wp') . '</p>';
+
+    // Tampilkan UI Form Builder
+    rental_mobil_form_builder_ui();
 }
 
 /**

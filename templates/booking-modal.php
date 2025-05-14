@@ -18,54 +18,12 @@ if (!defined('WPINC')) {
             <p class="rental-mobil-modal-subtitle"><?php _e('Silakan isi form di bawah ini untuk booking', 'rental-mobil-wp'); ?> <span class="rental-mobil-modal-subtitle-kendaraan"></span></p>
         </div>
 
-        <form id="rental-mobil-booking-form" class="rental-mobil-booking-form">
-            <input type="hidden" id="rental-mobil-booking-kendaraan-id" name="kendaraan_id" value="">
-            <input type="hidden" id="rental-mobil-booking-kendaraan-title" name="kendaraan_title" value="">
+        <?php
+        // Set kendaraan_id untuk template booking-form.php
+        $kendaraan_id = '';
 
-            <div class="rental-mobil-form-group">
-                <label for="rental-mobil-booking-nama"><?php _e('Nama', 'rental-mobil-wp'); ?> <span class="required">*</span></label>
-                <input type="text" id="rental-mobil-booking-nama" name="nama" required>
-            </div>
-
-            <div class="rental-mobil-form-group">
-                <label for="rental-mobil-booking-domisili"><?php _e('Domisili', 'rental-mobil-wp'); ?> <span class="required">*</span></label>
-                <input type="text" id="rental-mobil-booking-domisili" name="domisili" required>
-            </div>
-
-            <div class="rental-mobil-form-row">
-                <div class="rental-mobil-form-group rental-mobil-form-col">
-                    <label for="rental-mobil-booking-tanggal"><?php _e('Tanggal Sewa', 'rental-mobil-wp'); ?> <span class="required">*</span></label>
-                    <input type="date" id="rental-mobil-booking-tanggal" name="tanggal_sewa" required>
-                </div>
-
-                <div class="rental-mobil-form-group rental-mobil-form-col">
-                    <label for="rental-mobil-booking-jam"><?php _e('Jam Sewa', 'rental-mobil-wp'); ?> <span class="required">*</span></label>
-                    <input type="time" id="rental-mobil-booking-jam" name="jam_sewa" step="1800" required>
-                </div>
-            </div>
-
-            <div class="rental-mobil-form-row">
-                <div class="rental-mobil-form-group rental-mobil-form-col">
-                    <label for="rental-mobil-booking-durasi"><?php _e('Durasi Sewa', 'rental-mobil-wp'); ?> <span class="required">*</span></label>
-                    <input type="number" id="rental-mobil-booking-durasi" name="durasi_sewa" min="1" value="1" required>
-                </div>
-
-                <div class="rental-mobil-form-group rental-mobil-form-col">
-                    <label for="rental-mobil-booking-satuan"><?php _e('Satuan Durasi', 'rental-mobil-wp'); ?> <span class="required">*</span></label>
-                    <select id="rental-mobil-booking-satuan" name="satuan_durasi" required>
-                        <option value="hari"><?php _e('Hari', 'rental-mobil-wp'); ?></option>
-                        <option value="minggu"><?php _e('Minggu', 'rental-mobil-wp'); ?></option>
-                        <option value="bulan"><?php _e('Bulan', 'rental-mobil-wp'); ?></option>
-                        <option value="tahun"><?php _e('Tahun', 'rental-mobil-wp'); ?></option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="rental-mobil-form-actions">
-                <button type="submit" class="rental-mobil-button rental-mobil-button-submit">
-                    <?php _e('Booking via WhatsApp', 'rental-mobil-wp'); ?>
-                </button>
-            </div>
-        </form>
+        // Include template booking-form.php
+        include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-form.php';
+        ?>
     </div>
 </div>

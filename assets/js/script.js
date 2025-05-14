@@ -47,6 +47,18 @@
         const today = new Date().toISOString().split('T')[0];
         $('.rental-mobil-booking-form input[type="date"]').attr('min', today);
 
+        // Initialize time picker for time fields
+        $('.rental-mobil-time-picker').each(function() {
+            $(this).on('focus', function() {
+                $(this).attr('type', 'time');
+                $(this).attr('step', '1800'); // 30 minutes step
+            }).on('blur', function() {
+                if (!$(this).val()) {
+                    $(this).attr('type', 'text');
+                }
+            });
+        });
+
         // Toggle filter pada mobile
         filterToggle.on('click', function() {
             sidebar.addClass('active');
@@ -96,7 +108,7 @@
                             searchResults.empty();
 
                             if (response.data.results.length > 0) {
-                                $.each(response.data.results, function(index, item) {
+                                $.each(response.data.results, function(_, item) {
                                     searchResults.append(`
                                         <div class="rental-mobil-search-item" data-id="${item.id}" data-permalink="${item.permalink}">
                                             <div class="rental-mobil-search-item-title">${item.title}</div>
@@ -185,7 +197,7 @@
                         if (response.data.results.length > 0) {
                             searchModalResults.append(`<div class="rental-mobil-grid"></div>`);
 
-                            $.each(response.data.results, function(index, item) {
+                            $.each(response.data.results, function(_, item) {
                                 searchModalResults.find('.rental-mobil-grid').append(`
                                     <div class="rental-mobil-card" data-id="${item.id}">
                                         <div class="rental-mobil-card-image rental-mobil-quick-view-trigger" data-id="${item.id}">
@@ -384,7 +396,6 @@
 
             // Dapatkan data dari card
             const title = card.data('title');
-            const permalink = card.data('permalink');
             const hargaHarian = card.data('harga-harian');
             const hargaMingguan = card.data('harga-mingguan');
             const hargaBulanan = card.data('harga-bulanan');
@@ -484,7 +495,7 @@
                         }
 
                         // Tambahkan galeri lainnya
-                        $.each(response.data.gallery, function(index, image) {
+                        $.each(response.data.gallery, function(_, image) {
                             $('.rental-mobil-quick-view-thumbnails').append(`
                                 <div class="rental-mobil-quick-view-thumbnail" data-src="${image.url}">
                                     <img src="${image.thumbnail}" alt="${title}">
@@ -603,12 +614,34 @@
                     .catch(console.error);
                 } else {
                     // Fallback untuk browser yang tidak mendukung Web Share API
-                    const tempInput = $('<input>');
-                    $('body').append(tempInput);
-                    tempInput.val(shareUrl).select();
-                    document.execCommand('copy');
-                    tempInput.remove();
-                    alert('URL telah disalin ke clipboard');
+                    // Gunakan Clipboard API jika tersedia
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(shareUrl)
+                            .then(() => {
+                                alert('URL telah disalin ke clipboard');
+                            })
+                            .catch(err => {
+                                console.error('Gagal menyalin URL: ', err);
+                                alert('Gagal menyalin URL. Silakan coba lagi.');
+                            });
+                    } else {
+                        // Fallback untuk browser yang tidak mendukung Clipboard API
+                        const tempInput = $('<input>');
+                        $('body').append(tempInput);
+                        tempInput.val(shareUrl).select();
+                        try {
+                            const successful = document.execCommand('copy');
+                            if (successful) {
+                                alert('URL telah disalin ke clipboard');
+                            } else {
+                                alert('Gagal menyalin URL. Silakan coba lagi.');
+                            }
+                        } catch (err) {
+                            console.error('Gagal menyalin URL: ', err);
+                            alert('Gagal menyalin URL. Silakan coba lagi.');
+                        }
+                        tempInput.remove();
+                    }
                 }
             });
 
@@ -682,48 +715,47 @@
             e.preventDefault();
 
             const kendaraanId = $('#rental-mobil-booking-kendaraan-id').val();
-            const kendaraanTitle = $('#rental-mobil-booking-kendaraan-title').val();
-            const nama = $('#rental-mobil-booking-nama').val();
-            const domisili = $('#rental-mobil-booking-domisili').val();
-            const tanggalSewa = $('#rental-mobil-booking-tanggal').val();
-            const jamSewa = $('#rental-mobil-booking-jam').val();
-            const durasiSewa = $('#rental-mobil-booking-durasi').val();
-            const satuanDurasi = $('#rental-mobil-booking-satuan').val();
 
-            // Format tanggal
-            const tanggalObj = new Date(tanggalSewa);
-            const formattedTanggal = tanggalObj.toLocaleDateString('id-ID', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
+            // Collect all form data
+            const formData = $(this).serializeArray();
+            const formValues = {};
+
+            // Convert form data to object
+            $.each(formData, function(_, field) {
+                formValues[field.name] = field.value;
             });
 
-            // Buat pesan WhatsApp
-            let message = `Halo, saya ingin menyewa kendaraan *${kendaraanTitle}* dengan detail berikut:
+            // Format date fields if they exist
+            $.each(formValues, function(key, value) {
+                // Check if this is a date field by looking at the input type
+                const input = $(`#rental-mobil-booking-${key}`);
+                if (input.attr('type') === 'date' && value) {
+                    const dateObj = new Date(value);
+                    formValues[key] = dateObj.toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                }
+            });
 
-Nama: ${nama}
-Domisili: ${domisili}
-Tanggal Sewa: ${formattedTanggal}
-Jam Sewa: ${jamSewa}
-Durasi Sewa: ${durasiSewa} ${satuanDurasi}
+            // Prepare data for AJAX request
+            const ajaxData = {
+                action: 'rental_mobil_get_whatsapp',
+                nonce: rental_mobil_ajax.nonce,
+                kendaraan_id: kendaraanId
+            };
 
-Mohon informasi lebih lanjut. Terima kasih.`;
+            // Add all form values to AJAX data
+            $.each(formValues, function(key, value) {
+                ajaxData[key] = value;
+            });
 
-            // Dapatkan nomor WhatsApp dari AJAX
+            // Dapatkan nomor WhatsApp dan template pesan dari AJAX
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
                 type: 'POST',
-                data: {
-                    action: 'rental_mobil_get_whatsapp',
-                    nonce: rental_mobil_ajax.nonce,
-                    kendaraan_id: kendaraanId,
-                    nama: nama,
-                    domisili: domisili,
-                    tanggal_sewa: formattedTanggal,
-                    jam_sewa: jamSewa,
-                    durasi_sewa: durasiSewa,
-                    satuan_durasi: satuanDurasi
-                },
+                data: ajaxData,
                 success: function(response) {
                     if (response.success) {
                         // Buka WhatsApp
@@ -751,7 +783,7 @@ Mohon informasi lebih lanjut. Terima kasih.`;
 
             // Update URL dengan parameter filter
             const formValues = {};
-            $.each($(this).serializeArray(), function(i, field) {
+            $.each($(this).serializeArray(), function(_, field) {
                 if (field.value) {
                     formValues[field.name] = field.value;
                 }
@@ -932,37 +964,47 @@ Mohon informasi lebih lanjut. Terima kasih.`;
             e.preventDefault();
 
             const kendaraanId = $('#rental-mobil-inline-booking-kendaraan-id').val();
-            const kendaraanTitle = $('#rental-mobil-inline-booking-kendaraan-title').val();
-            const nama = $('#rental-mobil-inline-booking-nama').val();
-            const domisili = $('#rental-mobil-inline-booking-domisili').val();
-            const tanggalSewa = $('#rental-mobil-inline-booking-tanggal').val();
-            const jamSewa = $('#rental-mobil-inline-booking-jam').val();
-            const durasiSewa = $('#rental-mobil-inline-booking-durasi').val();
-            const satuanDurasi = $('#rental-mobil-inline-booking-satuan').val();
 
-            // Format tanggal
-            const tanggalObj = new Date(tanggalSewa);
-            const formattedTanggal = tanggalObj.toLocaleDateString('id-ID', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
+            // Collect all form data
+            const formData = $(this).serializeArray();
+            const formValues = {};
+
+            // Convert form data to object
+            $.each(formData, function(_, field) {
+                formValues[field.name] = field.value;
             });
 
-            // Dapatkan nomor WhatsApp dari AJAX
+            // Format date fields if they exist
+            $.each(formValues, function(key, value) {
+                // Check if this is a date field by looking at the input type
+                const input = $(`#rental-mobil-inline-booking-${key}`);
+                if (input.attr('type') === 'date' && value) {
+                    const dateObj = new Date(value);
+                    formValues[key] = dateObj.toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                }
+            });
+
+            // Prepare data for AJAX request
+            const ajaxData = {
+                action: 'rental_mobil_get_whatsapp',
+                nonce: rental_mobil_ajax.nonce,
+                kendaraan_id: kendaraanId
+            };
+
+            // Add all form values to AJAX data
+            $.each(formValues, function(key, value) {
+                ajaxData[key] = value;
+            });
+
+            // Dapatkan nomor WhatsApp dan template pesan dari AJAX
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
                 type: 'POST',
-                data: {
-                    action: 'rental_mobil_get_whatsapp',
-                    nonce: rental_mobil_ajax.nonce,
-                    kendaraan_id: kendaraanId,
-                    nama: nama,
-                    domisili: domisili,
-                    tanggal_sewa: formattedTanggal,
-                    jam_sewa: jamSewa,
-                    durasi_sewa: durasiSewa,
-                    satuan_durasi: satuanDurasi
-                },
+                data: ajaxData,
                 success: function(response) {
                     if (response.success) {
                         // Buka WhatsApp
