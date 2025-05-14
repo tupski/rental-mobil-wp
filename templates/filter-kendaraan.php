@@ -118,11 +118,11 @@ $tahun_terms = in_array('tahun', $filter_options) ? get_terms(array(
         <div class="rental-mobil-filter-group">
             <label for="rental-mobil-filter-orderby"><?php _e('Urutkan', 'rental-mobil-wp'); ?></label>
             <select id="rental-mobil-filter-orderby" name="orderby" class="rental-mobil-filter-select">
-                <option value="date"><?php _e('Terbaru', 'rental-mobil-wp'); ?></option>
-                <option value="title"><?php _e('Nama', 'rental-mobil-wp'); ?></option>
-                <option value="meta_value_num" data-meta-key="_rental_mobil_harga_sewa"><?php _e('Harga', 'rental-mobil-wp'); ?></option>
-                <option value="price_high" data-meta-key="_rental_mobil_harga_sewa"><?php _e('Harga Tertinggi', 'rental-mobil-wp'); ?></option>
-                <option value="price_low" data-meta-key="_rental_mobil_harga_sewa"><?php _e('Harga Terendah', 'rental-mobil-wp'); ?></option>
+                <option value="date" <?php selected(isset($_GET['orderby']) ? $_GET['orderby'] : '', 'date'); ?>><?php _e('Terbaru', 'rental-mobil-wp'); ?></option>
+                <option value="title" <?php selected(isset($_GET['orderby']) ? $_GET['orderby'] : '', 'title'); ?>><?php _e('Nama', 'rental-mobil-wp'); ?></option>
+                <option value="meta_value_num" data-meta-key="_rental_mobil_harga_sewa" <?php selected(isset($_GET['orderby']) ? $_GET['orderby'] : '', 'meta_value_num'); ?>><?php _e('Harga', 'rental-mobil-wp'); ?></option>
+                <option value="price_high" data-meta-key="_rental_mobil_harga_sewa" <?php selected(isset($_GET['orderby']) ? $_GET['orderby'] : '', 'price_high'); ?>><?php _e('Harga Tertinggi', 'rental-mobil-wp'); ?></option>
+                <option value="price_low" data-meta-key="_rental_mobil_harga_sewa" <?php selected(isset($_GET['orderby']) ? $_GET['orderby'] : '', 'price_low'); ?>><?php _e('Harga Terendah', 'rental-mobil-wp'); ?></option>
             </select>
         </div>
         <?php endif; ?>
@@ -131,8 +131,8 @@ $tahun_terms = in_array('tahun', $filter_options) ? get_terms(array(
         <div class="rental-mobil-filter-group">
             <label for="rental-mobil-filter-order"><?php _e('Urutan', 'rental-mobil-wp'); ?></label>
             <select id="rental-mobil-filter-order" name="order" class="rental-mobil-filter-select">
-                <option value="DESC"><?php _e('Menurun', 'rental-mobil-wp'); ?></option>
-                <option value="ASC"><?php _e('Menaik', 'rental-mobil-wp'); ?></option>
+                <option value="DESC" <?php selected(isset($_GET['order']) ? $_GET['order'] : '', 'DESC'); ?>><?php _e('Menurun', 'rental-mobil-wp'); ?></option>
+                <option value="ASC" <?php selected(isset($_GET['order']) ? $_GET['order'] : '', 'ASC'); ?>><?php _e('Menaik', 'rental-mobil-wp'); ?></option>
             </select>
         </div>
         <?php endif; ?>

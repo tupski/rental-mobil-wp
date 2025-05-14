@@ -959,6 +959,10 @@
                     $('#rental-mobil-filter-tipe').val('');
                 } else if (filterKey === 'tahun') {
                     $('#rental-mobil-filter-tahun').val('');
+                } else if (filterKey === 'orderby') {
+                    $('#rental-mobil-filter-orderby').val('date');
+                } else if (filterKey === 'order') {
+                    $('#rental-mobil-filter-order').val('DESC');
                 }
 
                 // Submit form

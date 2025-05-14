@@ -175,8 +175,16 @@ function rental_mobil_register_settings() {
 
     add_settings_field(
         'homepage_vehicle_order',
-        __('Pengaturan Urutan Kendaraan', 'rental-mobil-wp'),
+        __('Pengaturan Urutan Kendaraan Homepage', 'rental-mobil-wp'),
         'rental_mobil_homepage_vehicle_order_callback',
+        'rental_mobil_homepage',
+        'rental_mobil_homepage_section'
+    );
+
+    add_settings_field(
+        'shortcode_vehicle_order',
+        __('Pengaturan Urutan Kendaraan Shortcode', 'rental-mobil-wp'),
+        'rental_mobil_shortcode_vehicle_order_callback',
         'rental_mobil_homepage',
         'rental_mobil_homepage_section'
     );
@@ -978,6 +986,17 @@ function rental_mobil_validate_options($input) {
         $output['homepage_order'] = in_array($input['homepage_order'], $valid_order) ? $input['homepage_order'] : 'DESC';
     }
 
+    // Sanitize shortcode order settings
+    if (isset($input['shortcode_orderby'])) {
+        $valid_orderby = array('date', 'title', 'meta_value_num', 'price_high', 'price_low', 'rand');
+        $output['shortcode_orderby'] = in_array($input['shortcode_orderby'], $valid_orderby) ? $input['shortcode_orderby'] : 'date';
+    }
+
+    if (isset($input['shortcode_order'])) {
+        $valid_order = array('ASC', 'DESC');
+        $output['shortcode_order'] = in_array($input['shortcode_order'], $valid_order) ? $input['shortcode_order'] : 'DESC';
+    }
+
     // Sanitize license key
     if (isset($input['license_key'])) {
         $output['license_key'] = sanitize_text_field($input['license_key']);
@@ -1358,6 +1377,17 @@ function rental_mobil_get_homepage_order_settings() {
 }
 
 /**
+ * Get shortcode vehicle order settings
+ */
+function rental_mobil_get_shortcode_order_settings() {
+    $options = rental_mobil_get_options();
+    return array(
+        'orderby' => isset($options['shortcode_orderby']) ? $options['shortcode_orderby'] : 'date',
+        'order' => isset($options['shortcode_order']) ? $options['shortcode_order'] : 'DESC',
+    );
+}
+
+/**
  * Get slider settings
  */
 function rental_mobil_get_slider_settings() {
@@ -1401,6 +1431,43 @@ function rental_mobil_homepage_vehicle_order_callback() {
         </p>
 
         <p class="description"><?php _e('Pengaturan ini akan diterapkan pada shortcode [kendaraan_pilihan] dan [kendaraan_unggulan] di homepage.', 'rental-mobil-wp'); ?></p>
+    </div>
+    <?php
+}
+
+/**
+ * Shortcode vehicle order callback
+ */
+function rental_mobil_shortcode_vehicle_order_callback() {
+    $options = rental_mobil_get_options();
+    $default_orderby = isset($options['shortcode_orderby']) ? $options['shortcode_orderby'] : 'date';
+    $default_order = isset($options['shortcode_order']) ? $options['shortcode_order'] : 'DESC';
+    ?>
+    <div class="rental-mobil-shortcode-order-settings">
+        <p>
+            <label for="shortcode_orderby"><?php _e('Urutkan Berdasarkan', 'rental-mobil-wp'); ?></label>
+            <select id="shortcode_orderby" name="rental_mobil_options[shortcode_orderby]">
+                <option value="date" <?php selected($default_orderby, 'date'); ?>><?php _e('Tanggal', 'rental-mobil-wp'); ?></option>
+                <option value="title" <?php selected($default_orderby, 'title'); ?>><?php _e('Judul', 'rental-mobil-wp'); ?></option>
+                <option value="meta_value_num" <?php selected($default_orderby, 'meta_value_num'); ?>><?php _e('Harga', 'rental-mobil-wp'); ?></option>
+                <option value="price_high" <?php selected($default_orderby, 'price_high'); ?>><?php _e('Harga Tertinggi', 'rental-mobil-wp'); ?></option>
+                <option value="price_low" <?php selected($default_orderby, 'price_low'); ?>><?php _e('Harga Terendah', 'rental-mobil-wp'); ?></option>
+                <option value="rand" <?php selected($default_orderby, 'rand'); ?>><?php _e('Acak', 'rental-mobil-wp'); ?></option>
+            </select>
+            <span class="description"><?php _e('Pilih cara mengurutkan kendaraan di shortcode [daftar_kendaraan].', 'rental-mobil-wp'); ?></span>
+        </p>
+
+        <p>
+            <label for="shortcode_order"><?php _e('Urutan', 'rental-mobil-wp'); ?></label>
+            <select id="shortcode_order" name="rental_mobil_options[shortcode_order]">
+                <option value="ASC" <?php selected($default_order, 'ASC'); ?>><?php _e('Naik (A-Z, Lama-Baru, Murah-Mahal)', 'rental-mobil-wp'); ?></option>
+                <option value="DESC" <?php selected($default_order, 'DESC'); ?>><?php _e('Turun (Z-A, Baru-Lama, Mahal-Murah)', 'rental-mobil-wp'); ?></option>
+            </select>
+            <span class="description"><?php _e('Pilih arah pengurutan kendaraan.', 'rental-mobil-wp'); ?></span>
+        </p>
+
+        <p class="description"><?php _e('Pengaturan ini akan diterapkan pada shortcode [daftar_kendaraan] sebagai nilai default.', 'rental-mobil-wp'); ?></p>
+        <p class="description"><?php _e('Contoh penggunaan: [daftar_kendaraan orderby="price_high" order="DESC"]', 'rental-mobil-wp'); ?></p>
     </div>
     <?php
 }

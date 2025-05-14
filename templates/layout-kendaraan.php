@@ -43,10 +43,30 @@ if (!defined('WPINC')) {
             $args = array(
                 'post_type'      => 'kendaraan',
                 'posts_per_page' => 9, // Tetapkan 9 kendaraan per halaman
-                'orderby'        => $atts['orderby'],
-                'order'          => $atts['order'],
                 'paged'          => $paged,
             );
+
+            // Atur pengurutan berdasarkan parameter
+            if ($atts['orderby'] === 'price_high') {
+                // Urutkan berdasarkan harga tertinggi
+                $args['meta_key'] = '_rental_mobil_harga_sewa';
+                $args['orderby'] = 'meta_value_num';
+                $args['order'] = 'DESC';
+            } elseif ($atts['orderby'] === 'price_low') {
+                // Urutkan berdasarkan harga terendah
+                $args['meta_key'] = '_rental_mobil_harga_sewa';
+                $args['orderby'] = 'meta_value_num';
+                $args['order'] = 'ASC';
+            } elseif ($atts['orderby'] === 'meta_value_num') {
+                // Urutkan berdasarkan harga (sesuai order)
+                $args['meta_key'] = '_rental_mobil_harga_sewa';
+                $args['orderby'] = 'meta_value_num';
+                $args['order'] = $atts['order'];
+            } else {
+                // Urutkan berdasarkan parameter lainnya
+                $args['orderby'] = $atts['orderby'];
+                $args['order'] = $atts['order'];
+            }
 
             // Tambahkan filter berdasarkan parameter
             if (!empty($atts['merk'])) {
