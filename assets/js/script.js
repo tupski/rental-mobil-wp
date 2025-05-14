@@ -471,6 +471,31 @@
                 openZoomModal(imgSrc, title);
             });
 
+            // Tambahkan event click untuk tombol share
+            $('.rental-mobil-share-button').off('click').on('click', function() {
+                const platform = $(this).data('platform');
+                const currentUrl = window.location.href;
+                const shareUrl = currentUrl.includes('?') ? currentUrl : currentUrl + '?kata_kunci=' + encodeURIComponent(title);
+
+                switch(platform) {
+                    case 'whatsapp':
+                        window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(title + ' - ' + shareUrl), '_blank');
+                        break;
+                    case 'facebook':
+                        window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank');
+                        break;
+                    case 'twitter':
+                        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(title) + '&url=' + encodeURIComponent(shareUrl), '_blank');
+                        break;
+                    case 'telegram':
+                        window.open('https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(title), '_blank');
+                        break;
+                    case 'email':
+                        window.open('mailto:?subject=' + encodeURIComponent('Info Rental Mobil: ' + title) + '&body=' + encodeURIComponent('Lihat info tentang ' + title + ' di ' + shareUrl), '_blank');
+                        break;
+                }
+            });
+
             // Dapatkan galeri kendaraan melalui AJAX
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
@@ -626,21 +651,36 @@
                             });
                     } else {
                         // Fallback untuk browser yang tidak mendukung Clipboard API
-                        const tempInput = $('<input>');
-                        $('body').append(tempInput);
-                        tempInput.val(shareUrl).select();
                         try {
-                            const successful = document.execCommand('copy');
-                            if (successful) {
-                                alert('URL telah disalin ke clipboard');
+                            // Gunakan navigator.clipboard API jika tersedia
+                            if (navigator.clipboard) {
+                                navigator.clipboard.writeText(shareUrl)
+                                    .then(() => {
+                                        alert('URL telah disalin ke clipboard');
+                                    })
+                                    .catch(() => {
+                                        alert('Gagal menyalin URL. Silakan coba lagi.');
+                                    });
                             } else {
-                                alert('Gagal menyalin URL. Silakan coba lagi.');
+                                // Fallback lama jika tidak ada pilihan lain
+                                const tempInput = $('<input>');
+                                $('body').append(tempInput);
+                                tempInput.val(shareUrl).select();
+
+                                // Gunakan document.execCommand dengan peringatan
+                                // eslint-disable-next-line deprecation/deprecation
+                                const successful = document.execCommand('copy');
+                                if (successful) {
+                                    alert('URL telah disalin ke clipboard');
+                                } else {
+                                    alert('Gagal menyalin URL. Silakan coba lagi.');
+                                }
+                                tempInput.remove();
                             }
                         } catch (err) {
                             console.error('Gagal menyalin URL: ', err);
                             alert('Gagal menyalin URL. Silakan coba lagi.');
                         }
-                        tempInput.remove();
                     }
                 }
             });

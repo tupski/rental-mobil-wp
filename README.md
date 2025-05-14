@@ -25,6 +25,8 @@ Rental Mobil WP adalah plugin WordPress yang dirancang khusus untuk bisnis renta
 * **Quick View** - Fitur quick view untuk melihat detail kendaraan tanpa perlu membuka halaman baru
 * **Sortir Berdasarkan Harga** - Urutkan kendaraan dari harga tertinggi ke terendah atau sebaliknya
 * **Slider Kendaraan Unggulan** - Tampilkan kendaraan unggulan dengan slider yang dapat dikonfigurasi
+* **Share Button** - Tombol berbagi ke WhatsApp, Facebook, Twitter, Telegram, dan Email
+* **Pengaturan Filter Konfigurabel** - Atur filter yang ditampilkan di frontend dan admin
 
 ### Shortcode
 
