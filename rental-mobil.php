@@ -70,13 +70,21 @@ function rental_mobil_wp_deactivate() {
 // Load plugin files
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/post-types.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/meta-boxes.php';
-require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/shortcodes.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/settings.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/admin-columns.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/ajax-handlers.php';
 require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/license.php';
-require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/form-builder.php';
-require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/custom-form.php';
+
+// Load shortcodes setelah settings dan license
+require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/shortcodes.php';
+
+// Load form builder dan custom form jika file ada
+if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'includes/form-builder.php')) {
+    require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/form-builder.php';
+}
+if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'includes/custom-form.php')) {
+    require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/custom-form.php';
+}
 
 // Enqueue scripts and styles
 add_action('wp_enqueue_scripts', 'rental_mobil_wp_enqueue_scripts');
@@ -90,32 +98,53 @@ function rental_mobil_wp_enqueue_scripts() {
     // wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css', array(), '5.15.4');
     // wp_enqueue_style('rental-mobil-icons', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/icons.css', array('font-awesome'), RENTAL_MOBIL_VERSION);
 
-    wp_enqueue_style('rental-mobil-style', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/style.css', array(), RENTAL_MOBIL_VERSION);
-    wp_enqueue_style('rental-mobil-custom-form', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/custom-form.css', array(), RENTAL_MOBIL_VERSION);
-    wp_enqueue_script('rental-mobil-script', RENTAL_MOBIL_PLUGIN_URL . 'assets/js/script.js', array('jquery'), RENTAL_MOBIL_VERSION, true);
+    // Enqueue style.css jika file ada
+    if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'assets/css/style.css')) {
+        wp_enqueue_style('rental-mobil-style', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/style.css', array(), RENTAL_MOBIL_VERSION);
+    }
 
-    // Localize script untuk AJAX
-    wp_localize_script('rental-mobil-script', 'rental_mobil_ajax', array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('rental_mobil_nonce')
-    ));
+    // Enqueue custom-form.css jika file ada
+    if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'assets/css/custom-form.css')) {
+        wp_enqueue_style('rental-mobil-custom-form', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/custom-form.css', array(), RENTAL_MOBIL_VERSION);
+    }
+
+    // Enqueue script.js jika file ada
+    if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'assets/js/script.js')) {
+        wp_enqueue_script('rental-mobil-script', RENTAL_MOBIL_PLUGIN_URL . 'assets/js/script.js', array('jquery'), RENTAL_MOBIL_VERSION, true);
+
+        // Localize script untuk AJAX
+        wp_localize_script('rental-mobil-script', 'rental_mobil_ajax', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('rental_mobil_nonce')
+        ));
+    }
 }
 
 // Enqueue admin scripts and styles
 add_action('admin_enqueue_scripts', 'rental_mobil_wp_enqueue_admin_scripts');
 function rental_mobil_wp_enqueue_admin_scripts($hook) {
     // Load di halaman plugin rental mobil dan halaman edit kendaraan
-    if (strpos($hook, 'rental-mobil') !== false || (get_current_screen()->post_type === 'kendaraan' && get_current_screen()->base === 'edit')) {
-        wp_enqueue_style('rental-mobil-admin-style', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/admin.css', array(), RENTAL_MOBIL_VERSION);
-        wp_enqueue_style('rental-mobil-form-builder', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/form-builder.css', array(), RENTAL_MOBIL_VERSION);
+    if (strpos($hook, 'rental-mobil') !== false || (get_current_screen() && get_current_screen()->post_type === 'kendaraan' && get_current_screen()->base === 'edit')) {
+        // Enqueue admin.css jika file ada
+        if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'assets/css/admin.css')) {
+            wp_enqueue_style('rental-mobil-admin-style', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/admin.css', array(), RENTAL_MOBIL_VERSION);
+        }
+
+        // Enqueue form-builder.css jika file ada
+        if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'assets/css/form-builder.css')) {
+            wp_enqueue_style('rental-mobil-form-builder', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/form-builder.css', array(), RENTAL_MOBIL_VERSION);
+        }
+
         wp_enqueue_script('wp-color-picker');
         wp_enqueue_style('wp-color-picker');
 
         // Load jQuery UI untuk sortable
         wp_enqueue_script('jquery-ui-sortable');
 
-        // Load form builder script
-        wp_enqueue_script('rental-mobil-form-builder', RENTAL_MOBIL_PLUGIN_URL . 'assets/js/form-builder.js', array('jquery', 'jquery-ui-sortable'), RENTAL_MOBIL_VERSION, true);
+        // Load form builder script jika file ada
+        if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'assets/js/form-builder.js')) {
+            wp_enqueue_script('rental-mobil-form-builder', RENTAL_MOBIL_PLUGIN_URL . 'assets/js/form-builder.js', array('jquery', 'jquery-ui-sortable'), RENTAL_MOBIL_VERSION, true);
+        }
     }
 }
 
@@ -157,12 +186,18 @@ function rental_mobil_wp_add_modals_to_footer() {
         return;
     }
 
-    // Tampilkan modal booking
-    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-modal.php';
+    // Tampilkan modal booking jika file ada
+    if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-modal.php')) {
+        include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-modal.php';
+    }
 
-    // Tampilkan modal quick view
-    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php';
+    // Tampilkan modal quick view jika file ada
+    if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php')) {
+        include RENTAL_MOBIL_PLUGIN_DIR . 'templates/quick-view-modal.php';
+    }
 
-    // Tampilkan modal zoom
-    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/zoom-modal.php';
+    // Tampilkan modal zoom jika file ada
+    if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'templates/zoom-modal.php')) {
+        include RENTAL_MOBIL_PLUGIN_DIR . 'templates/zoom-modal.php';
+    }
 }

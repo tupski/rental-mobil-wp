@@ -1327,6 +1327,9 @@ function rental_mobil_get_options() {
             'license_max_domains' => '',
             'form_fields' => array()
         );
+
+        // Simpan opsi default ke database
+        update_option('rental_mobil_options', $options, 'yes');
     }
 
     // Pastikan form_fields selalu ada
@@ -1891,7 +1894,73 @@ function rental_mobil_get_license_max_domains() {
  */
 function rental_mobil_get_form_fields() {
     $options = rental_mobil_get_options();
-    return isset($options['form_fields']) ? $options['form_fields'] : array();
+
+    // Jika form_fields tidak ada atau kosong, gunakan default fields
+    if (!isset($options['form_fields']) || empty($options['form_fields'])) {
+        $default_fields = array(
+            array(
+                'id' => 'nama',
+                'label' => 'Nama',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => 'Masukkan nama Anda',
+                'order' => 1
+            ),
+            array(
+                'id' => 'domisili',
+                'label' => 'Domisili',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => 'Masukkan domisili Anda',
+                'order' => 2
+            ),
+            array(
+                'id' => 'tanggal_sewa',
+                'label' => 'Tanggal Sewa',
+                'type' => 'date',
+                'required' => true,
+                'placeholder' => '',
+                'order' => 3
+            ),
+            array(
+                'id' => 'jam_sewa',
+                'label' => 'Jam Sewa',
+                'type' => 'time',
+                'required' => true,
+                'placeholder' => '',
+                'order' => 4
+            ),
+            array(
+                'id' => 'durasi_sewa',
+                'label' => 'Durasi Sewa',
+                'type' => 'number',
+                'required' => true,
+                'placeholder' => 'Masukkan durasi sewa',
+                'order' => 5
+            ),
+            array(
+                'id' => 'satuan_durasi',
+                'label' => 'Satuan Durasi',
+                'type' => 'select',
+                'required' => true,
+                'placeholder' => '',
+                'options' => array(
+                    'hari' => 'Hari',
+                    'minggu' => 'Minggu',
+                    'bulan' => 'Bulan'
+                ),
+                'order' => 6
+            )
+        );
+
+        // Simpan default fields ke database
+        $options['form_fields'] = $default_fields;
+        update_option('rental_mobil_options', $options, 'yes');
+
+        return $default_fields;
+    }
+
+    return $options['form_fields'];
 }
 
 /**
@@ -2066,34 +2135,12 @@ function rental_mobil_wp_add_custom_css() {
 }
 
 /**
- * Fungsi untuk menampilkan tombol donasi Trakteer
+ * Fungsi untuk menampilkan tombol donasi (dinonaktifkan)
+ *
+ * @param string $type Tipe tombol (tidak digunakan)
+ * @return string String kosong
  */
 function rental_mobil_trakteer_button($type = 'overlay') {
-    ob_start();
-    if ($type === 'overlay') {
-        ?>
-        <div class="rental-mobil-trakteer-button">
-            <script type='text/javascript' src='https://edge-cdn.trakteer.id/js/trbtn-overlay.min.js?v=24-01-2025'></script>
-            <script type='text/javascript' class='troverlay'>
-                (function() {
-                    var trbtnId = trbtnOverlay.init('Dukung Saya di Trakteer','#000F9B','https://trakteer.id/tupski/tip/embed/modal','https://trakteer.id/images/mix/coffee.png','40','inline');
-                    trbtnOverlay.draw(trbtnId);
-                })();
-            </script>
-        </div>
-        <?php
-    } else {
-        ?>
-        <div class="rental-mobil-trakteer-button">
-            <script type='text/javascript' src='https://edge-cdn.trakteer.id/js/embed/trbtn.min.js?v=24-01-2025'></script>
-            <script type='text/javascript'>
-                (function(){
-                    var trbtnId=trbtn.init('Dukung Saya di Trakteer','#4075FF','https://trakteer.id/tupski','https://trakteer.id/images/mix/coffee.png','40');
-                    trbtn.draw(trbtnId);
-                })();
-            </script>
-        </div>
-        <?php
-    }
-    return ob_get_clean();
+    // Parameter $type tidak digunakan, tetapi dipertahankan untuk kompatibilitas
+    return '';
 }
