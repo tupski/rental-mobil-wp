@@ -466,6 +466,28 @@ function rental_mobil_get_whatsapp_ajax() {
         $values[] = $value;
     }
 
+    // Tambahkan placeholder dinamis untuk semua field form
+    $dynamic_placeholders = array();
+    $dynamic_values = array();
+
+    foreach ($_POST as $key => $value) {
+        // Lewati kunci yang bukan field form (seperti action, nonce, dll)
+        if (in_array($key, array('action', 'nonce', 'kendaraan_id'))) {
+            continue;
+        }
+
+        // Buat placeholder dinamis jika belum ada
+        $dynamic_placeholder = '{' . $key . '}';
+        if (!in_array($dynamic_placeholder, $placeholders)) {
+            $dynamic_placeholders[] = $dynamic_placeholder;
+            $dynamic_values[] = sanitize_text_field($value);
+        }
+    }
+
+    // Gabungkan placeholder dinamis dengan placeholder yang sudah ada
+    $placeholders = array_merge($placeholders, $dynamic_placeholders);
+    $values = array_merge($values, $dynamic_values);
+
     // Ganti placeholder dengan data sebenarnya
     $message = str_replace($placeholders, $values, $message_template);
 

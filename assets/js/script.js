@@ -897,10 +897,17 @@
         function initPagination(formData) {
             // Delegasi event untuk tombol paginasi
             $(document).off('click', '.rental-mobil-pagination-links a').on('click', '.rental-mobil-pagination-links a', function(e) {
-                e.preventDefault();
+                // Tidak perlu e.preventDefault() karena kita ingin menggunakan URL
+                // Namun kita tetap mempertahankan fungsi AJAX untuk kompatibilitas
                 const page = $(this).data('page');
 
-                // Muat kendaraan dengan halaman yang dipilih tanpa scroll
+                // Jika pengguna menekan tombol Ctrl atau Command saat mengklik, biarkan browser menangani link
+                if (e.ctrlKey || e.metaKey) {
+                    return true;
+                }
+
+                // Jika tidak, gunakan AJAX untuk memuat konten tanpa refresh halaman
+                e.preventDefault();
                 loadKendaraan(formData, page);
             });
         }

@@ -632,17 +632,34 @@ function rental_mobil_whatsapp_message_callback() {
         <br>
         <code>{nama_kendaraan}</code> - <?php _e('Nama kendaraan', 'rental-mobil-wp'); ?>
         <br>
-        <code>{nama}</code> - <?php _e('Nama pemesan', 'rental-mobil-wp'); ?>
+        <?php
+        // Dapatkan form fields dari pengaturan
+        $form_fields = rental_mobil_get_form_fields();
+
+        // Tampilkan placeholder untuk setiap field
+        if (!empty($form_fields)) {
+            foreach ($form_fields as $field) {
+                echo '<code>{' . esc_html($field['id']) . '}</code> - ' . esc_html($field['label']) . '<br>';
+            }
+        } else {
+            // Tampilkan placeholder default jika form fields belum diatur
+            ?>
+            <code>{nama}</code> - <?php _e('Nama pemesan', 'rental-mobil-wp'); ?>
+            <br>
+            <code>{domisili}</code> - <?php _e('Domisili pemesan', 'rental-mobil-wp'); ?>
+            <br>
+            <code>{tanggal_sewa}</code> - <?php _e('Tanggal sewa', 'rental-mobil-wp'); ?>
+            <br>
+            <code>{jam_sewa}</code> - <?php _e('Jam sewa', 'rental-mobil-wp'); ?>
+            <br>
+            <code>{durasi_sewa}</code> - <?php _e('Durasi sewa', 'rental-mobil-wp'); ?>
+            <br>
+            <code>{satuan_durasi}</code> - <?php _e('Satuan durasi (hari/minggu/bulan/tahun)', 'rental-mobil-wp'); ?>
+            <?php
+        }
+        ?>
         <br>
-        <code>{domisili}</code> - <?php _e('Domisili pemesan', 'rental-mobil-wp'); ?>
-        <br>
-        <code>{tanggal_sewa}</code> - <?php _e('Tanggal sewa', 'rental-mobil-wp'); ?>
-        <br>
-        <code>{jam_sewa}</code> - <?php _e('Jam sewa', 'rental-mobil-wp'); ?>
-        <br>
-        <code>{durasi_sewa}</code> - <?php _e('Durasi sewa', 'rental-mobil-wp'); ?>
-        <br>
-        <code>{satuan_durasi}</code> - <?php _e('Satuan durasi (hari/minggu/bulan/tahun)', 'rental-mobil-wp'); ?>
+        <strong><?php _e('Catatan:', 'rental-mobil-wp'); ?></strong> <?php _e('Placeholder akan otomatis dibuat untuk setiap field form yang Anda tambahkan dengan format {id_field}.', 'rental-mobil-wp'); ?>
     </p>
     <?php
 }
