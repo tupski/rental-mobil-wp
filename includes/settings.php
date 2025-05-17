@@ -333,7 +333,7 @@ function rental_mobil_documentation_section_callback() {
 
     echo '<h3>' . __('Dokumentasi Lengkap', 'rental-mobil-wp') . '</h3>';
     echo '<p>' . __('Untuk dokumentasi lengkap, silakan kunjungi:', 'rental-mobil-wp') . '</p>';
-    echo '<p><a href="https://github.com/tupski/rental-mobil-wp/blob/main/DOKUMENTASI.md" target="_blank" class="button button-primary">' . __('Buka Dokumentasi Lengkap', 'rental-mobil-wp') . '</a></p>';
+    echo '<p><a href="https://github.com/tupski/rental-mobil-wp/blob/rental-mobil-wp/DOKUMENTASI.md" target="_blank" class="button button-primary">' . __('Buka Dokumentasi Lengkap', 'rental-mobil-wp') . '</a></p>';
 
     echo '<h3>' . __('Kontribusi', 'rental-mobil-wp') . '</h3>';
     echo '<p>' . sprintf(__('Plugin ini open source dan Anda dapat berkontribusi di %s', 'rental-mobil-wp'), '<a href="https://github.com/tupski/rental-mobil-wp" target="_blank">GitHub</a>') . '</p>';
