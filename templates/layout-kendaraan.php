@@ -46,26 +46,45 @@ if (!defined('WPINC')) {
                 'paged'          => $paged,
             );
 
-            // Atur pengurutan berdasarkan parameter
-            if ($atts['orderby'] === 'price_high') {
-                // Urutkan berdasarkan harga tertinggi
-                $args['meta_key'] = '_rental_mobil_harga_sewa';
-                $args['orderby'] = 'meta_value_num';
-                $args['order'] = 'DESC';
-            } elseif ($atts['orderby'] === 'price_low') {
-                // Urutkan berdasarkan harga terendah
-                $args['meta_key'] = '_rental_mobil_harga_sewa';
-                $args['orderby'] = 'meta_value_num';
-                $args['order'] = 'ASC';
-            } elseif ($atts['orderby'] === 'meta_value_num') {
-                // Urutkan berdasarkan harga (sesuai order)
-                $args['meta_key'] = '_rental_mobil_harga_sewa';
-                $args['orderby'] = 'meta_value_num';
-                $args['order'] = $atts['order'];
+            // Cek apakah ada parameter orderby dan order dari URL atau shortcode
+            $has_custom_order = isset($_GET['orderby']) || (isset($atts['orderby']) && $atts['orderby'] !== 'date');
+
+            if ($has_custom_order) {
+                // Atur pengurutan berdasarkan parameter
+                $orderby = isset($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : $atts['orderby'];
+                $order = isset($_GET['order']) ? sanitize_text_field($_GET['order']) : $atts['order'];
+
+                if ($orderby === 'price_high') {
+                    // Urutkan berdasarkan harga tertinggi
+                    $args['meta_key'] = '_rental_mobil_harga_sewa';
+                    $args['orderby'] = 'meta_value_num';
+                    $args['order'] = 'DESC';
+                } elseif ($orderby === 'price_low') {
+                    // Urutkan berdasarkan harga terendah
+                    $args['meta_key'] = '_rental_mobil_harga_sewa';
+                    $args['orderby'] = 'meta_value_num';
+                    $args['order'] = 'ASC';
+                } elseif ($orderby === 'meta_value_num') {
+                    // Urutkan berdasarkan harga (sesuai order)
+                    $args['meta_key'] = '_rental_mobil_harga_sewa';
+                    $args['orderby'] = 'meta_value_num';
+                    $args['order'] = $order;
+                } else {
+                    // Urutkan berdasarkan parameter lainnya
+                    $args['orderby'] = $orderby;
+                    $args['order'] = $order;
+                }
             } else {
-                // Urutkan berdasarkan parameter lainnya
-                $args['orderby'] = $atts['orderby'];
-                $args['order'] = $atts['order'];
+                // Gunakan pengaturan urutan default dari pengaturan plugin
+                $sort_settings = rental_mobil_get_frontend_sort_settings();
+
+                $args['orderby'] = $sort_settings['orderby'];
+                $args['order'] = $sort_settings['order'];
+
+                // Jika orderby adalah meta_value_num, tambahkan meta_key
+                if ($sort_settings['orderby'] === 'meta_value_num' && isset($sort_settings['meta_key'])) {
+                    $args['meta_key'] = $sort_settings['meta_key'];
+                }
             }
 
             // Tambahkan filter berdasarkan parameter

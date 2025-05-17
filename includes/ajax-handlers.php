@@ -26,8 +26,8 @@ function rental_mobil_filter_ajax() {
     $bahan_bakar = isset($_POST['bahan_bakar']) ? sanitize_text_field($_POST['bahan_bakar']) : '';
     $tipe = isset($_POST['tipe']) ? sanitize_text_field($_POST['tipe']) : '';
     $tahun = isset($_POST['tahun']) ? sanitize_text_field($_POST['tahun']) : '';
-    $orderby = isset($_POST['orderby']) ? sanitize_text_field($_POST['orderby']) : 'date';
-    $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'DESC';
+    $orderby = isset($_POST['orderby']) ? sanitize_text_field($_POST['orderby']) : '';
+    $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : '';
     $jumlah = isset($_POST['jumlah']) ? intval($_POST['jumlah']) : 9; // Default 9 kendaraan per halaman
 
     // Cek parameter halaman dari POST
@@ -102,22 +102,40 @@ function rental_mobil_filter_ajax() {
     $args = array(
         'post_type'      => 'kendaraan',
         'posts_per_page' => $jumlah,
-        'orderby'        => $orderby,
-        'order'          => $order,
         'paged'          => $paged,
     );
 
-    // Jika orderby adalah harga, tambahkan meta_key
-    if ($orderby === 'meta_value_num') {
-        $args['meta_key'] = '_rental_mobil_harga_sewa';
-    } elseif ($orderby === 'price_high') {
-        $args['meta_key'] = '_rental_mobil_harga_sewa';
-        $args['orderby'] = 'meta_value_num';
-        $args['order'] = 'DESC';
-    } elseif ($orderby === 'price_low') {
-        $args['meta_key'] = '_rental_mobil_harga_sewa';
-        $args['orderby'] = 'meta_value_num';
-        $args['order'] = 'ASC';
+    // Cek apakah ada parameter orderby dan order dari POST
+    $has_custom_order = !empty($orderby);
+
+    if ($has_custom_order) {
+        // Atur pengurutan berdasarkan parameter
+        $args['orderby'] = $orderby;
+        $args['order'] = !empty($order) ? $order : 'DESC';
+
+        // Jika orderby adalah harga, tambahkan meta_key
+        if ($orderby === 'meta_value_num') {
+            $args['meta_key'] = '_rental_mobil_harga_sewa';
+        } elseif ($orderby === 'price_high') {
+            $args['meta_key'] = '_rental_mobil_harga_sewa';
+            $args['orderby'] = 'meta_value_num';
+            $args['order'] = 'DESC';
+        } elseif ($orderby === 'price_low') {
+            $args['meta_key'] = '_rental_mobil_harga_sewa';
+            $args['orderby'] = 'meta_value_num';
+            $args['order'] = 'ASC';
+        }
+    } else {
+        // Gunakan pengaturan urutan default dari pengaturan plugin
+        $sort_settings = rental_mobil_get_frontend_sort_settings();
+
+        $args['orderby'] = $sort_settings['orderby'];
+        $args['order'] = $sort_settings['order'];
+
+        // Jika orderby adalah meta_value_num, tambahkan meta_key
+        if ($sort_settings['orderby'] === 'meta_value_num' && isset($sort_settings['meta_key'])) {
+            $args['meta_key'] = $sort_settings['meta_key'];
+        }
     }
 
     // Jika ada keyword, tambahkan pencarian

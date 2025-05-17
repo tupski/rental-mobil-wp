@@ -1792,65 +1792,105 @@ function rental_mobil_share_section_callback() {
  * Filter sort options callback
  */
 function rental_mobil_filter_sort_options_callback() {
+    $sort_field = rental_mobil_get_option('filter_sort_field', 'harga_harian');
+    $price_order = rental_mobil_get_option('filter_sort_price', 'high_to_low');
+    $date_order = rental_mobil_get_option('filter_sort_date', 'newest');
+    $title_order = rental_mobil_get_option('filter_sort_title', 'a_to_z');
+    $random = rental_mobil_get_option('filter_sort_random', '0');
     ?>
     <div class="rental-mobil-filter-sort-options">
-        <h4><?php _e('Harga Harian', 'rental-mobil-wp'); ?></h4>
-        <div class="rental-mobil-filter-sort-option">
-            <label>
-                <input type="radio" name="rental_mobil_options[filter_sort_price]" value="high_to_low" <?php checked(rental_mobil_get_option('filter_sort_price', 'high_to_low'), 'high_to_low'); ?>>
-                <?php _e('Tertinggi - Terendah', 'rental-mobil-wp'); ?>
-            </label>
-            <label>
-                <input type="radio" name="rental_mobil_options[filter_sort_price]" value="low_to_high" <?php checked(rental_mobil_get_option('filter_sort_price', 'high_to_low'), 'low_to_high'); ?>>
-                <?php _e('Terendah - Tertinggi', 'rental-mobil-wp'); ?>
-            </label>
+        <div class="rental-mobil-filter-sort-row">
+            <div class="rental-mobil-filter-sort-field">
+                <label for="filter_sort_field"><?php _e('Urutkan Berdasarkan', 'rental-mobil-wp'); ?></label>
+                <select id="filter_sort_field" name="rental_mobil_options[filter_sort_field]">
+                    <option value="harga_harian" <?php selected($sort_field, 'harga_harian'); ?>><?php _e('Harga Harian', 'rental-mobil-wp'); ?></option>
+                    <option value="dipublish" <?php selected($sort_field, 'dipublish'); ?>><?php _e('Dipublish', 'rental-mobil-wp'); ?></option>
+                    <option value="judul" <?php selected($sort_field, 'judul'); ?>><?php _e('Judul', 'rental-mobil-wp'); ?></option>
+                </select>
+            </div>
+
+            <div class="rental-mobil-filter-sort-order rental-mobil-filter-sort-price" <?php echo $sort_field !== 'harga_harian' ? 'style="display:none;"' : ''; ?>>
+                <label for="filter_sort_price"><?php _e('Urutan', 'rental-mobil-wp'); ?></label>
+                <select id="filter_sort_price" name="rental_mobil_options[filter_sort_price]">
+                    <option value="high_to_low" <?php selected($price_order, 'high_to_low'); ?>><?php _e('Tertinggi - Terendah', 'rental-mobil-wp'); ?></option>
+                    <option value="low_to_high" <?php selected($price_order, 'low_to_high'); ?>><?php _e('Terendah - Tertinggi', 'rental-mobil-wp'); ?></option>
+                </select>
+            </div>
+
+            <div class="rental-mobil-filter-sort-order rental-mobil-filter-sort-date" <?php echo $sort_field !== 'dipublish' ? 'style="display:none;"' : ''; ?>>
+                <label for="filter_sort_date"><?php _e('Urutan', 'rental-mobil-wp'); ?></label>
+                <select id="filter_sort_date" name="rental_mobil_options[filter_sort_date]">
+                    <option value="newest" <?php selected($date_order, 'newest'); ?>><?php _e('Terbaru - Terlama', 'rental-mobil-wp'); ?></option>
+                    <option value="oldest" <?php selected($date_order, 'oldest'); ?>><?php _e('Terlama - Terbaru', 'rental-mobil-wp'); ?></option>
+                </select>
+            </div>
+
+            <div class="rental-mobil-filter-sort-order rental-mobil-filter-sort-title" <?php echo $sort_field !== 'judul' ? 'style="display:none;"' : ''; ?>>
+                <label for="filter_sort_title"><?php _e('Urutan', 'rental-mobil-wp'); ?></label>
+                <select id="filter_sort_title" name="rental_mobil_options[filter_sort_title]">
+                    <option value="a_to_z" <?php selected($title_order, 'a_to_z'); ?>><?php _e('A - Z', 'rental-mobil-wp'); ?></option>
+                    <option value="z_to_a" <?php selected($title_order, 'z_to_a'); ?>><?php _e('Z - A', 'rental-mobil-wp'); ?></option>
+                </select>
+            </div>
         </div>
 
-        <h4><?php _e('Dipublish', 'rental-mobil-wp'); ?></h4>
-        <div class="rental-mobil-filter-sort-option">
+        <div class="rental-mobil-filter-sort-random">
             <label>
-                <input type="radio" name="rental_mobil_options[filter_sort_date]" value="newest" <?php checked(rental_mobil_get_option('filter_sort_date', 'newest'), 'newest'); ?>>
-                <?php _e('Terbaru - Terlama', 'rental-mobil-wp'); ?>
-            </label>
-            <label>
-                <input type="radio" name="rental_mobil_options[filter_sort_date]" value="oldest" <?php checked(rental_mobil_get_option('filter_sort_date', 'newest'), 'oldest'); ?>>
-                <?php _e('Terlama - Terbaru', 'rental-mobil-wp'); ?>
-            </label>
-        </div>
-
-        <h4><?php _e('Judul', 'rental-mobil-wp'); ?></h4>
-        <div class="rental-mobil-filter-sort-option">
-            <label>
-                <input type="radio" name="rental_mobil_options[filter_sort_title]" value="a_to_z" <?php checked(rental_mobil_get_option('filter_sort_title', 'a_to_z'), 'a_to_z'); ?>>
-                <?php _e('A - Z', 'rental-mobil-wp'); ?>
-            </label>
-            <label>
-                <input type="radio" name="rental_mobil_options[filter_sort_title]" value="z_to_a" <?php checked(rental_mobil_get_option('filter_sort_title', 'a_to_z'), 'z_to_a'); ?>>
-                <?php _e('Z - A', 'rental-mobil-wp'); ?>
-            </label>
-        </div>
-
-        <h4><?php _e('Acak', 'rental-mobil-wp'); ?></h4>
-        <div class="rental-mobil-filter-sort-option">
-            <label>
-                <input type="checkbox" name="rental_mobil_options[filter_sort_random]" value="1" <?php checked(rental_mobil_get_option('filter_sort_random', '0'), '1'); ?>>
-                <?php _e('Tampilkan kendaraan secara acak', 'rental-mobil-wp'); ?>
+                <input type="checkbox" name="rental_mobil_options[filter_sort_random]" value="1" <?php checked($random, '1'); ?>>
+                <?php _e('Tampilkan kendaraan secara acak di frontend', 'rental-mobil-wp'); ?>
             </label>
         </div>
     </div>
     <p class="description"><?php _e('Pilih opsi pengurutan default untuk daftar kendaraan.', 'rental-mobil-wp'); ?></p>
     <style>
-        .rental-mobil-filter-sort-options h4 {
-            margin: 15px 0 5px;
+        .rental-mobil-filter-sort-options {
+            margin-bottom: 15px;
         }
-        .rental-mobil-filter-sort-option {
-            margin-left: 15px;
+        .rental-mobil-filter-sort-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
         }
-        .rental-mobil-filter-sort-option label {
+        .rental-mobil-filter-sort-field,
+        .rental-mobil-filter-sort-order {
+            min-width: 200px;
+        }
+        .rental-mobil-filter-sort-field label,
+        .rental-mobil-filter-sort-order label {
             display: block;
             margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .rental-mobil-filter-sort-field select,
+        .rental-mobil-filter-sort-order select {
+            width: 100%;
+            max-width: 250px;
+        }
+        .rental-mobil-filter-sort-random {
+            margin-top: 10px;
         }
     </style>
+    <script>
+    jQuery(document).ready(function($) {
+        // Tampilkan/sembunyikan field urutan berdasarkan pilihan field
+        $('#filter_sort_field').on('change', function() {
+            const selectedField = $(this).val();
+
+            // Sembunyikan semua field urutan
+            $('.rental-mobil-filter-sort-order').hide();
+
+            // Tampilkan field urutan yang sesuai
+            if (selectedField === 'harga_harian') {
+                $('.rental-mobil-filter-sort-price').show();
+            } else if (selectedField === 'dipublish') {
+                $('.rental-mobil-filter-sort-date').show();
+            } else if (selectedField === 'judul') {
+                $('.rental-mobil-filter-sort-title').show();
+            }
+        });
+    });
+    </script>
     <?php
 }
 
@@ -2330,5 +2370,53 @@ function rental_mobil_get_option($key, $default = '') {
 
     $options = rental_mobil_get_options();
     return isset($options[$key]) ? $options[$key] : $default;
+}
+
+/**
+ * Get frontend sort settings
+ */
+function rental_mobil_get_frontend_sort_settings() {
+    $options = rental_mobil_get_options();
+    $sort_field = isset($options['filter_sort_field']) ? $options['filter_sort_field'] : 'harga_harian';
+    $random = isset($options['filter_sort_random']) && $options['filter_sort_random'] === '1';
+
+    // Jika random diaktifkan, gunakan 'rand' sebagai orderby
+    if ($random) {
+        return array(
+            'orderby' => 'rand',
+            'order' => 'DESC'
+        );
+    }
+
+    // Tentukan orderby dan order berdasarkan field yang dipilih
+    if ($sort_field === 'harga_harian') {
+        $price_order = isset($options['filter_sort_price']) ? $options['filter_sort_price'] : 'high_to_low';
+
+        return array(
+            'orderby' => 'meta_value_num',
+            'meta_key' => '_rental_mobil_harga_sewa',
+            'order' => ($price_order === 'high_to_low') ? 'DESC' : 'ASC'
+        );
+    } elseif ($sort_field === 'dipublish') {
+        $date_order = isset($options['filter_sort_date']) ? $options['filter_sort_date'] : 'newest';
+
+        return array(
+            'orderby' => 'date',
+            'order' => ($date_order === 'newest') ? 'DESC' : 'ASC'
+        );
+    } elseif ($sort_field === 'judul') {
+        $title_order = isset($options['filter_sort_title']) ? $options['filter_sort_title'] : 'a_to_z';
+
+        return array(
+            'orderby' => 'title',
+            'order' => ($title_order === 'a_to_z') ? 'ASC' : 'DESC'
+        );
+    }
+
+    // Default jika tidak ada yang cocok
+    return array(
+        'orderby' => 'date',
+        'order' => 'DESC'
+    );
 }
 
