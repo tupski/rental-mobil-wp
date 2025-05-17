@@ -181,10 +181,25 @@ if (!defined('WPINC')) {
             $query = new WP_Query($args);
 
             if ($query->have_posts()) {
-                echo '<div class="rental-mobil-grid">';
+                // Tentukan tampilan berdasarkan parameter shortcode
+                $tampilan = isset($atts['tampilan']) ? $atts['tampilan'] : 'default';
+
+                // Tentukan class grid dan template card berdasarkan tampilan
+                $grid_class = 'rental-mobil-grid';
+                $card_template = 'card-kendaraan.php';
+
+                if ($tampilan === 'vertical') {
+                    $grid_class = 'rental-mobil-grid-vertical';
+                    $card_template = 'card-kendaraan-vertical.php';
+                } elseif ($tampilan === 'horizontal') {
+                    $grid_class = 'rental-mobil-grid-horizontal';
+                    $card_template = 'card-kendaraan-horizontal.php';
+                }
+
+                echo '<div class="' . esc_attr($grid_class) . '">';
                 while ($query->have_posts()) {
                     $query->the_post();
-                    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/card-kendaraan.php';
+                    include RENTAL_MOBIL_PLUGIN_DIR . 'templates/' . $card_template;
                 }
                 echo '</div>';
 

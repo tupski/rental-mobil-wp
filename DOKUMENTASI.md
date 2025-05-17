@@ -6,6 +6,7 @@ Plugin WordPress untuk rental mobil dengan fitur menampilkan daftar kendaraan, d
 
 - [Instalasi](#instalasi)
 - [Penggunaan Shortcode](#penggunaan-shortcode)
+  - [Opsi Tampilan Card](#opsi-tampilan-card)
 - [Pengaturan Plugin](#pengaturan-plugin)
 - [Menambahkan Kendaraan](#menambahkan-kendaraan)
 - [Filter dan Pencarian](#filter-dan-pencarian)
@@ -27,18 +28,38 @@ Plugin WordPress untuk rental mobil dengan fitur menampilkan daftar kendaraan, d
 Menampilkan daftar kendaraan dengan filter di sidebar.
 
 ```
-[daftar_kendaraan jumlah="10" orderby="date" order="DESC" merk="" transmisi="" bahan_bakar="" tipe="" tahun=""]
+[daftar_kendaraan jumlah="10" orderby="date" order="DESC" merk="" transmisi="" bahan_bakar="" tipe="" tahun="" tampilan="default"]
 ```
 
 **Parameter:**
 - `jumlah` - Jumlah kendaraan yang ditampilkan (default: 10)
 - `orderby` - Mengurutkan berdasarkan (date, title, meta_value_num)
 - `order` - Urutan (ASC, DESC)
+- `tampilan` - Tampilan card (default, vertical, horizontal)
 - `merk` - Filter berdasarkan merk (slug)
 - `transmisi` - Filter berdasarkan transmisi (slug)
 - `bahan_bakar` - Filter berdasarkan bahan bakar (slug)
 - `tipe` - Filter berdasarkan tipe kendaraan (slug)
 - `tahun` - Filter berdasarkan tahun kendaraan (slug)
+
+#### Opsi Tampilan Card
+
+Plugin ini menyediakan tiga opsi tampilan card yang dapat dikonfigurasi melalui parameter `tampilan`:
+
+1. **Default** - Tampilan grid standar dengan card yang memanjang ke bawah
+   ```
+   [daftar_kendaraan tampilan="default"]
+   ```
+
+2. **Vertical** - Tampilan card yang memanjang ke bawah, mirip dengan tampilan default
+   ```
+   [daftar_kendaraan tampilan="vertical"]
+   ```
+
+3. **Horizontal** - Tampilan card yang memanjang ke samping dengan gambar di sebelah kiri dan informasi di sebelah kanan
+   ```
+   [daftar_kendaraan tampilan="horizontal"]
+   ```
 
 ### [detail_kendaraan]
 

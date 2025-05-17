@@ -27,8 +27,9 @@ Rental Mobil WP adalah plugin WordPress yang dirancang khusus untuk bisnis renta
 Plugin ini menyediakan dua shortcode utama:
 
 1. `[daftar_kendaraan]` - Menampilkan daftar kendaraan dengan filter
-   * Parameter: `jumlah`, `merk`, `transmisi`, `bahan_bakar`, `tipe`, `tahun`, `orderby`, `order`
-   * Contoh: `[daftar_kendaraan jumlah="6" tahun="2022" orderby="meta_value_num" order="ASC"]`
+   * Parameter: `jumlah`, `merk`, `transmisi`, `bahan_bakar`, `tipe`, `tahun`, `orderby`, `order`, `tampilan`
+   * Opsi tampilan: `default`, `vertical`, `horizontal`
+   * Contoh: `[daftar_kendaraan jumlah="6" tahun="2022" orderby="meta_value_num" order="ASC" tampilan="horizontal"]`
 
 2. `[detail_kendaraan id="ID"]` - Menampilkan detail kendaraan
    * Parameter: `id` (ID kendaraan)

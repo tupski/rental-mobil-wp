@@ -25,6 +25,7 @@ function rental_mobil_daftar_shortcode($atts) {
         'tahun' => '',
         'orderby' => $order_settings['orderby'],
         'order' => $order_settings['order'],
+        'tampilan' => 'default', // Opsi: default, vertical, horizontal
     ), $atts, 'daftar_kendaraan');
 
     // Mulai output buffering

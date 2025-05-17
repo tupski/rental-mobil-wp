@@ -289,12 +289,13 @@ function rental_mobil_documentation_section_callback() {
     echo '<div class="rental-mobil-shortcode-item">';
     echo '<h4>[daftar_kendaraan]</h4>';
     echo '<p>' . __('Menampilkan daftar kendaraan dengan filter di sidebar.', 'rental-mobil-wp') . '</p>';
-    echo '<pre>[daftar_kendaraan jumlah="10" orderby="date" order="DESC" merk="" transmisi="" bahan_bakar="" tipe="" tahun=""]</pre>';
+    echo '<pre>[daftar_kendaraan jumlah="10" orderby="date" order="DESC" merk="" transmisi="" bahan_bakar="" tipe="" tahun="" tampilan="default"]</pre>';
     echo '<p><strong>' . __('Parameter:', 'rental-mobil-wp') . '</strong></p>';
     echo '<ul>';
     echo '<li><code>jumlah</code> - ' . __('Jumlah kendaraan yang ditampilkan (default: 10)', 'rental-mobil-wp') . '</li>';
     echo '<li><code>orderby</code> - ' . __('Mengurutkan berdasarkan (date, title, meta_value_num)', 'rental-mobil-wp') . '</li>';
     echo '<li><code>order</code> - ' . __('Urutan (ASC, DESC)', 'rental-mobil-wp') . '</li>';
+    echo '<li><code>tampilan</code> - ' . __('Tampilan card (default, vertical, horizontal)', 'rental-mobil-wp') . '</li>';
     echo '<li><code>merk</code> - ' . __('Filter berdasarkan merk (slug)', 'rental-mobil-wp') . '</li>';
     echo '<li><code>transmisi</code> - ' . __('Filter berdasarkan transmisi (slug)', 'rental-mobil-wp') . '</li>';
     echo '<li><code>bahan_bakar</code> - ' . __('Filter berdasarkan bahan bakar (slug)', 'rental-mobil-wp') . '</li>';

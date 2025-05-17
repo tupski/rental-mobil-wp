@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contoh Tampilan Card Rental Mobil WP</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1, h2 {
+            color: #0073aa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .example-section {
+            margin-bottom: 40px;
+        }
+        
+        .example-title {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .example-code {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #0073aa;
+            font-family: monospace;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        
+        /* Card Styles */
+        .card-container {
+            margin-top: 20px;
+        }
+        
+        /* Default Card (Grid) */
+        .rental-mobil-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        /* Vertical Card Grid */
+        .rental-mobil-grid-vertical {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        /* Horizontal Card Grid */
+        .rental-mobil-grid-horizontal {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        /* Card Base Styles */
+        .rental-mobil-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        /* Vertical Card Styles */
+        .rental-mobil-card-vertical {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Horizontal Card Styles */
+        .rental-mobil-card-horizontal {
+            height: 100%;
+        }
+        
+        .rental-mobil-card-horizontal .rental-mobil-card-horizontal-inner {
+            display: flex;
+            height: 100%;
+        }
+        
+        .rental-mobil-card-horizontal .rental-mobil-card-image {
+            flex: 0 0 40%;
+            max-width: 40%;
+            height: auto;
+        }
+        
+        .rental-mobil-card-horizontal .rental-mobil-card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+        }
+        
+        .rental-mobil-card-horizontal .rental-mobil-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .rental-mobil-card-horizontal .rental-mobil-card-title {
+            flex: 1;
+            margin-right: 10px;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        
+        .rental-mobil-card-horizontal .rental-mobil-card-price {
+            text-align: right;
+            white-space: nowrap;
+        }
+        
+        .rental-mobil-card-horizontal .rental-mobil-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .rental-mobil-card-horizontal .rental-mobil-card-actions {
+            margin-top: auto;
+        }
+        
+        /* Card Image */
+        .rental-mobil-card-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            background-color: #f9f9f9;
+        }
+        
+        .rental-mobil-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+        }
+        
+        /* Card Content */
+        .rental-mobil-card-content {
+            padding: 15px;
+        }
+        
+        .rental-mobil-card-title {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #0073aa;
+        }
+        
+        .rental-mobil-card-meta {
+            margin-bottom: 15px;
+        }
+        
+        .rental-mobil-meta-item {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .rental-mobil-meta-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .rental-mobil-meta-value {
+            color: #333;
+        }
+        
+        .rental-mobil-card-price {
+            margin-bottom: 15px;
+        }
+        
+        .rental-mobil-price-label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .rental-mobil-price-value {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            color: #0073aa;
+        }
+        
+        .rental-mobil-card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .rental-mobil-button {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .rental-mobil-button-detail {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        
+        .rental-mobil-button-booking {
+            background-color: #0073aa;
+            color: #fff;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .rental-mobil-grid,
+            .rental-mobil-grid-vertical,
+            .rental-mobil-grid-horizontal {
+                grid-template-columns: 1fr;
+            }
+            
+            .rental-mobil-card-horizontal .rental-mobil-card-horizontal-inner {
+                flex-direction: column;
+            }
+            
+            .rental-mobil-card-horizontal .rental-mobil-card-image {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            
+            .rental-mobil-card-horizontal .rental-mobil-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .rental-mobil-card-horizontal .rental-mobil-card-price {
+                text-align: left;
+                margin-top: 10px;
+            }
+            
+            .rental-mobil-card-horizontal .rental-mobil-meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Contoh Tampilan Card Rental Mobil WP</h1>
+        <p>Berikut adalah contoh tampilan card yang tersedia di plugin Rental Mobil WP.</p>
+        
+        <div class="example-section">
+            <h2 class="example-title">1. Tampilan Default (Grid)</h2>
+            <div class="example-code">[daftar_kendaraan tampilan="default"]</div>
+            
+            <div class="card-container">
+                <div class="rental-mobil-grid">
+                    <!-- Card 1 -->
+                    <div class="rental-mobil-card">
+                        <div class="rental-mobil-card-image">
+                            <img src="https://placehold.co/400x300/f9f9f9/0073aa?text=Mobil+1" alt="Mobil 1">
+                        </div>
+                        <div class="rental-mobil-card-content">
+                            <h3 class="rental-mobil-card-title">Toyota Avanza</h3>
+                            <div class="rental-mobil-card-meta">
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Merk:</span>
+                                    <span class="rental-mobil-meta-value">Toyota</span>
+                                </div>
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Transmisi:</span>
+                                    <span class="rental-mobil-meta-value">Manual</span>
+                                </div>
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Bahan Bakar:</span>
+                                    <span class="rental-mobil-meta-value">Bensin</span>
+                                </div>
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Tahun:</span>
+                                    <span class="rental-mobil-meta-value">2022</span>
+                                </div>
+                            </div>
+                            <div class="rental-mobil-card-price">
+                                <span class="rental-mobil-price-label">Mulai dari</span>
+                                <span class="rental-mobil-price-value">Rp 350.000 / hari</span>
+                            </div>
+                            <div class="rental-mobil-card-actions">
+                                <button class="rental-mobil-button rental-mobil-button-detail">Lihat Detail</button>
+                                <button class="rental-mobil-button rental-mobil-button-booking">Booking</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2 -->
+                    <div class="rental-mobil-card">
+                        <div class="rental-mobil-card-image">
+                            <img src="https://placehold.co/400x300/f9f9f9/0073aa?text=Mobil+2" alt="Mobil 2">
+                        </div>
+                        <div class="rental-mobil-card-content">
+                            <h3 class="rental-mobil-card-title">Honda Brio</h3>
+                            <div class="rental-mobil-card-meta">
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Merk:</span>
+                                    <span class="rental-mobil-meta-value">Honda</span>
+                                </div>
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Transmisi:</span>
+                                    <span class="rental-mobil-meta-value">Automatic</span>
+                                </div>
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Bahan Bakar:</span>
+                                    <span class="rental-mobil-meta-value">Bensin</span>
+                                </div>
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Tahun:</span>
+                                    <span class="rental-mobil-meta-value">2023</span>
+                                </div>
+                            </div>
+                            <div class="rental-mobil-card-price">
+                                <span class="rental-mobil-price-label">Mulai dari</span>
+                                <span class="rental-mobil-price-value">Rp 300.000 / hari</span>
+                            </div>
+                            <div class="rental-mobil-card-actions">
+                                <button class="rental-mobil-button rental-mobil-button-detail">Lihat Detail</button>
+                                <button class="rental-mobil-button rental-mobil-button-booking">Booking</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="example-section">
+            <h2 class="example-title">2. Tampilan Vertical (Memanjang ke Bawah)</h2>
+            <div class="example-code">[daftar_kendaraan tampilan="vertical"]</div>
+            
+            <div class="card-container">
+                <div class="rental-mobil-grid-vertical">
+                    <!-- Card 1 -->
+                    <div class="rental-mobil-card rental-mobil-card-vertical">
+                        <div class="rental-mobil-card-image">
+                            <img src="https://placehold.co/400x300/f9f9f9/0073aa?text=Mobil+1" alt="Mobil 1">
+                        </div>
+                        <div class="rental-mobil-card-content">
+                            <h3 class="rental-mobil-card-title">Toyota Avanza</h3>
+                            <div class="rental-mobil-card-meta">
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Merk:</span>
+                                    <span class="rental-mobil-meta-value">Toyota</span>
+                                </div>
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Transmisi:</span>
+                                    <span class="rental-mobil-meta-value">Manual</span>
+                                </div>
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Bahan Bakar:</span>
+                                    <span class="rental-mobil-meta-value">Bensin</span>
+                                </div>
+                                <div class="rental-mobil-meta-item">
+                                    <span class="rental-mobil-meta-label">Tahun:</span>
+                                    <span class="rental-mobil-meta-value">2022</span>
+                                </div>
+                            </div>
+                            <div class="rental-mobil-card-price">
+                                <span class="rental-mobil-price-label">Mulai dari</span>
+                                <span class="rental-mobil-price-value">Rp 350.000 / hari</span>
+                            </div>
+                            <div class="rental-mobil-card-actions">
+                                <button class="rental-mobil-button rental-mobil-button-detail">Lihat Detail</button>
+                                <button class="rental-mobil-button rental-mobil-button-booking">Booking</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="example-section">
+            <h2 class="example-title">3. Tampilan Horizontal (Memanjang ke Samping)</h2>
+            <div class="example-code">[daftar_kendaraan tampilan="horizontal"]</div>
+            
+            <div class="card-container">
+                <div class="rental-mobil-grid-horizontal">
+                    <!-- Card 1 -->
+                    <div class="rental-mobil-card rental-mobil-card-horizontal">
+                        <div class="rental-mobil-card-horizontal-inner">
+                            <div class="rental-mobil-card-image">
+                                <img src="https://placehold.co/400x300/f9f9f9/0073aa?text=Mobil+1" alt="Mobil 1">
+                            </div>
+                            <div class="rental-mobil-card-content">
+                                <div class="rental-mobil-card-header">
+                                    <h3 class="rental-mobil-card-title">Toyota Avanza</h3>
+                                    <div class="rental-mobil-card-price">
+                                        <span class="rental-mobil-price-label">Mulai dari</span>
+                                        <span class="rental-mobil-price-value">Rp 350.000 / hari</span>
+                                    </div>
+                                </div>
+                                <div class="rental-mobil-card-meta">
+                                    <div class="rental-mobil-meta-grid">
+                                        <div class="rental-mobil-meta-item">
+                                            <span class="rental-mobil-meta-label">Merk:</span>
+                                            <span class="rental-mobil-meta-value">Toyota</span>
+                                        </div>
+                                        <div class="rental-mobil-meta-item">
+                                            <span class="rental-mobil-meta-label">Transmisi:</span>
+                                            <span class="rental-mobil-meta-value">Manual</span>
+                                        </div>
+                                        <div class="rental-mobil-meta-item">
+                                            <span class="rental-mobil-meta-label">Bahan Bakar:</span>
+                                            <span class="rental-mobil-meta-value">Bensin</span>
+                                        </div>
+                                        <div class="rental-mobil-meta-item">
+                                            <span class="rental-mobil-meta-label">Tahun:</span>
+                                            <span class="rental-mobil-meta-value">2022</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rental-mobil-card-actions">
+                                    <button class="rental-mobil-button rental-mobil-button-detail">Lihat Detail</button>
+                                    <button class="rental-mobil-button rental-mobil-button-booking">Booking</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

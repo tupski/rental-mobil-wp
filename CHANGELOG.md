@@ -2,6 +2,18 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.7.2] - 2024-05-23
+
+### Ditambahkan
+- Opsi tampilan card yang berbeda (default, vertical, horizontal) melalui parameter `tampilan` di shortcode
+- Tampilan card memanjang ke bawah (vertical) dan memanjang ke samping (horizontal)
+- CSS untuk mendukung tampilan card yang berbeda
+- Perbaikan tampilan quick view modal untuk mobile
+
+### Diubah
+- Memperbaiki tombol bagikan yang tidak berfungsi
+- Memperbaiki tampilan quick view modal untuk mobile
+
 ## [1.7.1] - 2024-05-22
 
 ### Ditambahkan
