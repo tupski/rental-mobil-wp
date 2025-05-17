@@ -4,7 +4,7 @@ Donate link:
 Tags: car rental, rental, booking, whatsapp, mobil
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.4.9
+Stable tag: 1.6.4
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -84,6 +84,17 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 4. Pengaturan Plugin
 
 == Changelog ==
+
+= 1.6.4 =
+* Perbaikan filter di mobile agar hanya tampil di sidebar saat tombol filter diklik
+* Menambahkan animasi slide untuk filter di mobile
+* Format otomatis nomor WhatsApp (08xx menjadi 628xx, 02xx menjadi 622xx)
+* Membuat placeholder di pengaturan WhatsApp bisa diklik dan otomatis dimasukkan ke textarea
+* Menambahkan dukungan untuk placeholder conditional dengan label di pesan WhatsApp
+* Menambahkan opsi ukuran field (25%, 50%, 75%, 100%) di form builder
+* Mengimplementasikan Select2 untuk field select dengan pencarian otomatis
+* Memastikan pengaturan tersimpan saat update plugin
+* Optimasi kode dan perbaikan bug
 
 = 1.4.9 =
 * Perbaikan filter sticky yang tidak berfungsi
@@ -193,6 +204,9 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 * Rilis pertama
 
 == Upgrade Notice ==
+
+= 1.6.4 =
+Perbaikan filter di mobile, format otomatis nomor WhatsApp, placeholder yang bisa diklik, dukungan placeholder conditional, opsi ukuran field, dan implementasi Select2 untuk field select.
 
 = 1.4.9 =
 Perbaikan filter sticky yang tidak berfungsi dan memperbaiki nama fungsi untuk menambahkan custom CSS.
