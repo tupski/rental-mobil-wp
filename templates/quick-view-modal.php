@@ -59,8 +59,9 @@ if (!defined('WPINC')) {
                                 $icon_class = 'dashicons-email';
                             }
                         ?>
-                            <button class="rental-mobil-share-button rental-mobil-share-<?php echo esc_attr($platform); ?>" data-platform="<?php echo esc_attr($platform); ?>">
+                            <button class="rental-mobil-share-button rental-mobil-share-<?php echo esc_attr($platform); ?>" data-platform="<?php echo esc_attr($platform); ?>" title="<?php echo esc_attr(ucfirst($platform)); ?>">
                                 <span class="dashicons <?php echo esc_attr($icon_class); ?>"></span>
+                                <span class="rental-mobil-tooltip"><?php echo esc_html(ucfirst($platform)); ?></span>
                             </button>
                         <?php endforeach; ?>
                     </div>

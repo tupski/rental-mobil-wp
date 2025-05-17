@@ -250,7 +250,7 @@
     display: block; /* Pastikan elemen ditampilkan sebagai block */
     height: auto; /* Pastikan tinggi elemen sesuai dengan kontennya */
     will-change: position; /* Optimasi performa untuk sticky */
-    overflow-y: visible; /* Hapus scrollbar */
+    overflow: visible !important; /* Hapus scrollbar */
 }
 
 .rental-mobil-content {
@@ -418,7 +418,8 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 1px solid #ddd;
     height: auto; /* Pastikan tinggi sesuai dengan konten */
-    overflow: visible; /* Pastikan tidak ada scrollbar */
+    overflow: visible !important; /* Pastikan tidak ada scrollbar */
+    max-height: none !important; /* Hapus batasan tinggi */
 }
 
 /* Floating Filter Button untuk Mobile */
@@ -2177,6 +2178,48 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Tooltip untuk tombol bagikan */
+.rental-mobil-share-button {
+    position: relative;
+}
+
+.rental-mobil-share-button .rental-mobil-tooltip {
+    visibility: hidden;
+    width: auto;
+    min-width: 80px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.rental-mobil-share-button .rental-mobil-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.rental-mobil-share-button:hover .rental-mobil-tooltip {
+    visibility: visible;
+    opacity: 1;
 }
 
 .rental-mobil-share-whatsapp {

@@ -423,6 +423,77 @@ function rental_mobil_get_gallery_ajax() {
 }
 
 /**
+ * AJAX handler untuk mendapatkan data kendaraan
+ */
+add_action('wp_ajax_rental_mobil_get_kendaraan_data', 'rental_mobil_get_kendaraan_data_ajax');
+add_action('wp_ajax_nopriv_rental_mobil_get_kendaraan_data', 'rental_mobil_get_kendaraan_data_ajax');
+function rental_mobil_get_kendaraan_data_ajax() {
+    // Verifikasi nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'rental_mobil_nonce')) {
+        wp_send_json_error('Invalid nonce');
+    }
+
+    // Dapatkan ID kendaraan
+    $kendaraan_id = isset($_POST['kendaraan_id']) ? intval($_POST['kendaraan_id']) : 0;
+
+    if (empty($kendaraan_id)) {
+        wp_send_json_error('ID kendaraan tidak valid');
+    }
+
+    // Dapatkan data kendaraan
+    $kendaraan = get_post($kendaraan_id);
+
+    if (!$kendaraan || $kendaraan->post_type !== 'kendaraan') {
+        wp_send_json_error('Kendaraan tidak ditemukan');
+    }
+
+    // Dapatkan meta data
+    $harga_harian = get_post_meta($kendaraan_id, '_rental_mobil_harga_sewa', true);
+    $harga_mingguan = get_post_meta($kendaraan_id, '_rental_mobil_harga_sewa_mingguan', true);
+    $harga_bulanan = get_post_meta($kendaraan_id, '_rental_mobil_harga_sewa_bulanan', true);
+    $is_featured = get_post_meta($kendaraan_id, '_rental_mobil_featured', true);
+    $is_popular = get_post_meta($kendaraan_id, '_rental_mobil_popular', true);
+
+    // Format harga
+    $harga_harian_formatted = 'Rp ' . number_format($harga_harian, 0, ',', '.');
+    $harga_mingguan_formatted = 'Rp ' . number_format($harga_mingguan, 0, ',', '.');
+    $harga_bulanan_formatted = 'Rp ' . number_format($harga_bulanan, 0, ',', '.');
+
+    // Dapatkan terms
+    $merk_terms = get_the_terms($kendaraan_id, 'merk_kendaraan');
+    $merk = !empty($merk_terms) && !is_wp_error($merk_terms) ? $merk_terms[0]->name : '';
+
+    $transmisi_terms = get_the_terms($kendaraan_id, 'transmisi');
+    $transmisi = !empty($transmisi_terms) && !is_wp_error($transmisi_terms) ? $transmisi_terms[0]->name : '';
+
+    $bahan_bakar_terms = get_the_terms($kendaraan_id, 'bahan_bakar');
+    $bahan_bakar = !empty($bahan_bakar_terms) && !is_wp_error($bahan_bakar_terms) ? $bahan_bakar_terms[0]->name : '';
+
+    $tahun_terms = get_the_terms($kendaraan_id, 'tahun_kendaraan');
+    $tahun = !empty($tahun_terms) && !is_wp_error($tahun_terms) ? $tahun_terms[0]->name : '';
+
+    // Dapatkan featured image
+    $featured_image = get_the_post_thumbnail_url($kendaraan_id, 'large');
+
+    // Siapkan data untuk response
+    $data = array(
+        'title' => $kendaraan->post_title,
+        'harga_harian' => $harga_harian_formatted,
+        'harga_mingguan' => $harga_mingguan_formatted,
+        'harga_bulanan' => $harga_bulanan_formatted,
+        'merk' => $merk,
+        'transmisi' => $transmisi,
+        'bahan_bakar' => $bahan_bakar,
+        'tahun' => $tahun,
+        'is_featured' => !empty($is_featured),
+        'is_popular' => !empty($is_popular),
+        'featured_image' => $featured_image
+    );
+
+    wp_send_json_success($data);
+}
+
+/**
  * AJAX handler untuk mendapatkan nomor WhatsApp dan template pesan
  */
 add_action('wp_ajax_rental_mobil_get_whatsapp', 'rental_mobil_get_whatsapp_ajax');

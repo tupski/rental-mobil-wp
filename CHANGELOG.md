@@ -2,6 +2,41 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.6.1] - 2024-05-15
+
+### Ditambahkan
+- Tooltip pada tombol bagikan yang menampilkan nama platform
+
+### Diperbaiki
+- Parameter URL sekarang langsung terfilter saat halaman dimuat
+- Masalah nama kendaraan yang salah di booking modal dari quick view
+- Scrollbar pada filter sidebar yang seharusnya tidak muncul
+- URL bagikan sekarang menggunakan parameter kata kunci yang benar
+
+## [1.6.0] - 2024-05-01
+
+### Ditambahkan
+- Fitur berbagi kendaraan ke berbagai platform (WhatsApp, Facebook, Twitter, Telegram, Email)
+- Ikon yang sesuai untuk setiap platform berbagi
+- Parameter kata kunci di URL untuk berbagi kendaraan
+
+### Diperbaiki
+- Tampilan filter pada perangkat mobile
+- Responsivitas modal detail kendaraan
+- Performa loading gambar kendaraan
+
+## [1.5.0] - 2024-04-15
+
+### Ditambahkan
+- Fitur kendaraan unggulan dan paling banyak disewa
+- Badge untuk menandai kendaraan unggulan dan paling banyak disewa
+- Pengaturan untuk mengaktifkan/menonaktifkan fitur kendaraan unggulan dan paling banyak disewa
+
+### Diperbaiki
+- Tampilan filter pada perangkat desktop dan mobile
+- Responsivitas card kendaraan
+- Performa loading daftar kendaraan
+
 ## [1.4.3] - 2024-02-15
 
 ### Ditambahkan
