@@ -64,15 +64,50 @@
         function updateConditionalFieldOptions() {
             const currentFieldId = $('#rental-mobil-field-id').val();
             const conditionalFieldSelect = $('#rental-mobil-field-conditional-field');
+            const conditionalValueContainer = $('#rental-mobil-conditional-value-container');
 
             // Clear current options
             conditionalFieldSelect.find('option:not(:first)').remove();
 
             // Add options from existing fields
             formFields.forEach(field => {
-                // Skip current field
+                // Skip current field and only include select fields
                 if (field.id !== currentFieldId) {
-                    conditionalFieldSelect.append(`<option value="${field.id}">${field.label}</option>`);
+                    conditionalFieldSelect.append(`<option value="${field.id}" data-type="${field.type}">${field.label}</option>`);
+                }
+            });
+
+            // Handle conditional field change
+            conditionalFieldSelect.off('change').on('change', function() {
+                const selectedFieldId = $(this).val();
+                const selectedFieldType = $(this).find('option:selected').data('type');
+
+                // Reset conditional value container
+                conditionalValueContainer.empty();
+
+                if (selectedFieldId) {
+                    const selectedField = formFields.find(f => f.id === selectedFieldId);
+
+                    // If selected field is a select field, show dropdown with its options
+                    if (selectedField && selectedField.type === 'select' && selectedField.options) {
+                        const select = $('<select id="rental-mobil-field-conditional-value"></select>');
+
+                        // Add empty option
+                        select.append('<option value="">-- Pilih Nilai --</option>');
+
+                        // Add options from the selected field
+                        $.each(selectedField.options, function(value, label) {
+                            select.append(`<option value="${value}">${label}</option>`);
+                        });
+
+                        conditionalValueContainer.append(select);
+                    } else {
+                        // For other field types, show text input
+                        conditionalValueContainer.append('<input type="text" id="rental-mobil-field-conditional-value" placeholder="Nilai">');
+                    }
+                } else {
+                    // If no field selected, show default text input
+                    conditionalValueContainer.append('<input type="text" id="rental-mobil-field-conditional-value" placeholder="Nilai">');
                 }
             });
         }
@@ -118,15 +153,31 @@
                 if (field.conditional) {
                     $('#rental-mobil-field-conditional-enabled').prop('checked', true);
                     $('.rental-mobil-field-conditional-container').show();
-                    $('#rental-mobil-field-conditional-field').val(field.conditional.field);
+
+                    // Set conditional field
+                    $('#rental-mobil-field-conditional-field').val(field.conditional.field).trigger('change');
+
+                    // Set conditional operator
                     $('#rental-mobil-field-conditional-operator').val(field.conditional.operator);
-                    $('#rental-mobil-field-conditional-value').val(field.conditional.value);
+
+                    // Wait for conditional value container to be updated
+                    setTimeout(function() {
+                        // Set conditional value
+                        const conditionalValueInput = $('#rental-mobil-field-conditional-value');
+                        if (conditionalValueInput.is('select')) {
+                            conditionalValueInput.val(field.conditional.value);
+                        } else {
+                            conditionalValueInput.val(field.conditional.value);
+                        }
+                    }, 100);
                 } else {
                     $('#rental-mobil-field-conditional-enabled').prop('checked', false);
                     $('.rental-mobil-field-conditional-container').hide();
                     $('#rental-mobil-field-conditional-field').val('');
                     $('#rental-mobil-field-conditional-operator').val('equal');
-                    $('#rental-mobil-field-conditional-value').val('');
+
+                    // Reset conditional value container
+                    $('#rental-mobil-conditional-value-container').empty().append('<input type="text" id="rental-mobil-field-conditional-value" placeholder="Nilai">');
                 }
 
                 // Update conditional field options

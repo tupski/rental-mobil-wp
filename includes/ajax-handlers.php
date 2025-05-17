@@ -543,14 +543,43 @@ function rental_mobil_get_whatsapp_ajax() {
     $placeholders = array('{nama_kendaraan}');
     $values = array($kendaraan_title);
 
+    // Buat array untuk menyimpan field conditional dan nilainya
+    $conditional_fields = array();
+    $conditional_values = array();
+    $conditional_labels = array();
+
     // Tambahkan semua field dari form ke array placeholder dan nilai
     foreach ($form_fields as $field) {
         $field_id = $field['id'];
         $placeholder = '{' . $field_id . '}';
         $value = isset($_POST[$field_id]) ? sanitize_text_field($_POST[$field_id]) : '';
 
-        $placeholders[] = $placeholder;
-        $values[] = $value;
+        // Jika field adalah conditional, simpan di array terpisah
+        if (isset($field['conditional']) && !empty($field['conditional'])) {
+            // Cek apakah kondisi terpenuhi
+            $condition_field_id = $field['conditional']['field'];
+            $condition_operator = $field['conditional']['operator'];
+            $condition_value = $field['conditional']['value'];
+            $condition_field_value = isset($_POST[$condition_field_id]) ? sanitize_text_field($_POST[$condition_field_id]) : '';
+
+            $condition_met = false;
+            if ($condition_operator === 'equal' && $condition_field_value === $condition_value) {
+                $condition_met = true;
+            } elseif ($condition_operator === 'not_equal' && $condition_field_value !== $condition_value) {
+                $condition_met = true;
+            }
+
+            // Jika kondisi terpenuhi dan field diisi, tambahkan ke array conditional
+            if ($condition_met && !empty($value)) {
+                $conditional_fields[] = $placeholder;
+                $conditional_values[] = $value;
+                $conditional_labels[] = $field['label'];
+            }
+        } else {
+            // Field normal, tambahkan ke array placeholder biasa
+            $placeholders[] = $placeholder;
+            $values[] = $value;
+        }
     }
 
     // Tambahkan placeholder dinamis untuk semua field form
@@ -565,7 +594,7 @@ function rental_mobil_get_whatsapp_ajax() {
 
         // Buat placeholder dinamis jika belum ada
         $dynamic_placeholder = '{' . $key . '}';
-        if (!in_array($dynamic_placeholder, $placeholders)) {
+        if (!in_array($dynamic_placeholder, $placeholders) && !in_array($dynamic_placeholder, $conditional_fields)) {
             $dynamic_placeholders[] = $dynamic_placeholder;
             $dynamic_values[] = sanitize_text_field($value);
         }
@@ -577,6 +606,30 @@ function rental_mobil_get_whatsapp_ajax() {
 
     // Ganti placeholder dengan data sebenarnya
     $message = str_replace($placeholders, $values, $message_template);
+
+    // Tambahkan field conditional dengan label ke pesan
+    if (!empty($conditional_fields)) {
+        // Cari posisi yang tepat untuk menambahkan field conditional (sebelum "Terima kasih" atau di akhir pesan)
+        $thank_you_pos = strpos($message, "Terima kasih");
+        if ($thank_you_pos !== false) {
+            $before_thank_you = substr($message, 0, $thank_you_pos);
+            $after_thank_you = substr($message, $thank_you_pos);
+
+            // Tambahkan field conditional
+            $conditional_message = "";
+            for ($i = 0; $i < count($conditional_fields); $i++) {
+                $conditional_message .= $conditional_labels[$i] . ": " . $conditional_values[$i] . "\n";
+            }
+
+            $message = $before_thank_you . $conditional_message . $after_thank_you;
+        } else {
+            // Jika tidak ada "Terima kasih", tambahkan di akhir pesan
+            $message .= "\n";
+            for ($i = 0; $i < count($conditional_fields); $i++) {
+                $message .= $conditional_labels[$i] . ": " . $conditional_values[$i] . "\n";
+            }
+        }
+    }
 
     wp_send_json_success(array(
         'whatsapp_number' => $whatsapp_number,

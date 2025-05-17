@@ -185,6 +185,110 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
 
     <script>
     jQuery(document).ready(function($) {
+        // Load Select2 library if not already loaded
+        if (typeof $.fn.select2 === 'undefined') {
+            // Load CSS
+            $('head').append('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">');
+
+            // Load JS
+            $.getScript('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', function() {
+                initSelect2();
+            });
+        } else {
+            initSelect2();
+        }
+
+        // Initialize Select2 for select fields
+        function initSelect2() {
+            $('.rental-mobil-custom-booking-field select').each(function() {
+                const select = $(this);
+                const optionsCount = select.find('option').length - 1; // Exclude the placeholder option
+
+                // Only use Select2 if there are more than 10 options
+                if (optionsCount > 10) {
+                    select.select2({
+                        width: '100%',
+                        dropdownAutoWidth: true,
+                        placeholder: select.find('option:first').text(),
+                        allowClear: true,
+                        dropdownCssClass: 'rental-mobil-select2-dropdown',
+                        minimumResultsForSearch: 5, // Show search box if more than 5 options
+                        language: {
+                            noResults: function() {
+                                return "Tidak ada hasil yang ditemukan";
+                            }
+                        }
+                    });
+
+                    // Focus search field when dropdown opens
+                    select.on('select2:open', function() {
+                        setTimeout(function() {
+                            $('.select2-search__field').focus();
+                        }, 100);
+                    });
+                }
+            });
+        }
+
+        // Inisialisasi conditional fields
+        function initConditionalFields() {
+            // Sembunyikan semua field conditional secara default
+            $('.rental-mobil-conditional-field').hide();
+
+            // Cek kondisi untuk setiap field
+            $('.rental-mobil-custom-booking-field select, .rental-mobil-custom-booking-field input[type="radio"], .rental-mobil-custom-booking-field input[type="checkbox"]').each(function() {
+                const fieldId = $(this).attr('name');
+                const fieldValue = $(this).val();
+
+                // Trigger change event untuk inisialisasi
+                $(this).trigger('change');
+            });
+        }
+
+        // Handler untuk perubahan nilai field
+        $('.rental-mobil-custom-booking-field select, .rental-mobil-custom-booking-field input[type="radio"], .rental-mobil-custom-booking-field input[type="checkbox"]').on('change', function() {
+            const fieldId = $(this).attr('name');
+            const fieldValue = $(this).val();
+
+            // Cek semua field conditional
+            $('.rental-mobil-conditional-field').each(function() {
+                const conditionalField = $(this).data('conditional-field');
+                const conditionalOperator = $(this).data('conditional-operator');
+                const conditionalValue = $(this).data('conditional-value');
+
+                // Jika field ini tergantung pada field yang berubah
+                if (conditionalField === fieldId) {
+                    let shouldShow = false;
+
+                    // Evaluasi kondisi
+                    if (conditionalOperator === 'equal') {
+                        shouldShow = fieldValue === conditionalValue;
+                    } else if (conditionalOperator === 'not_equal') {
+                        shouldShow = fieldValue !== conditionalValue;
+                    }
+
+                    // Tampilkan atau sembunyikan field
+                    if (shouldShow) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                        // Reset nilai field
+                        $(this).find('input, select, textarea').val('');
+
+                        // Reset Select2 jika ada
+                        $(this).find('select').each(function() {
+                            if ($(this).data('select2')) {
+                                $(this).val('').trigger('change');
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        // Inisialisasi conditional fields saat halaman dimuat
+        initConditionalFields();
+
         // Custom time picker
         $('.rental-mobil-time-picker').on('focus', function() {
             const input = $(this);

@@ -17,6 +17,32 @@
     box-sizing: border-box;
 }
 
+/* Field width classes */
+.rental-mobil-custom-booking-field.rental-mobil-field-width-100 {
+    width: 100%;
+}
+
+.rental-mobil-custom-booking-field.rental-mobil-field-width-75 {
+    width: 75%;
+}
+
+.rental-mobil-custom-booking-field.rental-mobil-field-width-50 {
+    width: 50%;
+}
+
+.rental-mobil-custom-booking-field.rental-mobil-field-width-25 {
+    width: 25%;
+}
+
+/* Responsive adjustments for field widths */
+@media (max-width: 768px) {
+    .rental-mobil-custom-booking-field.rental-mobil-field-width-75,
+    .rental-mobil-custom-booking-field.rental-mobil-field-width-50,
+    .rental-mobil-custom-booking-field.rental-mobil-field-width-25 {
+        width: 100%;
+    }
+}
+
 .rental-mobil-custom-booking-field label {
     display: block;
     margin-bottom: 5px;

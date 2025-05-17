@@ -229,7 +229,9 @@ function rental_mobil_form_builder_ui() {
                             <option value="equal"><?php _e('Sama dengan', 'rental-mobil-wp'); ?></option>
                             <option value="not_equal"><?php _e('Tidak sama dengan', 'rental-mobil-wp'); ?></option>
                         </select>
-                        <input type="text" id="rental-mobil-field-conditional-value" placeholder="<?php _e('Nilai', 'rental-mobil-wp'); ?>">
+                        <div id="rental-mobil-conditional-value-container">
+                            <input type="text" id="rental-mobil-field-conditional-value" placeholder="<?php _e('Nilai', 'rental-mobil-wp'); ?>">
+                        </div>
                     </div>
                     <p class="description"><?php _e('Field ini hanya akan ditampilkan jika kondisi terpenuhi', 'rental-mobil-wp'); ?></p>
                 </div>
