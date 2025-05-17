@@ -237,32 +237,19 @@
 .rental-mobil-sidebar {
     width: 25%;
     position: relative;
+    height: fit-content; /* Penting untuk sticky */
 }
 
 .rental-mobil-sidebar-inner {
+    position: -webkit-sticky; /* Untuk dukungan Safari */
     position: sticky;
     top: 50px; /* Meningkatkan jarak dari atas */
-    max-height: calc(100vh - 100px); /* Menyesuaikan max-height */
-    overflow-y: auto;
     padding-right: 10px;
     padding-top: 10px; /* Tambahkan padding atas */
-    scrollbar-width: thin;
-    scrollbar-color: #0073aa #f0f0f0;
     z-index: 100; /* Pastikan filter tetap di atas konten lain */
-}
-
-.rental-mobil-sidebar-inner::-webkit-scrollbar {
-    width: 6px;
-}
-
-.rental-mobil-sidebar-inner::-webkit-scrollbar-track {
-    background: #f0f0f0;
-    border-radius: 10px;
-}
-
-.rental-mobil-sidebar-inner::-webkit-scrollbar-thumb {
-    background-color: #0073aa;
-    border-radius: 10px;
+    display: block; /* Pastikan elemen ditampilkan sebagai block */
+    height: auto; /* Pastikan tinggi elemen sesuai dengan kontennya */
+    will-change: position; /* Optimasi performa untuk sticky */
 }
 
 .rental-mobil-content {
@@ -429,6 +416,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 1px solid #ddd;
+    height: auto; /* Pastikan tinggi sesuai dengan konten */
 }
 
 /* Floating Filter Button untuk Mobile */
@@ -457,6 +445,10 @@
 
 .rental-mobil-filter-toggle i {
     line-height: 60px;
+    display: inline-block;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
 }
 
 .rental-mobil-filter-title {
@@ -1070,6 +1062,28 @@
     border-radius: 4px;
 }
 
+/* Time Dropdown Styles */
+.rental-mobil-time-dropdown-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.rental-mobil-time-dropdown {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rental-mobil-time-separator {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+}
+
 .rental-mobil-form-row {
     display: flex;
     gap: 15px;
@@ -1523,7 +1537,7 @@
 
     .rental-mobil-sidebar {
         width: 100%;
-        display: none;
+        display: block; /* Tampilkan di desktop */
     }
 
     .rental-mobil-sidebar.active {
@@ -1543,10 +1557,18 @@
         transition: transform 0.3s ease;
     }
 
-    .rental-mobil-sidebar-inner {
+    /* Hanya ubah properti sidebar-inner saat dalam mode sidebar mobile (active) */
+    .rental-mobil-sidebar.active .rental-mobil-sidebar-inner {
         position: static;
         max-height: none;
         padding-right: 0;
+    }
+
+    /* Tetap pertahankan sticky untuk desktop view */
+    .rental-mobil-sidebar:not(.active) .rental-mobil-sidebar-inner {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 20px; /* Jarak dari atas lebih kecil pada mobile */
     }
 
     .rental-mobil-content {

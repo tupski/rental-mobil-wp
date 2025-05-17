@@ -30,7 +30,84 @@
         const filterOverlay = $('#rental-mobil-filter-overlay');
         const filterClose = $('#rental-mobil-filter-close');
         const sidebar = $('.rental-mobil-sidebar');
+        const sidebarInner = $('.rental-mobil-sidebar-inner');
         const activeFilters = $('#rental-mobil-active-filters');
+
+        // Time Dropdown - Modal Booking
+        const hourDropdown = $('#rental-mobil-booking-jam-hour');
+        const minuteDropdown = $('#rental-mobil-booking-jam-minute');
+        const timeInput = $('#rental-mobil-booking-jam');
+
+        // Time Dropdown - Inline Booking
+        const inlineHourDropdown = $('#rental-mobil-inline-booking-jam-hour');
+        const inlineMinuteDropdown = $('#rental-mobil-inline-booking-jam-minute');
+        const inlineTimeInput = $('#rental-mobil-inline-booking-jam');
+
+        // Inisialisasi formData untuk paginasi awal
+        let initialFormData = filterForm.serialize();
+
+        // Inisialisasi time dropdown untuk modal booking
+        function updateTimeInput() {
+            const hour = hourDropdown.val();
+            const minute = minuteDropdown.val();
+
+            if (hour && minute) {
+                timeInput.val(`${hour}:${minute}`);
+            } else {
+                timeInput.val('');
+            }
+        }
+
+        // Inisialisasi time dropdown untuk inline booking
+        function updateInlineTimeInput() {
+            const hour = inlineHourDropdown.val();
+            const minute = inlineMinuteDropdown.val();
+
+            if (hour && minute) {
+                inlineTimeInput.val(`${hour}:${minute}`);
+            } else {
+                inlineTimeInput.val('');
+            }
+        }
+
+        // Event listener untuk dropdown jam dan menit - modal booking
+        hourDropdown.on('change', updateTimeInput);
+        minuteDropdown.on('change', updateTimeInput);
+
+        // Event listener untuk dropdown jam dan menit - inline booking
+        inlineHourDropdown.on('change', updateInlineTimeInput);
+        inlineMinuteDropdown.on('change', updateInlineTimeInput);
+
+        // Pastikan filter sticky berfungsi dengan benar
+        function updateStickyFilter() {
+            // Pastikan sidebar memiliki tinggi yang cukup
+            if ($(window).width() > 768) {
+                // Hanya terapkan di desktop
+                const sidebarHeight = sidebar.outerHeight();
+                const contentHeight = $('.rental-mobil-content').outerHeight();
+                const filterHeight = filterContainer.outerHeight();
+                const windowHeight = $(window).height();
+
+                // Periksa apakah filter lebih tinggi dari jendela
+                if (filterHeight > windowHeight - 100) {
+                    // Jika filter terlalu tinggi, atur max-height agar tidak ada scrollbar
+                    sidebarInner.css('max-height', 'none');
+                    // Pastikan sidebar memiliki tinggi yang cukup
+                    sidebar.css('min-height', contentHeight + 'px');
+                } else if (contentHeight > sidebarHeight) {
+                    // Pastikan sidebar memiliki tinggi yang cukup untuk sticky
+                    sidebar.css('min-height', contentHeight + 'px');
+                }
+            }
+        }
+
+        // Panggil fungsi saat halaman dimuat
+        updateStickyFilter();
+
+        // Panggil fungsi saat jendela diubah ukurannya
+        $(window).on('resize', function() {
+            updateStickyFilter();
+        });
 
         // Search Functionality
         const searchInput = $('#rental-mobil-search-input');
@@ -681,6 +758,9 @@
         bookingForm.on('submit', function(e) {
             e.preventDefault();
 
+            // Update time input dari dropdown
+            updateTimeInput();
+
             const kendaraanId = $('#rental-mobil-booking-kendaraan-id').val();
             const kendaraanTitle = $('#rental-mobil-booking-kendaraan-title').val();
             const nama = $('#rental-mobil-booking-nama').val();
@@ -689,6 +769,12 @@
             const jamSewa = $('#rental-mobil-booking-jam').val();
             const durasiSewa = $('#rental-mobil-booking-durasi').val();
             const satuanDurasi = $('#rental-mobil-booking-satuan').val();
+
+            // Validasi form
+            if (!jamSewa) {
+                alert('Silakan pilih jam dan menit untuk waktu sewa.');
+                return;
+            }
 
             // Format tanggal
             const tanggalObj = new Date(tanggalSewa);
@@ -804,6 +890,11 @@ Mohon informasi lebih lanjut. Terima kasih.`;
             const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
             window.history.pushState({ path: newUrl }, '', newUrl);
 
+            // Scroll ke atas halaman sebelum memuat konten baru
+            $('html, body').animate({
+                scrollTop: $('.rental-mobil-layout').offset().top - 50
+            }, 300);
+
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
                 type: 'POST',
@@ -851,6 +942,9 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                             filterContainer.removeClass('active');
                             filterOverlay.removeClass('active');
                         }
+
+                        // Update sticky filter setelah konten dimuat
+                        updateStickyFilter();
                     } else {
                         $('#rental-mobil-results').html('<p>Terjadi kesalahan. Silakan coba lagi.</p>');
                     }
@@ -868,10 +962,16 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                 e.preventDefault();
                 const page = $(this).data('page');
 
-                // Muat kendaraan dengan halaman yang dipilih tanpa scroll
-                loadKendaraan(formData, page);
+                // Gunakan formData jika tersedia, jika tidak gunakan initialFormData
+                const dataToUse = formData || initialFormData;
+
+                // Muat kendaraan dengan halaman yang dipilih dan scroll ke atas
+                loadKendaraan(dataToUse, page);
             });
         }
+
+        // Inisialisasi paginasi saat halaman pertama kali dimuat
+        initPagination(initialFormData);
 
         // Reset Filter
         resetButton.on('click', function() {
@@ -931,6 +1031,9 @@ Mohon informasi lebih lanjut. Terima kasih.`;
         inlineBookingForm.on('submit', function(e) {
             e.preventDefault();
 
+            // Update time input dari dropdown
+            updateInlineTimeInput();
+
             const kendaraanId = $('#rental-mobil-inline-booking-kendaraan-id').val();
             const kendaraanTitle = $('#rental-mobil-inline-booking-kendaraan-title').val();
             const nama = $('#rental-mobil-inline-booking-nama').val();
@@ -939,6 +1042,12 @@ Mohon informasi lebih lanjut. Terima kasih.`;
             const jamSewa = $('#rental-mobil-inline-booking-jam').val();
             const durasiSewa = $('#rental-mobil-inline-booking-durasi').val();
             const satuanDurasi = $('#rental-mobil-inline-booking-satuan').val();
+
+            // Validasi form
+            if (!jamSewa) {
+                alert('Silakan pilih jam dan menit untuk waktu sewa.');
+                return;
+            }
 
             // Format tanggal
             const tanggalObj = new Date(tanggalSewa);

@@ -13,7 +13,7 @@ if (!defined('WPINC')) {
     <!-- Sidebar Filter (25%) -->
     <div class="rental-mobil-sidebar">
         <div class="rental-mobil-sidebar-inner">
-
+%
             <?php include RENTAL_MOBIL_PLUGIN_DIR . 'templates/filter-kendaraan.php'; ?>
         </div>
     </div>
@@ -22,7 +22,7 @@ if (!defined('WPINC')) {
     <div class="rental-mobil-content">
         <!-- Floating Filter Button untuk Mobile -->
         <div id="rental-mobil-filter-toggle" class="rental-mobil-filter-toggle">
-            <i class="dashicons dashicons-filter"></i>
+            <i class="dashicons dashicons-filter rental-mobil-icon-filter"></i>
         </div>
 
         <!-- Overlay untuk filter sidebar -->
@@ -37,7 +37,7 @@ if (!defined('WPINC')) {
         <div id="rental-mobil-results" class="rental-mobil-results">
             <?php
             // Dapatkan halaman saat ini
-            $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+            $paged = isset($_GET['halaman']) ? intval($_GET['halaman']) : (get_query_var('paged') ? get_query_var('paged') : 1);
 
             // Query kendaraan
             $args = array(

@@ -40,7 +40,21 @@ if (!defined('WPINC')) {
 
                 <div class="rental-mobil-form-group rental-mobil-form-col">
                     <label for="rental-mobil-booking-jam"><?php _e('Jam Sewa', 'rental-mobil-wp'); ?> <span class="required">*</span></label>
-                    <input type="time" id="rental-mobil-booking-jam" name="jam_sewa" step="1800" required>
+                    <div class="rental-mobil-time-dropdown-container">
+                        <select id="rental-mobil-booking-jam-hour" class="rental-mobil-time-dropdown rental-mobil-hour-dropdown" required>
+                            <option value=""><?php _e('Jam', 'rental-mobil-wp'); ?></option>
+                            <?php for ($i = 0; $i < 24; $i++) : ?>
+                                <option value="<?php echo sprintf('%02d', $i); ?>"><?php echo sprintf('%02d', $i); ?></option>
+                            <?php endfor; ?>
+                        </select>
+                        <span class="rental-mobil-time-separator">:</span>
+                        <select id="rental-mobil-booking-jam-minute" class="rental-mobil-time-dropdown rental-mobil-minute-dropdown" required>
+                            <option value=""><?php _e('Menit', 'rental-mobil-wp'); ?></option>
+                            <option value="00">00</option>
+                            <option value="30">30</option>
+                        </select>
+                        <input type="hidden" id="rental-mobil-booking-jam" name="jam_sewa" required>
+                    </div>
                 </div>
             </div>
 

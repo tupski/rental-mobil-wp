@@ -81,14 +81,14 @@ require_once RENTAL_MOBIL_PLUGIN_DIR . 'includes/custom-form.php';
 // Enqueue scripts and styles
 add_action('wp_enqueue_scripts', 'rental_mobil_wp_enqueue_scripts');
 function rental_mobil_wp_enqueue_scripts() {
-    // Pilih salah satu opsi di bawah ini:
+    // Gunakan kedua opsi untuk memastikan kompatibilitas maksimum
 
     // Opsi 1: Enqueue dashicons untuk semua pengguna (termasuk yang tidak login)
     wp_enqueue_style('dashicons');
 
-    // Opsi 2: Gunakan Font Awesome sebagai alternatif (nonaktifkan jika menggunakan Opsi 1)
-    // wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css', array(), '5.15.4');
-    // wp_enqueue_style('rental-mobil-icons', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/icons.css', array('font-awesome'), RENTAL_MOBIL_VERSION);
+    // Opsi 2: Gunakan Font Awesome sebagai alternatif dan backup
+    wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css', array(), '5.15.4');
+    wp_enqueue_style('rental-mobil-icons', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/icons.css', array('font-awesome'), RENTAL_MOBIL_VERSION);
 
     wp_enqueue_style('rental-mobil-style', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/style.css', array(), RENTAL_MOBIL_VERSION);
     wp_enqueue_style('rental-mobil-custom-form', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/custom-form.css', array(), RENTAL_MOBIL_VERSION);
