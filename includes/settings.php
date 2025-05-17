@@ -424,6 +424,37 @@ function rental_mobil_whatsapp_number_callback() {
     ?>
     <input type="text" id="whatsapp_number" name="rental_mobil_options[whatsapp_number]" value="<?php echo esc_attr($whatsapp_number); ?>" class="regular-text">
     <p class="description"><?php _e('Masukkan nomor WhatsApp dengan format internasional (contoh: 628123456789)', 'rental-mobil-wp'); ?></p>
+
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        // Format otomatis nomor WhatsApp
+        $('#whatsapp_number').on('blur', function() {
+            let number = $(this).val().trim();
+
+            // Hapus semua karakter non-digit
+            number = number.replace(/\D/g, '');
+
+            // Jika dimulai dengan 0, ganti dengan 62
+            if (number.startsWith('0')) {
+                number = '62' + number.substring(1);
+            }
+            // Jika dimulai dengan 62, biarkan
+            else if (!number.startsWith('62') && number.length > 0) {
+                // Jika dimulai dengan angka lain, tambahkan 62 di depan
+                if (number.startsWith('8')) {
+                    number = '62' + number;
+                }
+                // Jika dimulai dengan 2, tambahkan 6 di depan (untuk kode area Jakarta 021, dll)
+                else if (number.startsWith('2')) {
+                    number = '62' + number;
+                }
+            }
+
+            // Update nilai input
+            $(this).val(number);
+        });
+    });
+    </script>
     <?php
 }
 
@@ -436,40 +467,107 @@ function rental_mobil_whatsapp_message_callback() {
     $whatsapp_message = isset($options['whatsapp_message']) ? $options['whatsapp_message'] : $default_message;
     ?>
     <textarea id="whatsapp_message" name="rental_mobil_options[whatsapp_message]" rows="10" class="large-text"><?php echo esc_textarea($whatsapp_message); ?></textarea>
-    <p class="description">
+    <div class="description">
         <?php _e('Template pesan WhatsApp. Gunakan placeholder berikut:', 'rental-mobil-wp'); ?>
         <br>
-        <code>{nama_kendaraan}</code> - <?php _e('Nama kendaraan', 'rental-mobil-wp'); ?>
-        <br>
-        <?php
-        // Dapatkan form fields dari pengaturan
-        $form_fields = rental_mobil_get_form_fields();
-
-        // Tampilkan placeholder untuk setiap field
-        if (!empty($form_fields)) {
-            foreach ($form_fields as $field) {
-                echo '<code>{' . esc_html($field['id']) . '}</code> - ' . esc_html($field['label']) . '<br>';
-            }
-        } else {
-            // Tampilkan placeholder default jika form fields belum diatur
-            ?>
-            <code>{nama}</code> - <?php _e('Nama pemesan', 'rental-mobil-wp'); ?>
+        <div class="rental-mobil-placeholders">
+            <span class="rental-mobil-placeholder-item" data-placeholder="{nama_kendaraan}">
+                <code>{nama_kendaraan}</code> - <?php _e('Nama kendaraan', 'rental-mobil-wp'); ?>
+            </span>
             <br>
-            <code>{domisili}</code> - <?php _e('Domisili pemesan', 'rental-mobil-wp'); ?>
-            <br>
-            <code>{tanggal_sewa}</code> - <?php _e('Tanggal sewa', 'rental-mobil-wp'); ?>
-            <br>
-            <code>{jam_sewa}</code> - <?php _e('Jam sewa', 'rental-mobil-wp'); ?>
-            <br>
-            <code>{durasi_sewa}</code> - <?php _e('Durasi sewa', 'rental-mobil-wp'); ?>
-            <br>
-            <code>{satuan_durasi}</code> - <?php _e('Satuan durasi (hari/minggu/bulan/tahun)', 'rental-mobil-wp'); ?>
             <?php
+            // Dapatkan form fields dari pengaturan
+            $form_fields = rental_mobil_get_form_fields();
+
+            // Tampilkan placeholder untuk setiap field
+            if (!empty($form_fields)) {
+                foreach ($form_fields as $field) {
+                    echo '<span class="rental-mobil-placeholder-item" data-placeholder="{' . esc_attr($field['id']) . '}">';
+                    echo '<code>{' . esc_html($field['id']) . '}</code> - ' . esc_html($field['label']);
+                    echo '</span><br>';
+                }
+            } else {
+                // Tampilkan placeholder default jika form fields belum diatur
+                ?>
+                <span class="rental-mobil-placeholder-item" data-placeholder="{nama}">
+                    <code>{nama}</code> - <?php _e('Nama pemesan', 'rental-mobil-wp'); ?>
+                </span>
+                <br>
+                <span class="rental-mobil-placeholder-item" data-placeholder="{domisili}">
+                    <code>{domisili}</code> - <?php _e('Domisili pemesan', 'rental-mobil-wp'); ?>
+                </span>
+                <br>
+                <span class="rental-mobil-placeholder-item" data-placeholder="{tanggal_sewa}">
+                    <code>{tanggal_sewa}</code> - <?php _e('Tanggal sewa', 'rental-mobil-wp'); ?>
+                </span>
+                <br>
+                <span class="rental-mobil-placeholder-item" data-placeholder="{jam_sewa}">
+                    <code>{jam_sewa}</code> - <?php _e('Jam sewa', 'rental-mobil-wp'); ?>
+                </span>
+                <br>
+                <span class="rental-mobil-placeholder-item" data-placeholder="{durasi_sewa}">
+                    <code>{durasi_sewa}</code> - <?php _e('Durasi sewa', 'rental-mobil-wp'); ?>
+                </span>
+                <br>
+                <span class="rental-mobil-placeholder-item" data-placeholder="{satuan_durasi}">
+                    <code>{satuan_durasi}</code> - <?php _e('Satuan durasi (hari/minggu/bulan/tahun)', 'rental-mobil-wp'); ?>
+                </span>
+                <?php
+            }
+            ?>
+            <br>
+            <strong><?php _e('Catatan:', 'rental-mobil-wp'); ?></strong> <?php _e('Placeholder akan otomatis dibuat untuk setiap field form yang Anda tambahkan dengan format {id_field}.', 'rental-mobil-wp'); ?>
+        </div>
+    </div>
+
+    <style>
+        .rental-mobil-placeholders {
+            margin-top: 10px;
         }
-        ?>
-        <br>
-        <strong><?php _e('Catatan:', 'rental-mobil-wp'); ?></strong> <?php _e('Placeholder akan otomatis dibuat untuk setiap field form yang Anda tambahkan dengan format {id_field}.', 'rental-mobil-wp'); ?>
-    </p>
+        .rental-mobil-placeholder-item {
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 5px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+        .rental-mobil-placeholder-item:hover {
+            background-color: #f0f0f0;
+        }
+        .rental-mobil-placeholder-item code {
+            background-color: #f8f8f8;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border: 1px solid #e0e0e0;
+        }
+    </style>
+
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        // Fungsi untuk memasukkan placeholder ke textarea pada posisi kursor
+        $('.rental-mobil-placeholder-item').on('click', function() {
+            const placeholder = $(this).data('placeholder');
+            const textarea = $('#whatsapp_message');
+
+            // Dapatkan posisi kursor
+            const startPos = textarea[0].selectionStart;
+            const endPos = textarea[0].selectionEnd;
+
+            // Dapatkan teks sebelum dan sesudah kursor
+            const textBefore = textarea.val().substring(0, startPos);
+            const textAfter = textarea.val().substring(endPos);
+
+            // Masukkan placeholder pada posisi kursor
+            textarea.val(textBefore + placeholder + textAfter);
+
+            // Kembalikan fokus ke textarea dan atur posisi kursor setelah placeholder
+            textarea.focus();
+            const newCursorPos = startPos + placeholder.length;
+            textarea[0].setSelectionRange(newCursorPos, newCursorPos);
+        });
+    });
+    </script>
     <?php
 }
 

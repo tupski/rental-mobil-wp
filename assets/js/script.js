@@ -139,21 +139,32 @@
 
         // Toggle filter pada mobile
         filterToggle.on('click', function() {
+            // Tambahkan class active dengan animasi
             sidebar.addClass('active');
+            // Tampilkan overlay dengan animasi
             filterOverlay.addClass('active');
+            // Mencegah scrolling pada body saat filter terbuka
+            $('body').css('overflow', 'hidden');
         });
 
         // Tutup filter sidebar
         filterClose.on('click', function() {
-            sidebar.removeClass('active');
-            filterOverlay.removeClass('active');
+            closeFilterSidebar();
         });
 
         // Tutup filter sidebar jika klik overlay
         filterOverlay.on('click', function() {
+            closeFilterSidebar();
+        });
+
+        // Fungsi untuk menutup filter sidebar
+        function closeFilterSidebar() {
+            // Hapus class active dengan animasi
             sidebar.removeClass('active');
             filterOverlay.removeClass('active');
-        });
+            // Kembalikan scrolling pada body
+            $('body').css('overflow', '');
+        }
 
         // Search Functionality
         let searchTimeout;
@@ -1134,8 +1145,7 @@
 
             // Sembunyikan filter pada mobile setelah reset
             if ($(window).width() <= 768) {
-                sidebar.removeClass('active');
-                filterOverlay.removeClass('active');
+                closeFilterSidebar();
             }
         });
 

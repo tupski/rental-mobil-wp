@@ -34,6 +34,13 @@ function rental_mobil_wp_activate() {
 
     // Flush rewrite rules
     flush_rewrite_rules();
+
+    // Pastikan pengaturan tidak hilang saat plugin diaktifkan
+    $existing_options = get_option('rental_mobil_options', array());
+    if (!empty($existing_options)) {
+        // Jika pengaturan sudah ada, pastikan disimpan dengan autoload=yes
+        update_option('rental_mobil_options', $existing_options, 'yes');
+    }
 }
 
 // Tambahkan fungsi untuk flush rewrite rules saat plugin diaktifkan
@@ -254,6 +261,20 @@ function rental_mobil_wp_init() {
     // Inisialisasi variabel global untuk melacak shortcode yang digunakan
     global $rental_mobil_shortcodes_used;
     $rental_mobil_shortcodes_used = array();
+
+    // Pastikan pengaturan tidak hilang saat plugin diupdate
+    $plugin_version = get_option('rental_mobil_version', '');
+    if ($plugin_version !== RENTAL_MOBIL_VERSION) {
+        // Jika versi berbeda, pastikan pengaturan disimpan dengan benar
+        $existing_options = get_option('rental_mobil_options', array());
+        if (!empty($existing_options)) {
+            // Pastikan disimpan dengan autoload=yes
+            update_option('rental_mobil_options', $existing_options, 'yes');
+        }
+
+        // Update versi plugin di database
+        update_option('rental_mobil_version', RENTAL_MOBIL_VERSION, 'yes');
+    }
 }
 
 // Tambahkan modal ke footer

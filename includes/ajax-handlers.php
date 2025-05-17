@@ -511,6 +511,22 @@ function rental_mobil_get_whatsapp_ajax() {
         wp_send_json_error('Nomor WhatsApp belum diatur. Silakan hubungi administrator.');
     }
 
+    // Format nomor WhatsApp
+    $whatsapp_number = preg_replace('/[^0-9]/', '', $whatsapp_number);
+
+    // Jika dimulai dengan 0, ganti dengan 62
+    if (substr($whatsapp_number, 0, 1) === '0') {
+        $whatsapp_number = '62' . substr($whatsapp_number, 1);
+    }
+    // Jika dimulai dengan angka 8, tambahkan 62 di depan
+    elseif (substr($whatsapp_number, 0, 1) === '8') {
+        $whatsapp_number = '62' . $whatsapp_number;
+    }
+    // Jika dimulai dengan angka 2, tambahkan 62 di depan (untuk kode area Jakarta 021, dll)
+    elseif (substr($whatsapp_number, 0, 1) === '2') {
+        $whatsapp_number = '62' . $whatsapp_number;
+    }
+
     // Dapatkan template pesan
     $message_template = rental_mobil_get_whatsapp_message();
 
