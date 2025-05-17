@@ -962,6 +962,18 @@
     z-index: 10000; /* Memastikan modal berada di atas elemen lain */
 }
 
+/* Pastikan tombol booking di modal fullwidth */
+#rental-mobil-booking-modal .rental-mobil-form-actions {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#rental-mobil-booking-modal .rental-mobil-button-submit {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+}
+
 /* Styling untuk select biasa */
 select {
     appearance: auto;
@@ -1216,12 +1228,16 @@ select option {
     z-index: 100000; /* Pastikan tombol booking selalu di atas */
 }
 
-.rental-mobil-form-actions .rental-mobil-button {
+.rental-mobil-form-actions .rental-mobil-button,
+.rental-mobil-booking-form .rental-mobil-button-submit,
+.rental-mobil-form-actions .rental-mobil-button-submit {
     width: 100%;
     padding: 12px;
     font-size: 16px;
     position: relative;
     z-index: 100000; /* Pastikan tombol booking selalu di atas */
+    display: block; /* Pastikan tombol menempati seluruh lebar */
+    box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
 }
 
 .rental-mobil-button-submit {

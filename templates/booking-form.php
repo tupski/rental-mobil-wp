@@ -117,6 +117,7 @@ usort($form_fields, function($a, $b) {
                         name="<?php echo esc_attr($field['id']); ?>"
                         placeholder="<?php echo esc_attr($field['placeholder']); ?>"
                         <?php echo $field['required'] ? 'required' : ''; ?>
+                        data-was-required="<?php echo $field['required'] ? 'true' : 'false'; ?>"
                     >
                     <?php
                     break;
@@ -127,6 +128,7 @@ usort($form_fields, function($a, $b) {
                         id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>"
                         name="<?php echo esc_attr($field['id']); ?>"
                         <?php echo $field['required'] ? 'required' : ''; ?>
+                        data-was-required="<?php echo $field['required'] ? 'true' : 'false'; ?>"
                     >
                     <?php
                     break;
@@ -139,6 +141,7 @@ usort($form_fields, function($a, $b) {
                         class="rental-mobil-time-picker"
                         placeholder="HH:MM"
                         <?php echo $field['required'] ? 'required' : ''; ?>
+                        data-was-required="<?php echo $field['required'] ? 'true' : 'false'; ?>"
                     >
                     <?php
                     break;
@@ -148,6 +151,7 @@ usort($form_fields, function($a, $b) {
                         id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>"
                         name="<?php echo esc_attr($field['id']); ?>"
                         <?php echo $field['required'] ? 'required' : ''; ?>
+                        data-was-required="<?php echo $field['required'] ? 'true' : 'false'; ?>"
                     >
                         <option value=""><?php _e('-- Pilih --', 'rental-mobil-wp'); ?></option>
                         <?php if (isset($field['options']) && is_array($field['options'])) : ?>
@@ -165,6 +169,7 @@ usort($form_fields, function($a, $b) {
                         name="<?php echo esc_attr($field['id']); ?>"
                         placeholder="<?php echo esc_attr($field['placeholder']); ?>"
                         <?php echo $field['required'] ? 'required' : ''; ?>
+                        data-was-required="<?php echo $field['required'] ? 'true' : 'false'; ?>"
                     ></textarea>
                     <?php
                     break;

@@ -984,28 +984,21 @@
             // Reset semua error
             $(this).find('.error').removeClass('error');
 
-            // Cari semua field yang required
-            $(this).find('[required]').each(function() {
-                // Periksa apakah field ini berada dalam container kondisional
-                const isConditionalField = $(this).closest('.rental-mobil-conditional-field').length > 0;
-
-                // Jika field kondisional, hanya validasi jika visible
-                if (isConditionalField) {
-                    // Jika field kondisional dan visible tapi kosong
-                    if ($(this).closest('.rental-mobil-conditional-field').is(':visible') && !$(this).val()) {
-                        $(this).addClass('error');
-                        isValid = false;
-                    }
-                    // Jika field kondisional dan tidak visible, hapus atribut required sementara
-                    else if (!$(this).closest('.rental-mobil-conditional-field').is(':visible')) {
-                        $(this).prop('required', false);
-                    }
+            // Hapus atribut required dari semua field kondisional yang tidak terlihat
+            $(this).find('.rental-mobil-conditional-field').each(function() {
+                if (!$(this).is(':visible')) {
+                    $(this).find('[required]').removeAttr('required').data('was-required', true);
                 } else {
-                    // Field normal (non-kondisional) yang required
-                    if (!$(this).val()) {
-                        $(this).addClass('error');
-                        isValid = false;
-                    }
+                    // Pastikan field yang terlihat memiliki atribut required jika seharusnya required
+                    $(this).find('[data-was-required=true]').attr('required', true);
+                }
+            });
+
+            // Cari semua field yang required (setelah menghapus required dari field yang tidak terlihat)
+            $(this).find('[required]').each(function() {
+                if (!$(this).val()) {
+                    $(this).addClass('error');
+                    isValid = false;
                 }
             });
 
@@ -1291,6 +1284,36 @@
 
             // Update time input dari dropdown
             updateInlineTimeInput();
+
+            // Validasi form secara manual
+            let isValid = true;
+
+            // Reset semua error
+            $(this).find('.error').removeClass('error');
+
+            // Hapus atribut required dari semua field kondisional yang tidak terlihat
+            $(this).find('.rental-mobil-conditional-field').each(function() {
+                if (!$(this).is(':visible')) {
+                    $(this).find('[required]').removeAttr('required').data('was-required', true);
+                } else {
+                    // Pastikan field yang terlihat memiliki atribut required jika seharusnya required
+                    $(this).find('[data-was-required=true]').attr('required', true);
+                }
+            });
+
+            // Cari semua field yang required (setelah menghapus required dari field yang tidak terlihat)
+            $(this).find('[required]').each(function() {
+                if (!$(this).val()) {
+                    $(this).addClass('error');
+                    isValid = false;
+                }
+            });
+
+            // Jika form tidak valid, tampilkan pesan dan hentikan submit
+            if (!isValid) {
+                alert('Mohon lengkapi semua field yang wajib diisi.');
+                return;
+            }
 
             const kendaraanId = $('#rental-mobil-inline-booking-kendaraan-id').val();
 
@@ -1594,12 +1617,20 @@
                         $(this).find('input, select, textarea').each(function() {
                             if ($(this).closest('.rental-mobil-form-group, .rental-mobil-custom-booking-field').find('label .required').length > 0) {
                                 $(this).prop('required', true);
+                                // Hapus data-was-required jika ada
+                                $(this).removeData('was-required');
                             }
                         });
                     } else {
                         $(this).hide();
-                        // Reset nilai field dan hapus required
-                        $(this).find('input, select, textarea').val('').prop('required', false);
+                        // Reset nilai field dan hapus required, simpan status required asli
+                        $(this).find('input, select, textarea').each(function() {
+                            if ($(this).prop('required')) {
+                                $(this).data('was-required', true);
+                                $(this).prop('required', false);
+                            }
+                            $(this).val('');
+                        });
 
                         // Reset select biasa
                         $(this).find('select').val('');

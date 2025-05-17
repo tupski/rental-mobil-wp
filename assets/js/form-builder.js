@@ -451,6 +451,12 @@
             }
         }
 
+        // Tambahkan event listener untuk form submit (Simpan Pengaturan)
+        $('form[action="options.php"]').on('submit', function() {
+            // Update form fields hidden input dengan data terbaru
+            formFieldsInput.val(JSON.stringify(formFields));
+        });
+
         // Render form preview
         function renderFormPreview() {
             previewContainer.empty();
@@ -597,10 +603,24 @@
                         // Tampilkan atau sembunyikan field
                         if (shouldShow) {
                             $(this).show();
+                            // Kembalikan atribut required jika field memiliki tanda bintang (required)
+                            $(this).find('input, select, textarea').each(function() {
+                                if ($(this).closest('.rental-mobil-form-preview-field').find('label .required').length > 0) {
+                                    $(this).prop('required', true);
+                                    // Hapus data-was-required jika ada
+                                    $(this).removeData('was-required');
+                                }
+                            });
                         } else {
                             $(this).hide();
-                            // Reset nilai field
-                            $(this).find('input, select').val('');
+                            // Reset nilai field dan hapus required, simpan status required asli
+                            $(this).find('input, select, textarea').each(function() {
+                                if ($(this).prop('required')) {
+                                    $(this).data('was-required', true);
+                                    $(this).prop('required', false);
+                                }
+                                $(this).val('');
+                            });
                         }
                     }
                 });

@@ -124,7 +124,9 @@ function rental_mobil_form_builder_ui() {
         <div class="rental-mobil-form-builder-header">
             <button type="button" class="button button-primary" id="rental-mobil-add-field"><?php _e('Tambah Field', 'rental-mobil-wp'); ?></button>
             <button type="button" class="button" id="rental-mobil-preview-form"><?php _e('Preview Form', 'rental-mobil-wp'); ?></button>
-            <button type="button" class="button button-primary" id="rental-mobil-save-form-fields" style="float: right;"><?php _e('Simpan Form Fields', 'rental-mobil-wp'); ?></button>
+            <div class="rental-mobil-form-builder-notice" style="display: none; margin-top: 10px; padding: 10px; background-color: #f0f8ff; border-left: 4px solid #0073aa;">
+                <p><?php _e('Form fields akan otomatis disimpan saat Anda mengklik tombol "Simpan Pengaturan" di bawah.', 'rental-mobil-wp'); ?></p>
+            </div>
         </div>
 
         <div id="rental-mobil-form-preview" style="display: none;"></div>
@@ -263,55 +265,8 @@ function rental_mobil_form_builder_ui() {
     <!-- Form Builder UI dikelola oleh JavaScript di assets/js/form-builder.js -->
     <script>
     jQuery(document).ready(function($) {
-        // Save Form Fields button click
-        $('#rental-mobil-save-form-fields').on('click', function() {
-            const formFields = $('#rental-mobil-form-fields').val();
-            const saveButton = $(this);
-            const originalText = saveButton.text();
-
-            // Disable button and show loading
-            saveButton.prop('disabled', true).text('<?php _e('Menyimpan...', 'rental-mobil-wp'); ?>');
-
-            // Kirim data ke server
-            $.ajax({
-                url: ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'rental_mobil_save_form_fields',
-                    nonce: '<?php echo wp_create_nonce('rental_mobil_form_builder_nonce'); ?>',
-                    form_fields: formFields
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Tampilkan pesan sukses
-                        const message = $('<div class="notice notice-success is-dismissible"><p>' + response.data.message + '</p></div>');
-                        $('.rental-mobil-form-builder-container').before(message);
-
-                        // Auto dismiss setelah 3 detik
-                        setTimeout(function() {
-                            message.fadeOut(function() {
-                                $(this).remove();
-                            });
-                        }, 3000);
-                    } else {
-                        // Tampilkan pesan error
-                        const message = $('<div class="notice notice-error is-dismissible"><p>' + response.data.message + '</p></div>');
-                        $('.rental-mobil-form-builder-container').before(message);
-                    }
-
-                    // Re-enable button
-                    saveButton.prop('disabled', false).text(originalText);
-                },
-                error: function() {
-                    // Tampilkan pesan error
-                    const message = $('<div class="notice notice-error is-dismissible"><p><?php _e('Terjadi kesalahan. Silakan coba lagi.', 'rental-mobil-wp'); ?></p></div>');
-                    $('.rental-mobil-form-builder-container').before(message);
-
-                    // Re-enable button
-                    saveButton.prop('disabled', false).text(originalText);
-                }
-            });
-        });
+        // Tampilkan notifikasi bahwa form fields akan otomatis disimpan
+        $('.rental-mobil-form-builder-notice').show();
     });
     </script>
     <?php

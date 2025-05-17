@@ -1021,6 +1021,58 @@ function rental_mobil_validate_options($input) {
         $output['button_hover_color'] = sanitize_hex_color($input['button_hover_color']);
     }
 
+    // Sanitize form fields
+    if (isset($input['form_fields'])) {
+        // Jika form_fields adalah string JSON, decode terlebih dahulu
+        if (is_string($input['form_fields']) && json_decode($input['form_fields'])) {
+            $form_fields = json_decode($input['form_fields'], true);
+        } else {
+            $form_fields = $input['form_fields'];
+        }
+
+        // Sanitize form fields
+        $sanitized_fields = array();
+        if (is_array($form_fields)) {
+            foreach ($form_fields as $field) {
+                $sanitized_field = array(
+                    'id' => sanitize_text_field($field['id']),
+                    'label' => sanitize_text_field($field['label']),
+                    'type' => sanitize_text_field($field['type']),
+                    'required' => (bool) $field['required'],
+                    'order' => absint($field['order'])
+                );
+
+                if (isset($field['placeholder'])) {
+                    $sanitized_field['placeholder'] = sanitize_text_field($field['placeholder']);
+                }
+
+                if (isset($field['width'])) {
+                    $sanitized_field['width'] = sanitize_text_field($field['width']);
+                }
+
+                if (isset($field['options']) && is_array($field['options'])) {
+                    $sanitized_options = array();
+                    foreach ($field['options'] as $option_key => $option_value) {
+                        $sanitized_options[sanitize_text_field($option_key)] = sanitize_text_field($option_value);
+                    }
+                    $sanitized_field['options'] = $sanitized_options;
+                }
+
+                if (isset($field['conditional']) && is_array($field['conditional'])) {
+                    $sanitized_field['conditional'] = array(
+                        'field' => sanitize_text_field($field['conditional']['field']),
+                        'operator' => sanitize_text_field($field['conditional']['operator']),
+                        'value' => sanitize_text_field($field['conditional']['value'])
+                    );
+                }
+
+                $sanitized_fields[] = $sanitized_field;
+            }
+        }
+
+        $output['form_fields'] = $sanitized_fields;
+    }
+
     // Sanitize button text color
     if (isset($input['button_text_color'])) {
         $output['button_text_color'] = sanitize_hex_color($input['button_text_color']);
@@ -2111,6 +2163,16 @@ function rental_mobil_save_settings_ajax() {
 
         // Validasi dan sanitasi data
         $validated_options = rental_mobil_validate_options($form_data['rental_mobil_options']);
+
+        // Tangani array khusus seperti filter_options, frontend_filter_options, admin_filter_options, share_platforms
+        $array_options = array('frontend_filter_options', 'admin_filter_options', 'share_platforms');
+
+        foreach ($array_options as $option_key) {
+            // Jika opsi tidak ada di form data, pertahankan nilai yang ada
+            if (!isset($form_data['rental_mobil_options'][$option_key]) && isset($existing_options[$option_key])) {
+                $validated_options[$option_key] = $existing_options[$option_key];
+            }
+        }
 
         // Gabungkan dengan opsi yang sudah ada untuk memastikan tidak ada yang hilang
         $merged_options = array_merge($existing_options, $validated_options);
