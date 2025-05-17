@@ -445,41 +445,124 @@ function rental_mobil_get_whatsapp_ajax() {
 
     // Dapatkan data dari form
     $kendaraan_id = isset($_POST['kendaraan_id']) ? intval($_POST['kendaraan_id']) : 0;
-    $nama = isset($_POST['nama']) ? sanitize_text_field($_POST['nama']) : '';
-    $domisili = isset($_POST['domisili']) ? sanitize_text_field($_POST['domisili']) : '';
-    $tanggal_sewa = isset($_POST['tanggal_sewa']) ? sanitize_text_field($_POST['tanggal_sewa']) : '';
-    $jam_sewa = isset($_POST['jam_sewa']) ? sanitize_text_field($_POST['jam_sewa']) : '';
-    $durasi_sewa = isset($_POST['durasi_sewa']) ? sanitize_text_field($_POST['durasi_sewa']) : '';
-    $satuan_durasi = isset($_POST['satuan_durasi']) ? sanitize_text_field($_POST['satuan_durasi']) : '';
 
     // Dapatkan nama kendaraan
     $kendaraan_title = get_the_title($kendaraan_id);
 
+    // Dapatkan form fields dari pengaturan
+    $form_fields = rental_mobil_get_form_fields();
+
+    // Buat array placeholder dan nilai
+    $placeholders = array('{nama_kendaraan}');
+    $values = array($kendaraan_title);
+
+    // Tambahkan semua field dari form ke array placeholder dan nilai
+    foreach ($form_fields as $field) {
+        $field_id = $field['id'];
+        $placeholder = '{' . $field_id . '}';
+        $value = isset($_POST[$field_id]) ? sanitize_text_field($_POST[$field_id]) : '';
+
+        $placeholders[] = $placeholder;
+        $values[] = $value;
+    }
+
+    // Tambahkan placeholder dinamis untuk semua field form
+    $dynamic_placeholders = array();
+    $dynamic_values = array();
+
+    foreach ($_POST as $key => $value) {
+        // Lewati kunci yang bukan field form (seperti action, nonce, dll)
+        if (in_array($key, array('action', 'nonce', 'kendaraan_id'))) {
+            continue;
+        }
+
+        // Buat placeholder dinamis jika belum ada
+        $dynamic_placeholder = '{' . $key . '}';
+        if (!in_array($dynamic_placeholder, $placeholders)) {
+            $dynamic_placeholders[] = $dynamic_placeholder;
+            $dynamic_values[] = sanitize_text_field($value);
+        }
+    }
+
+    // Gabungkan placeholder dinamis dengan placeholder yang sudah ada
+    $placeholders = array_merge($placeholders, $dynamic_placeholders);
+    $values = array_merge($values, $dynamic_values);
+
     // Ganti placeholder dengan data sebenarnya
-    $message = str_replace(
-        array(
-            '{nama_kendaraan}',
-            '{nama}',
-            '{domisili}',
-            '{tanggal_sewa}',
-            '{jam_sewa}',
-            '{durasi_sewa}',
-            '{satuan_durasi}'
-        ),
-        array(
-            $kendaraan_title,
-            $nama,
-            $domisili,
-            $tanggal_sewa,
-            $jam_sewa,
-            $durasi_sewa,
-            $satuan_durasi
-        ),
-        $message_template
-    );
+    $message = str_replace($placeholders, $values, $message_template);
 
     wp_send_json_success(array(
         'whatsapp_number' => $whatsapp_number,
         'message' => $message
     ));
 }
+<<<<<<< HEAD
+=======
+
+/**
+ * AJAX handler untuk menyimpan form fields
+ */
+add_action('wp_ajax_rental_mobil_save_form_fields', 'rental_mobil_save_form_fields_ajax');
+function rental_mobil_save_form_fields_ajax() {
+    // Verifikasi nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'rental_mobil_form_builder_nonce')) {
+        wp_send_json_error(array('message' => __('Verifikasi keamanan gagal.', 'rental-mobil-wp')));
+    }
+
+    // Verifikasi user capability
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(array('message' => __('Anda tidak memiliki izin untuk melakukan tindakan ini.', 'rental-mobil-wp')));
+    }
+
+    // Dapatkan form fields dari POST
+    $form_fields = isset($_POST['form_fields']) ? $_POST['form_fields'] : '';
+
+    // Decode JSON
+    $form_fields = json_decode(stripslashes($form_fields), true);
+
+    // Validasi form fields
+    if (!is_array($form_fields)) {
+        wp_send_json_error(array('message' => __('Format data tidak valid.', 'rental-mobil-wp')));
+    }
+
+    // Sanitize form fields
+    $sanitized_fields = array();
+    foreach ($form_fields as $field) {
+        $sanitized_field = array(
+            'id' => sanitize_text_field($field['id']),
+            'label' => sanitize_text_field($field['label']),
+            'type' => sanitize_text_field($field['type']),
+            'required' => (bool) $field['required'],
+            'order' => absint($field['order'])
+        );
+
+        if (isset($field['placeholder'])) {
+            $sanitized_field['placeholder'] = sanitize_text_field($field['placeholder']);
+        }
+
+        if (isset($field['options']) && is_array($field['options'])) {
+            $sanitized_options = array();
+            foreach ($field['options'] as $option_key => $option_value) {
+                $sanitized_options[sanitize_text_field($option_key)] = sanitize_text_field($option_value);
+            }
+            $sanitized_field['options'] = $sanitized_options;
+        }
+
+        $sanitized_fields[] = $sanitized_field;
+    }
+
+    // Dapatkan opsi saat ini
+    $options = rental_mobil_get_options();
+
+    // Update form fields
+    $options['form_fields'] = $sanitized_fields;
+
+    // Simpan opsi
+    update_option('rental_mobil_options', $options);
+
+    wp_send_json_success(array(
+        'message' => __('Form fields berhasil disimpan.', 'rental-mobil-wp'),
+        'form_fields' => $sanitized_fields
+    ));
+}
+>>>>>>> c10b851801dc71997f8b2ec8278168e907cee452

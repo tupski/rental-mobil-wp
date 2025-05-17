@@ -88,6 +88,49 @@ function rental_mobil_register_settings() {
         'rental_mobil_style_section'
     );
 
+    // Tab Filter
+    add_settings_section(
+        'rental_mobil_filter_section',
+        __('Pengaturan Filter', 'rental-mobil-wp'),
+        'rental_mobil_filter_section_callback',
+        'rental_mobil_filter'
+    );
+
+    // Pengaturan Filter Frontend
+    add_settings_field(
+        'frontend_filter_options',
+        __('Filter untuk Frontend', 'rental-mobil-wp'),
+        'rental_mobil_frontend_filter_options_callback',
+        'rental_mobil_filter',
+        'rental_mobil_filter_section'
+    );
+
+    // Pengaturan Filter Admin
+    add_settings_field(
+        'admin_filter_options',
+        __('Filter untuk Admin', 'rental-mobil-wp'),
+        'rental_mobil_admin_filter_options_callback',
+        'rental_mobil_filter',
+        'rental_mobil_filter_section'
+    );
+
+    // Tab Share
+    add_settings_section(
+        'rental_mobil_share_section',
+        __('Pengaturan Share', 'rental-mobil-wp'),
+        'rental_mobil_share_section_callback',
+        'rental_mobil_share'
+    );
+
+    // Pengaturan Platform Share
+    add_settings_field(
+        'share_platforms',
+        __('Platform Share', 'rental-mobil-wp'),
+        'rental_mobil_share_platforms_callback',
+        'rental_mobil_share',
+        'rental_mobil_share_section'
+    );
+
     add_settings_field(
         'button_hover_color',
         __('Warna Hover Button Utama', 'rental-mobil-wp'),
@@ -155,6 +198,8 @@ function rental_mobil_register_settings() {
         'rental_mobil_homepage'
     );
 
+
+
     add_settings_field(
         'homepage_vehicles',
         __('Kendaraan Pilihan untuk Homepage', 'rental-mobil-wp'),
@@ -173,8 +218,16 @@ function rental_mobil_register_settings() {
 
     add_settings_field(
         'homepage_vehicle_order',
-        __('Pengaturan Urutan Kendaraan', 'rental-mobil-wp'),
+        __('Pengaturan Urutan Kendaraan Homepage', 'rental-mobil-wp'),
         'rental_mobil_homepage_vehicle_order_callback',
+        'rental_mobil_homepage',
+        'rental_mobil_homepage_section'
+    );
+
+    add_settings_field(
+        'shortcode_vehicle_order',
+        __('Pengaturan Urutan Kendaraan Shortcode', 'rental-mobil-wp'),
+        'rental_mobil_shortcode_vehicle_order_callback',
         'rental_mobil_homepage',
         'rental_mobil_homepage_section'
     );
@@ -630,17 +683,34 @@ function rental_mobil_whatsapp_message_callback() {
         <br>
         <code>{nama_kendaraan}</code> - <?php _e('Nama kendaraan', 'rental-mobil-wp'); ?>
         <br>
-        <code>{nama}</code> - <?php _e('Nama pemesan', 'rental-mobil-wp'); ?>
+        <?php
+        // Dapatkan form fields dari pengaturan
+        $form_fields = rental_mobil_get_form_fields();
+
+        // Tampilkan placeholder untuk setiap field
+        if (!empty($form_fields)) {
+            foreach ($form_fields as $field) {
+                echo '<code>{' . esc_html($field['id']) . '}</code> - ' . esc_html($field['label']) . '<br>';
+            }
+        } else {
+            // Tampilkan placeholder default jika form fields belum diatur
+            ?>
+            <code>{nama}</code> - <?php _e('Nama pemesan', 'rental-mobil-wp'); ?>
+            <br>
+            <code>{domisili}</code> - <?php _e('Domisili pemesan', 'rental-mobil-wp'); ?>
+            <br>
+            <code>{tanggal_sewa}</code> - <?php _e('Tanggal sewa', 'rental-mobil-wp'); ?>
+            <br>
+            <code>{jam_sewa}</code> - <?php _e('Jam sewa', 'rental-mobil-wp'); ?>
+            <br>
+            <code>{durasi_sewa}</code> - <?php _e('Durasi sewa', 'rental-mobil-wp'); ?>
+            <br>
+            <code>{satuan_durasi}</code> - <?php _e('Satuan durasi (hari/minggu/bulan/tahun)', 'rental-mobil-wp'); ?>
+            <?php
+        }
+        ?>
         <br>
-        <code>{domisili}</code> - <?php _e('Domisili pemesan', 'rental-mobil-wp'); ?>
-        <br>
-        <code>{tanggal_sewa}</code> - <?php _e('Tanggal sewa', 'rental-mobil-wp'); ?>
-        <br>
-        <code>{jam_sewa}</code> - <?php _e('Jam sewa', 'rental-mobil-wp'); ?>
-        <br>
-        <code>{durasi_sewa}</code> - <?php _e('Durasi sewa', 'rental-mobil-wp'); ?>
-        <br>
-        <code>{satuan_durasi}</code> - <?php _e('Satuan durasi (hari/minggu/bulan/tahun)', 'rental-mobil-wp'); ?>
+        <strong><?php _e('Catatan:', 'rental-mobil-wp'); ?></strong> <?php _e('Placeholder akan otomatis dibuat untuk setiap field form yang Anda tambahkan dengan format {id_field}.', 'rental-mobil-wp'); ?>
     </p>
     <?php
 }
@@ -812,7 +882,7 @@ function rental_mobil_filter_icon_position_callback() {
  */
 function rental_mobil_homepage_vehicles_callback() {
     $options = rental_mobil_get_options();
-    $homepage_vehicles = isset($options['homepage_vehicles']) ? $options['homepage_vehicles'] : array();
+    $homepage_vehicles  = isset($options['homepage_vehicles']) ? $options['homepage_vehicles'] : array();
 
     // Dapatkan semua kendaraan
     $args = array(
@@ -959,6 +1029,41 @@ function rental_mobil_validate_options($input) {
         $output['homepage_order'] = in_array($input['homepage_order'], $valid_order) ? $input['homepage_order'] : 'DESC';
     }
 
+    // Sanitize shortcode order settings
+    if (isset($input['shortcode_orderby'])) {
+        $valid_orderby = array('date', 'title', 'meta_value_num', 'price_high', 'price_low', 'rand');
+        $output['shortcode_orderby'] = in_array($input['shortcode_orderby'], $valid_orderby) ? $input['shortcode_orderby'] : 'date';
+    }
+
+    if (isset($input['shortcode_order'])) {
+        $valid_order = array('ASC', 'DESC');
+        $output['shortcode_order'] = in_array($input['shortcode_order'], $valid_order) ? $input['shortcode_order'] : 'DESC';
+    }
+
+    // Sanitize frontend filter options
+    if (isset($input['frontend_filter_options']) && is_array($input['frontend_filter_options'])) {
+        $valid_filters = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+        $output['frontend_filter_options'] = array_intersect($input['frontend_filter_options'], $valid_filters);
+    } else {
+        $output['frontend_filter_options'] = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+    }
+
+    // Sanitize admin filter options
+    if (isset($input['admin_filter_options']) && is_array($input['admin_filter_options'])) {
+        $valid_filters = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'featured', 'popular');
+        $output['admin_filter_options'] = array_intersect($input['admin_filter_options'], $valid_filters);
+    } else {
+        $output['admin_filter_options'] = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'featured', 'popular');
+    }
+
+    // Sanitize share platforms
+    if (isset($input['share_platforms']) && is_array($input['share_platforms'])) {
+        $valid_platforms = array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
+        $output['share_platforms'] = array_intersect($input['share_platforms'], $valid_platforms);
+    } else {
+        $output['share_platforms'] = array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
+    }
+
     // Sanitize license key
     if (isset($input['license_key'])) {
         $output['license_key'] = sanitize_text_field($input['license_key']);
@@ -971,6 +1076,56 @@ function rental_mobil_validate_options($input) {
     }
     if (isset($options['license_expires'])) {
         $output['license_expires'] = $options['license_expires'];
+    }
+
+    // Sanitize form fields
+    if (isset($input['form_fields'])) {
+        // Jika form_fields adalah string JSON, decode terlebih dahulu
+        if (is_string($input['form_fields'])) {
+            $form_fields = json_decode($input['form_fields'], true);
+        } else {
+            $form_fields = $input['form_fields'];
+        }
+
+        // Pastikan form_fields adalah array
+        if (is_array($form_fields)) {
+            // Sanitize setiap field
+            foreach ($form_fields as $key => $field) {
+                if (isset($field['id'])) {
+                    $form_fields[$key]['id'] = sanitize_text_field($field['id']);
+                }
+                if (isset($field['label'])) {
+                    $form_fields[$key]['label'] = sanitize_text_field($field['label']);
+                }
+                if (isset($field['type'])) {
+                    $form_fields[$key]['type'] = sanitize_text_field($field['type']);
+                }
+                if (isset($field['placeholder'])) {
+                    $form_fields[$key]['placeholder'] = sanitize_text_field($field['placeholder']);
+                }
+                if (isset($field['required'])) {
+                    $form_fields[$key]['required'] = (bool) $field['required'];
+                }
+                if (isset($field['order'])) {
+                    $form_fields[$key]['order'] = absint($field['order']);
+                }
+                if (isset($field['options']) && is_array($field['options'])) {
+                    $sanitized_options = array();
+                    foreach ($field['options'] as $option_key => $option_value) {
+                        $sanitized_options[sanitize_text_field($option_key)] = sanitize_text_field($option_value);
+                    }
+                    $form_fields[$key]['options'] = $sanitized_options;
+                }
+            }
+
+            $output['form_fields'] = $form_fields;
+        } else {
+            // Jika bukan array, gunakan form_fields yang sudah ada
+            $output['form_fields'] = isset($options['form_fields']) ? $options['form_fields'] : array();
+        }
+    } else {
+        // Jika tidak ada form_fields di input, gunakan yang sudah ada
+        $output['form_fields'] = isset($options['form_fields']) ? $options['form_fields'] : array();
     }
 
     return $output;
@@ -1000,6 +1155,12 @@ function rental_mobil_settings_page() {
             </a>
             <a href="?page=rental-mobil&tab=style" class="nav-tab <?php echo $active_tab == 'style' ? 'nav-tab-active' : ''; ?>">
                 <span class="dashicons dashicons-admin-appearance"></span> <?php _e('Tampilan', 'rental-mobil-wp'); ?>
+            </a>
+            <a href="?page=rental-mobil&tab=filter" class="nav-tab <?php echo $active_tab == 'filter' ? 'nav-tab-active' : ''; ?>">
+                <span class="dashicons dashicons-filter"></span> <?php _e('Filter', 'rental-mobil-wp'); ?>
+            </a>
+            <a href="?page=rental-mobil&tab=share" class="nav-tab <?php echo $active_tab == 'share' ? 'nav-tab-active' : ''; ?>">
+                <span class="dashicons dashicons-share"></span> <?php _e('Share', 'rental-mobil-wp'); ?>
             </a>
             <a href="?page=rental-mobil&tab=homepage" class="nav-tab <?php echo $active_tab == 'homepage' ? 'nav-tab-active' : ''; ?>">
                 <span class="dashicons dashicons-admin-home"></span> <?php _e('Homepage', 'rental-mobil-wp'); ?>
@@ -1032,6 +1193,14 @@ function rental_mobil_settings_page() {
                 } elseif ($active_tab == 'homepage') {
                     echo '<div id="rental-mobil-homepage-settings" class="rental-mobil-settings-tab">';
                     do_settings_sections('rental_mobil_homepage');
+                    echo '</div>';
+                } elseif ($active_tab == 'filter') {
+                    echo '<div id="rental-mobil-filter-settings" class="rental-mobil-settings-tab">';
+                    do_settings_sections('rental_mobil_filter');
+                    echo '</div>';
+                } elseif ($active_tab == 'share') {
+                    echo '<div id="rental-mobil-share-settings" class="rental-mobil-settings-tab">';
+                    do_settings_sections('rental_mobil_share');
                     echo '</div>';
                 } elseif ($active_tab == 'form_builder') {
                     echo '<div id="rental-mobil-form-builder-settings" class="rental-mobil-settings-tab">';
@@ -1155,8 +1324,17 @@ function rental_mobil_get_options() {
             'license_customer' => '',
             'license_created_at' => '',
             'license_domain_count' => '',
-            'license_max_domains' => ''
+            'license_max_domains' => '',
+            'form_fields' => array()
         );
+
+        // Simpan opsi default ke database
+        update_option('rental_mobil_options', $options, 'yes');
+    }
+
+    // Pastikan form_fields selalu ada
+    if (!isset($options['form_fields'])) {
+        $options['form_fields'] = array();
     }
 
     return $options;
@@ -1180,18 +1358,19 @@ function rental_mobil_get_whatsapp_message() {
 }
 
 /**
- * Get filter options
+ * Get filter options (deprecated, use rental_mobil_get_frontend_filter_options() instead)
+ * @deprecated
  */
-function rental_mobil_get_filter_options() {
-    $options = rental_mobil_get_options();
-    $filter_options = isset($options['filter_options']) ? $options['filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+// function rental_mobil_get_filter_options() {
+//     $options = rental_mobil_get_options();
+//     $filter_options = isset($options['filter_options']) ? $options['filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
 
-    if (!is_array($filter_options)) {
-        $filter_options = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
-    }
+//     if (!is_array($filter_options)) {
+//         $filter_options = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+//     }
 
-    return $filter_options;
-}
+//     return $filter_options;
+// }
 
 /**
  * Get filter icon position
@@ -1283,6 +1462,66 @@ function rental_mobil_get_homepage_order_settings() {
 }
 
 /**
+ * Get shortcode vehicle order settings
+ */
+function rental_mobil_get_shortcode_order_settings() {
+    $options = rental_mobil_get_options();
+    return array(
+        'orderby' => isset($options['shortcode_orderby']) ? $options['shortcode_orderby'] : 'date',
+        'order' => isset($options['shortcode_order']) ? $options['shortcode_order'] : 'DESC',
+    );
+}
+
+/**
+ * Get frontend filter options
+ */
+function rental_mobil_get_frontend_filter_options() {
+    $options = rental_mobil_get_options();
+    $frontend_filter_options = isset($options['frontend_filter_options']) ? $options['frontend_filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+
+    if (!is_array($frontend_filter_options)) {
+        $frontend_filter_options = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+    }
+
+    return $frontend_filter_options;
+}
+
+/**
+ * Get filter options (alias for frontend filter options for backward compatibility)
+ */
+function rental_mobil_get_filter_options() {
+    return rental_mobil_get_frontend_filter_options();
+}
+
+/**
+ * Get admin filter options
+ */
+function rental_mobil_get_admin_filter_options() {
+    $options = rental_mobil_get_options();
+    $admin_filter_options = isset($options['admin_filter_options']) ? $options['admin_filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'featured', 'popular');
+
+    if (!is_array($admin_filter_options)) {
+        $admin_filter_options = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'featured', 'popular');
+    }
+
+    return $admin_filter_options;
+}
+
+/**
+ * Get share platforms
+ */
+function rental_mobil_get_share_platforms() {
+    $options = rental_mobil_get_options();
+    $share_platforms = isset($options['share_platforms']) ? $options['share_platforms'] : array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
+
+    if (!is_array($share_platforms)) {
+        $share_platforms = array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
+    }
+
+    return $share_platforms;
+}
+
+/**
  * Get slider settings
  */
 function rental_mobil_get_slider_settings() {
@@ -1293,6 +1532,186 @@ function rental_mobil_get_slider_settings() {
         'speed' => isset($options['slider_speed']) ? absint($options['slider_speed']) : 300,
         'interval' => isset($options['slider_interval']) ? absint($options['slider_interval']) : 5000,
     );
+}
+
+/**
+ * Filter section callback
+ */
+function rental_mobil_filter_section_callback() {
+    echo '<p>' . __('Atur pengaturan filter untuk frontend dan admin.', 'rental-mobil-wp') . '</p>';
+}
+
+/**
+ * Frontend filter options callback
+ */
+function rental_mobil_frontend_filter_options_callback() {
+    $options = rental_mobil_get_options();
+    $frontend_filter_options = isset($options['frontend_filter_options']) ? $options['frontend_filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+
+    if (!is_array($frontend_filter_options)) {
+        $frontend_filter_options = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+    }
+    ?>
+    <fieldset>
+        <legend class="screen-reader-text"><?php _e('Filter untuk Frontend', 'rental-mobil-wp'); ?></legend>
+
+        <label for="frontend_filter_merk">
+            <input type="checkbox" id="frontend_filter_merk" name="rental_mobil_options[frontend_filter_options][]" value="merk" <?php checked(in_array('merk', $frontend_filter_options)); ?>>
+            <?php _e('Merk Kendaraan', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="frontend_filter_transmisi">
+            <input type="checkbox" id="frontend_filter_transmisi" name="rental_mobil_options[frontend_filter_options][]" value="transmisi" <?php checked(in_array('transmisi', $frontend_filter_options)); ?>>
+            <?php _e('Transmisi', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="frontend_filter_bahan_bakar">
+            <input type="checkbox" id="frontend_filter_bahan_bakar" name="rental_mobil_options[frontend_filter_options][]" value="bahan_bakar" <?php checked(in_array('bahan_bakar', $frontend_filter_options)); ?>>
+            <?php _e('Bahan Bakar', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="frontend_filter_tipe">
+            <input type="checkbox" id="frontend_filter_tipe" name="rental_mobil_options[frontend_filter_options][]" value="tipe" <?php checked(in_array('tipe', $frontend_filter_options)); ?>>
+            <?php _e('Tipe Kendaraan', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="frontend_filter_tahun">
+            <input type="checkbox" id="frontend_filter_tahun" name="rental_mobil_options[frontend_filter_options][]" value="tahun" <?php checked(in_array('tahun', $frontend_filter_options)); ?>>
+            <?php _e('Tahun Kendaraan', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="frontend_filter_orderby">
+            <input type="checkbox" id="frontend_filter_orderby" name="rental_mobil_options[frontend_filter_options][]" value="orderby" <?php checked(in_array('orderby', $frontend_filter_options)); ?>>
+            <?php _e('Urutan Berdasarkan', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="frontend_filter_order">
+            <input type="checkbox" id="frontend_filter_order" name="rental_mobil_options[frontend_filter_options][]" value="order" <?php checked(in_array('order', $frontend_filter_options)); ?>>
+            <?php _e('Arah Urutan', 'rental-mobil-wp'); ?>
+        </label>
+    </fieldset>
+    <p class="description"><?php _e('Pilih opsi filter yang ingin ditampilkan pada halaman daftar kendaraan untuk pengunjung.', 'rental-mobil-wp'); ?></p>
+    <?php
+}
+
+/**
+ * Admin filter options callback
+ */
+function rental_mobil_admin_filter_options_callback() {
+    $options = rental_mobil_get_options();
+    $admin_filter_options = isset($options['admin_filter_options']) ? $options['admin_filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'featured', 'popular');
+
+    if (!is_array($admin_filter_options)) {
+        $admin_filter_options = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'featured', 'popular');
+    }
+    ?>
+    <fieldset>
+        <legend class="screen-reader-text"><?php _e('Filter untuk Admin', 'rental-mobil-wp'); ?></legend>
+
+        <label for="admin_filter_merk">
+            <input type="checkbox" id="admin_filter_merk" name="rental_mobil_options[admin_filter_options][]" value="merk" <?php checked(in_array('merk', $admin_filter_options)); ?>>
+            <?php _e('Merk Kendaraan', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="admin_filter_transmisi">
+            <input type="checkbox" id="admin_filter_transmisi" name="rental_mobil_options[admin_filter_options][]" value="transmisi" <?php checked(in_array('transmisi', $admin_filter_options)); ?>>
+            <?php _e('Transmisi', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="admin_filter_bahan_bakar">
+            <input type="checkbox" id="admin_filter_bahan_bakar" name="rental_mobil_options[admin_filter_options][]" value="bahan_bakar" <?php checked(in_array('bahan_bakar', $admin_filter_options)); ?>>
+            <?php _e('Bahan Bakar', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="admin_filter_tipe">
+            <input type="checkbox" id="admin_filter_tipe" name="rental_mobil_options[admin_filter_options][]" value="tipe" <?php checked(in_array('tipe', $admin_filter_options)); ?>>
+            <?php _e('Tipe Kendaraan', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="admin_filter_tahun">
+            <input type="checkbox" id="admin_filter_tahun" name="rental_mobil_options[admin_filter_options][]" value="tahun" <?php checked(in_array('tahun', $admin_filter_options)); ?>>
+            <?php _e('Tahun Kendaraan', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="admin_filter_featured">
+            <input type="checkbox" id="admin_filter_featured" name="rental_mobil_options[admin_filter_options][]" value="featured" <?php checked(in_array('featured', $admin_filter_options)); ?>>
+            <?php _e('Kendaraan Unggulan', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="admin_filter_popular">
+            <input type="checkbox" id="admin_filter_popular" name="rental_mobil_options[admin_filter_options][]" value="popular" <?php checked(in_array('popular', $admin_filter_options)); ?>>
+            <?php _e('Kendaraan Populer', 'rental-mobil-wp'); ?>
+        </label>
+    </fieldset>
+    <p class="description"><?php _e('Pilih opsi filter yang ingin ditampilkan pada halaman admin kendaraan.', 'rental-mobil-wp'); ?></p>
+    <?php
+}
+
+/**
+ * Share section callback
+ */
+function rental_mobil_share_section_callback() {
+    echo '<p>' . __('Atur pengaturan share untuk detail kendaraan.', 'rental-mobil-wp') . '</p>';
+}
+
+/**
+ * Share platforms callback
+ */
+function rental_mobil_share_platforms_callback() {
+    $options = rental_mobil_get_options();
+    $share_platforms = isset($options['share_platforms']) ? $options['share_platforms'] : array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
+
+    if (!is_array($share_platforms)) {
+        $share_platforms = array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
+    }
+    ?>
+    <fieldset>
+        <legend class="screen-reader-text"><?php _e('Platform Share', 'rental-mobil-wp'); ?></legend>
+
+        <label for="share_whatsapp">
+            <input type="checkbox" id="share_whatsapp" name="rental_mobil_options[share_platforms][]" value="whatsapp" <?php checked(in_array('whatsapp', $share_platforms)); ?>>
+            <?php _e('WhatsApp', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="share_facebook">
+            <input type="checkbox" id="share_facebook" name="rental_mobil_options[share_platforms][]" value="facebook" <?php checked(in_array('facebook', $share_platforms)); ?>>
+            <?php _e('Facebook', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="share_twitter">
+            <input type="checkbox" id="share_twitter" name="rental_mobil_options[share_platforms][]" value="twitter" <?php checked(in_array('twitter', $share_platforms)); ?>>
+            <?php _e('Twitter', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="share_telegram">
+            <input type="checkbox" id="share_telegram" name="rental_mobil_options[share_platforms][]" value="telegram" <?php checked(in_array('telegram', $share_platforms)); ?>>
+            <?php _e('Telegram', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="share_email">
+            <input type="checkbox" id="share_email" name="rental_mobil_options[share_platforms][]" value="email" <?php checked(in_array('email', $share_platforms)); ?>>
+            <?php _e('Email', 'rental-mobil-wp'); ?>
+        </label>
+    </fieldset>
+    <p class="description"><?php _e('Pilih platform share yang ingin ditampilkan pada detail kendaraan.', 'rental-mobil-wp'); ?></p>
+    <p class="description"><?php _e('URL yang dishare akan menggunakan slug halaman saat ini dan parameter kata_kunci untuk mengarahkan ke kendaraan yang spesifik.', 'rental-mobil-wp'); ?></p>
+    <?php
 }
 
 /**
@@ -1326,6 +1745,43 @@ function rental_mobil_homepage_vehicle_order_callback() {
         </p>
 
         <p class="description"><?php _e('Pengaturan ini akan diterapkan pada shortcode [kendaraan_pilihan] dan [kendaraan_unggulan] di homepage.', 'rental-mobil-wp'); ?></p>
+    </div>
+    <?php
+}
+
+/**
+ * Shortcode vehicle order callback
+ */
+function rental_mobil_shortcode_vehicle_order_callback() {
+    $options = rental_mobil_get_options();
+    $default_orderby = isset($options['shortcode_orderby']) ? $options['shortcode_orderby'] : 'date';
+    $default_order = isset($options['shortcode_order']) ? $options['shortcode_order'] : 'DESC';
+    ?>
+    <div class="rental-mobil-shortcode-order-settings">
+        <p>
+            <label for="shortcode_orderby"><?php _e('Urutkan Berdasarkan', 'rental-mobil-wp'); ?></label>
+            <select id="shortcode_orderby" name="rental_mobil_options[shortcode_orderby]">
+                <option value="date" <?php selected($default_orderby, 'date'); ?>><?php _e('Tanggal', 'rental-mobil-wp'); ?></option>
+                <option value="title" <?php selected($default_orderby, 'title'); ?>><?php _e('Judul', 'rental-mobil-wp'); ?></option>
+                <option value="meta_value_num" <?php selected($default_orderby, 'meta_value_num'); ?>><?php _e('Harga', 'rental-mobil-wp'); ?></option>
+                <option value="price_high" <?php selected($default_orderby, 'price_high'); ?>><?php _e('Harga Tertinggi', 'rental-mobil-wp'); ?></option>
+                <option value="price_low" <?php selected($default_orderby, 'price_low'); ?>><?php _e('Harga Terendah', 'rental-mobil-wp'); ?></option>
+                <option value="rand" <?php selected($default_orderby, 'rand'); ?>><?php _e('Acak', 'rental-mobil-wp'); ?></option>
+            </select>
+            <span class="description"><?php _e('Pilih cara mengurutkan kendaraan di shortcode [daftar_kendaraan].', 'rental-mobil-wp'); ?></span>
+        </p>
+
+        <p>
+            <label for="shortcode_order"><?php _e('Urutan', 'rental-mobil-wp'); ?></label>
+            <select id="shortcode_order" name="rental_mobil_options[shortcode_order]">
+                <option value="ASC" <?php selected($default_order, 'ASC'); ?>><?php _e('Naik (A-Z, Lama-Baru, Murah-Mahal)', 'rental-mobil-wp'); ?></option>
+                <option value="DESC" <?php selected($default_order, 'DESC'); ?>><?php _e('Turun (Z-A, Baru-Lama, Mahal-Murah)', 'rental-mobil-wp'); ?></option>
+            </select>
+            <span class="description"><?php _e('Pilih arah pengurutan kendaraan.', 'rental-mobil-wp'); ?></span>
+        </p>
+
+        <p class="description"><?php _e('Pengaturan ini akan diterapkan pada shortcode [daftar_kendaraan] sebagai nilai default.', 'rental-mobil-wp'); ?></p>
+        <p class="description"><?php _e('Contoh penggunaan: [daftar_kendaraan orderby="price_high" order="DESC"]', 'rental-mobil-wp'); ?></p>
     </div>
     <?php
 }
@@ -1431,6 +1887,90 @@ function rental_mobil_get_license_domain_count() {
 function rental_mobil_get_license_max_domains() {
     $options = rental_mobil_get_options();
     return isset($options['license_max_domains']) ? $options['license_max_domains'] : 0;
+}
+
+/**
+ * Get form fields
+ */
+function rental_mobil_get_form_fields() {
+    $options = rental_mobil_get_options();
+
+    // Jika form_fields tidak ada atau kosong, gunakan default fields
+    if (!isset($options['form_fields']) || empty($options['form_fields'])) {
+        $default_fields = array(
+            array(
+                'id' => 'nama',
+                'label' => 'Nama',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => 'Masukkan nama Anda',
+                'order' => 1
+            ),
+            array(
+                'id' => 'domisili',
+                'label' => 'Domisili',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => 'Masukkan domisili Anda',
+                'order' => 2
+            ),
+            array(
+                'id' => 'tanggal_sewa',
+                'label' => 'Tanggal Sewa',
+                'type' => 'date',
+                'required' => true,
+                'placeholder' => '',
+                'order' => 3
+            ),
+            array(
+                'id' => 'jam_sewa',
+                'label' => 'Jam Sewa',
+                'type' => 'time',
+                'required' => true,
+                'placeholder' => '',
+                'order' => 4
+            ),
+            array(
+                'id' => 'durasi_sewa',
+                'label' => 'Durasi Sewa',
+                'type' => 'number',
+                'required' => true,
+                'placeholder' => 'Masukkan durasi sewa',
+                'order' => 5
+            ),
+            array(
+                'id' => 'satuan_durasi',
+                'label' => 'Satuan Durasi',
+                'type' => 'select',
+                'required' => true,
+                'placeholder' => '',
+                'options' => array(
+                    'hari' => 'Hari',
+                    'minggu' => 'Minggu',
+                    'bulan' => 'Bulan'
+                ),
+                'order' => 6
+            )
+        );
+
+        // Simpan default fields ke database
+        $options['form_fields'] = $default_fields;
+        update_option('rental_mobil_options', $options, 'yes');
+
+        return $default_fields;
+    }
+
+    return $options['form_fields'];
+}
+
+/**
+ * Form Builder section callback
+ */
+function rental_mobil_form_builder_section_callback() {
+    echo '<p>' . __('Gunakan Form Builder untuk membuat dan mengelola field pada form booking kendaraan.', 'rental-mobil-wp') . '</p>';
+
+    // Tampilkan UI Form Builder
+    rental_mobil_form_builder_ui();
 }
 
 /**
@@ -1595,34 +2135,12 @@ function rental_mobil_wp_add_custom_css() {
 }
 
 /**
- * Fungsi untuk menampilkan tombol donasi Trakteer
+ * Fungsi untuk menampilkan tombol donasi (dinonaktifkan)
+ *
+ * @param string $type Tipe tombol (tidak digunakan)
+ * @return string String kosong
  */
 function rental_mobil_trakteer_button($type = 'overlay') {
-    ob_start();
-    if ($type === 'overlay') {
-        ?>
-        <div class="rental-mobil-trakteer-button">
-            <script type='text/javascript' src='https://edge-cdn.trakteer.id/js/trbtn-overlay.min.js?v=24-01-2025'></script>
-            <script type='text/javascript' class='troverlay'>
-                (function() {
-                    var trbtnId = trbtnOverlay.init('Dukung Saya di Trakteer','#000F9B','https://trakteer.id/tupski/tip/embed/modal','https://trakteer.id/images/mix/coffee.png','40','inline');
-                    trbtnOverlay.draw(trbtnId);
-                })();
-            </script>
-        </div>
-        <?php
-    } else {
-        ?>
-        <div class="rental-mobil-trakteer-button">
-            <script type='text/javascript' src='https://edge-cdn.trakteer.id/js/embed/trbtn.min.js?v=24-01-2025'></script>
-            <script type='text/javascript'>
-                (function(){
-                    var trbtnId=trbtn.init('Dukung Saya di Trakteer','#4075FF','https://trakteer.id/tupski','https://trakteer.id/images/mix/coffee.png','40');
-                    trbtn.draw(trbtnId);
-                })();
-            </script>
-        </div>
-        <?php
-    }
-    return ob_get_clean();
+    // Parameter $type tidak digunakan, tetapi dipertahankan untuk kompatibilitas
+    return '';
 }

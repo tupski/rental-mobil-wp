@@ -124,6 +124,18 @@
         const today = new Date().toISOString().split('T')[0];
         $('.rental-mobil-booking-form input[type="date"]').attr('min', today);
 
+        // Initialize time picker for time fields
+        $('.rental-mobil-time-picker').each(function() {
+            $(this).on('focus', function() {
+                $(this).attr('type', 'time');
+                $(this).attr('step', '1800'); // 30 minutes step
+            }).on('blur', function() {
+                if (!$(this).val()) {
+                    $(this).attr('type', 'text');
+                }
+            });
+        });
+
         // Toggle filter pada mobile
         filterToggle.on('click', function() {
             sidebar.addClass('active');
@@ -173,7 +185,7 @@
                             searchResults.empty();
 
                             if (response.data.results.length > 0) {
-                                $.each(response.data.results, function(index, item) {
+                                $.each(response.data.results, function(_, item) {
                                     searchResults.append(`
                                         <div class="rental-mobil-search-item" data-id="${item.id}" data-permalink="${item.permalink}">
                                             <div class="rental-mobil-search-item-title">${item.title}</div>
@@ -262,7 +274,7 @@
                         if (response.data.results.length > 0) {
                             searchModalResults.append(`<div class="rental-mobil-grid"></div>`);
 
-                            $.each(response.data.results, function(index, item) {
+                            $.each(response.data.results, function(_, item) {
                                 searchModalResults.find('.rental-mobil-grid').append(`
                                     <div class="rental-mobil-card" data-id="${item.id}">
                                         <div class="rental-mobil-card-image rental-mobil-quick-view-trigger" data-id="${item.id}">
@@ -461,7 +473,6 @@
 
             // Dapatkan data dari card
             const title = card.data('title');
-            const permalink = card.data('permalink');
             const hargaHarian = card.data('harga-harian');
             const hargaMingguan = card.data('harga-mingguan');
             const hargaBulanan = card.data('harga-bulanan');
@@ -537,6 +548,31 @@
                 openZoomModal(imgSrc, title);
             });
 
+            // Tambahkan event click untuk tombol share
+            $('.rental-mobil-share-button').off('click').on('click', function() {
+                const platform = $(this).data('platform');
+                const currentUrl = window.location.href;
+                const shareUrl = currentUrl.includes('?') ? currentUrl : currentUrl + '?kata_kunci=' + encodeURIComponent(title);
+
+                switch(platform) {
+                    case 'whatsapp':
+                        window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(title + ' - ' + shareUrl), '_blank');
+                        break;
+                    case 'facebook':
+                        window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank');
+                        break;
+                    case 'twitter':
+                        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(title) + '&url=' + encodeURIComponent(shareUrl), '_blank');
+                        break;
+                    case 'telegram':
+                        window.open('https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(title), '_blank');
+                        break;
+                    case 'email':
+                        window.open('mailto:?subject=' + encodeURIComponent('Info Rental Mobil: ' + title) + '&body=' + encodeURIComponent('Lihat info tentang ' + title + ' di ' + shareUrl), '_blank');
+                        break;
+                }
+            });
+
             // Dapatkan galeri kendaraan melalui AJAX
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
@@ -561,7 +597,7 @@
                         }
 
                         // Tambahkan galeri lainnya
-                        $.each(response.data.gallery, function(index, image) {
+                        $.each(response.data.gallery, function(_, image) {
                             $('.rental-mobil-quick-view-thumbnails').append(`
                                 <div class="rental-mobil-quick-view-thumbnail" data-src="${image.url}">
                                     <img src="${image.thumbnail}" alt="${title}">
@@ -680,12 +716,49 @@
                     .catch(console.error);
                 } else {
                     // Fallback untuk browser yang tidak mendukung Web Share API
-                    const tempInput = $('<input>');
-                    $('body').append(tempInput);
-                    tempInput.val(shareUrl).select();
-                    document.execCommand('copy');
-                    tempInput.remove();
-                    alert('URL telah disalin ke clipboard');
+                    // Gunakan Clipboard API jika tersedia
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(shareUrl)
+                            .then(() => {
+                                alert('URL telah disalin ke clipboard');
+                            })
+                            .catch(err => {
+                                console.error('Gagal menyalin URL: ', err);
+                                alert('Gagal menyalin URL. Silakan coba lagi.');
+                            });
+                    } else {
+                        // Fallback untuk browser yang tidak mendukung Clipboard API
+                        try {
+                            // Gunakan navigator.clipboard API jika tersedia
+                            if (navigator.clipboard) {
+                                navigator.clipboard.writeText(shareUrl)
+                                    .then(() => {
+                                        alert('URL telah disalin ke clipboard');
+                                    })
+                                    .catch(() => {
+                                        alert('Gagal menyalin URL. Silakan coba lagi.');
+                                    });
+                            } else {
+                                // Fallback lama jika tidak ada pilihan lain
+                                const tempInput = $('<input>');
+                                $('body').append(tempInput);
+                                tempInput.val(shareUrl).select();
+
+                                // Gunakan document.execCommand dengan peringatan
+                                // eslint-disable-next-line deprecation/deprecation
+                                const successful = document.execCommand('copy');
+                                if (successful) {
+                                    alert('URL telah disalin ke clipboard');
+                                } else {
+                                    alert('Gagal menyalin URL. Silakan coba lagi.');
+                                }
+                                tempInput.remove();
+                            }
+                        } catch (err) {
+                            console.error('Gagal menyalin URL: ', err);
+                            alert('Gagal menyalin URL. Silakan coba lagi.');
+                        }
+                    }
                 }
             });
 
@@ -762,14 +835,8 @@
             updateTimeInput();
 
             const kendaraanId = $('#rental-mobil-booking-kendaraan-id').val();
-            const kendaraanTitle = $('#rental-mobil-booking-kendaraan-title').val();
-            const nama = $('#rental-mobil-booking-nama').val();
-            const domisili = $('#rental-mobil-booking-domisili').val();
-            const tanggalSewa = $('#rental-mobil-booking-tanggal').val();
-            const jamSewa = $('#rental-mobil-booking-jam').val();
-            const durasiSewa = $('#rental-mobil-booking-durasi').val();
-            const satuanDurasi = $('#rental-mobil-booking-satuan').val();
 
+<<<<<<< HEAD
             // Validasi form
             if (!jamSewa) {
                 alert('Silakan pilih jam dan menit untuk waktu sewa.');
@@ -782,34 +849,48 @@
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
+=======
+            // Collect all form data
+            const formData = $(this).serializeArray();
+            const formValues = {};
+
+            // Convert form data to object
+            $.each(formData, function(_, field) {
+                formValues[field.name] = field.value;
+>>>>>>> c10b851801dc71997f8b2ec8278168e907cee452
             });
 
-            // Buat pesan WhatsApp
-            let message = `Halo, saya ingin menyewa kendaraan *${kendaraanTitle}* dengan detail berikut:
+            // Format date fields if they exist
+            $.each(formValues, function(key, value) {
+                // Check if this is a date field by looking at the input type
+                const input = $(`#rental-mobil-booking-${key}`);
+                if (input.attr('type') === 'date' && value) {
+                    const dateObj = new Date(value);
+                    formValues[key] = dateObj.toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                }
+            });
 
-Nama: ${nama}
-Domisili: ${domisili}
-Tanggal Sewa: ${formattedTanggal}
-Jam Sewa: ${jamSewa}
-Durasi Sewa: ${durasiSewa} ${satuanDurasi}
+            // Prepare data for AJAX request
+            const ajaxData = {
+                action: 'rental_mobil_get_whatsapp',
+                nonce: rental_mobil_ajax.nonce,
+                kendaraan_id: kendaraanId
+            };
 
-Mohon informasi lebih lanjut. Terima kasih.`;
+            // Add all form values to AJAX data
+            $.each(formValues, function(key, value) {
+                ajaxData[key] = value;
+            });
 
-            // Dapatkan nomor WhatsApp dari AJAX
+            // Dapatkan nomor WhatsApp dan template pesan dari AJAX
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
                 type: 'POST',
-                data: {
-                    action: 'rental_mobil_get_whatsapp',
-                    nonce: rental_mobil_ajax.nonce,
-                    kendaraan_id: kendaraanId,
-                    nama: nama,
-                    domisili: domisili,
-                    tanggal_sewa: formattedTanggal,
-                    jam_sewa: jamSewa,
-                    durasi_sewa: durasiSewa,
-                    satuan_durasi: satuanDurasi
-                },
+                data: ajaxData,
                 success: function(response) {
                     if (response.success) {
                         // Buka WhatsApp
@@ -837,7 +918,7 @@ Mohon informasi lebih lanjut. Terima kasih.`;
 
             // Update URL dengan parameter filter
             const formValues = {};
-            $.each($(this).serializeArray(), function(i, field) {
+            $.each($(this).serializeArray(), function(_, field) {
                 if (field.value) {
                     formValues[field.name] = field.value;
                 }
@@ -959,14 +1040,26 @@ Mohon informasi lebih lanjut. Terima kasih.`;
         function initPagination(formData) {
             // Delegasi event untuk tombol paginasi
             $(document).off('click', '.rental-mobil-pagination-links a').on('click', '.rental-mobil-pagination-links a', function(e) {
-                e.preventDefault();
+                // Tidak perlu e.preventDefault() karena kita ingin menggunakan URL
+                // Namun kita tetap mempertahankan fungsi AJAX untuk kompatibilitas
                 const page = $(this).data('page');
 
+<<<<<<< HEAD
                 // Gunakan formData jika tersedia, jika tidak gunakan initialFormData
                 const dataToUse = formData || initialFormData;
 
                 // Muat kendaraan dengan halaman yang dipilih dan scroll ke atas
                 loadKendaraan(dataToUse, page);
+=======
+                // Jika pengguna menekan tombol Ctrl atau Command saat mengklik, biarkan browser menangani link
+                if (e.ctrlKey || e.metaKey) {
+                    return true;
+                }
+
+                // Jika tidak, gunakan AJAX untuk memuat konten tanpa refresh halaman
+                e.preventDefault();
+                loadKendaraan(formData, page);
+>>>>>>> c10b851801dc71997f8b2ec8278168e907cee452
             });
         }
 
@@ -1020,6 +1113,10 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                     $('#rental-mobil-filter-tipe').val('');
                 } else if (filterKey === 'tahun') {
                     $('#rental-mobil-filter-tahun').val('');
+                } else if (filterKey === 'orderby') {
+                    $('#rental-mobil-filter-orderby').val('date');
+                } else if (filterKey === 'order') {
+                    $('#rental-mobil-filter-order').val('DESC');
                 }
 
                 // Submit form
@@ -1035,14 +1132,8 @@ Mohon informasi lebih lanjut. Terima kasih.`;
             updateInlineTimeInput();
 
             const kendaraanId = $('#rental-mobil-inline-booking-kendaraan-id').val();
-            const kendaraanTitle = $('#rental-mobil-inline-booking-kendaraan-title').val();
-            const nama = $('#rental-mobil-inline-booking-nama').val();
-            const domisili = $('#rental-mobil-inline-booking-domisili').val();
-            const tanggalSewa = $('#rental-mobil-inline-booking-tanggal').val();
-            const jamSewa = $('#rental-mobil-inline-booking-jam').val();
-            const durasiSewa = $('#rental-mobil-inline-booking-durasi').val();
-            const satuanDurasi = $('#rental-mobil-inline-booking-satuan').val();
 
+<<<<<<< HEAD
             // Validasi form
             if (!jamSewa) {
                 alert('Silakan pilih jam dan menit untuk waktu sewa.');
@@ -1055,23 +1146,48 @@ Mohon informasi lebih lanjut. Terima kasih.`;
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
+=======
+            // Collect all form data
+            const formData = $(this).serializeArray();
+            const formValues = {};
+
+            // Convert form data to object
+            $.each(formData, function(_, field) {
+                formValues[field.name] = field.value;
+>>>>>>> c10b851801dc71997f8b2ec8278168e907cee452
             });
 
-            // Dapatkan nomor WhatsApp dari AJAX
+            // Format date fields if they exist
+            $.each(formValues, function(key, value) {
+                // Check if this is a date field by looking at the input type
+                const input = $(`#rental-mobil-inline-booking-${key}`);
+                if (input.attr('type') === 'date' && value) {
+                    const dateObj = new Date(value);
+                    formValues[key] = dateObj.toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                }
+            });
+
+            // Prepare data for AJAX request
+            const ajaxData = {
+                action: 'rental_mobil_get_whatsapp',
+                nonce: rental_mobil_ajax.nonce,
+                kendaraan_id: kendaraanId
+            };
+
+            // Add all form values to AJAX data
+            $.each(formValues, function(key, value) {
+                ajaxData[key] = value;
+            });
+
+            // Dapatkan nomor WhatsApp dan template pesan dari AJAX
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
                 type: 'POST',
-                data: {
-                    action: 'rental_mobil_get_whatsapp',
-                    nonce: rental_mobil_ajax.nonce,
-                    kendaraan_id: kendaraanId,
-                    nama: nama,
-                    domisili: domisili,
-                    tanggal_sewa: formattedTanggal,
-                    jam_sewa: jamSewa,
-                    durasi_sewa: durasiSewa,
-                    satuan_durasi: satuanDurasi
-                },
+                data: ajaxData,
                 success: function(response) {
                     if (response.success) {
                         // Buka WhatsApp

@@ -18,6 +18,9 @@ function rental_mobil_daftar_shortcode($atts) {
         return rental_mobil_license_notice();
     }
 
+    // Dapatkan pengaturan urutan kendaraan shortcode
+    $order_settings = rental_mobil_get_shortcode_order_settings();
+
     $atts = shortcode_atts(array(
         'jumlah' => -1,
         'merk' => '',
@@ -25,8 +28,8 @@ function rental_mobil_daftar_shortcode($atts) {
         'bahan_bakar' => '',
         'tipe' => '',
         'tahun' => '',
-        'orderby' => 'date',
-        'order' => 'DESC',
+        'orderby' => $order_settings['orderby'],
+        'order' => $order_settings['order'],
     ), $atts, 'daftar_kendaraan');
 
     // Mulai output buffering

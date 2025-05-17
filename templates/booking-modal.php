@@ -18,10 +18,11 @@ if (!defined('WPINC')) {
             <p class="rental-mobil-modal-subtitle"><?php _e('Silakan isi form di bawah ini untuk booking', 'rental-mobil-wp'); ?> <span class="rental-mobil-modal-subtitle-kendaraan"></span></p>
         </div>
 
-        <form id="rental-mobil-booking-form" class="rental-mobil-booking-form">
-            <input type="hidden" id="rental-mobil-booking-kendaraan-id" name="kendaraan_id" value="">
-            <input type="hidden" id="rental-mobil-booking-kendaraan-title" name="kendaraan_title" value="">
+        <?php
+        // Set kendaraan_id untuk template booking-form.php
+        $kendaraan_id = '';
 
+<<<<<<< HEAD
             <div class="rental-mobil-form-group">
                 <label for="rental-mobil-booking-nama"><?php _e('Nama', 'rental-mobil-wp'); ?> <span class="required">*</span></label>
                 <input type="text" id="rental-mobil-booking-nama" name="nama" required>
@@ -81,5 +82,10 @@ if (!defined('WPINC')) {
                 </button>
             </div>
         </form>
+=======
+        // Include template booking-form.php
+        include RENTAL_MOBIL_PLUGIN_DIR . 'templates/booking-form.php';
+        ?>
+>>>>>>> c10b851801dc71997f8b2ec8278168e907cee452
     </div>
 </div>

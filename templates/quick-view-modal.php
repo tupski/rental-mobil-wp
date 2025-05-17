@@ -68,6 +68,24 @@ if (!defined('WPINC')) {
                     <button class="rental-mobil-button rental-mobil-button-booking rental-mobil-quick-view-booking" data-id="">
                         <?php _e('Booking Sekarang', 'rental-mobil-wp'); ?>
                     </button>
+
+                    <?php
+                    // Dapatkan platform share dari pengaturan
+                    $share_platforms = rental_mobil_get_share_platforms();
+
+                    if (!empty($share_platforms)) :
+                    ?>
+                    <div class="rental-mobil-quick-view-share">
+                        <span class="rental-mobil-quick-view-share-label"><?php _e('Bagikan:', 'rental-mobil-wp'); ?></span>
+                        <div class="rental-mobil-quick-view-share-buttons">
+                            <?php foreach ($share_platforms as $platform) : ?>
+                                <button class="rental-mobil-share-button rental-mobil-share-<?php echo esc_attr($platform); ?>" data-platform="<?php echo esc_attr($platform); ?>">
+                                    <span class="dashicons dashicons-<?php echo esc_attr($platform === 'email' ? 'email' : 'share'); ?>"></span>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

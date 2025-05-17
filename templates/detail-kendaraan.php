@@ -234,10 +234,11 @@ $whatsapp_message = rental_mobil_get_whatsapp_message();
             <div class="rental-mobil-detail-booking-form">
                 <h3 class="rental-mobil-detail-booking-title"><?php _e('Form Booking', 'rental-mobil-wp'); ?></h3>
 
-                <form id="rental-mobil-inline-booking-form" class="rental-mobil-booking-form">
-                    <input type="hidden" id="rental-mobil-inline-booking-kendaraan-id" name="kendaraan_id" value="<?php echo esc_attr($post_id); ?>">
-                    <input type="hidden" id="rental-mobil-inline-booking-kendaraan-title" name="kendaraan_title" value="<?php echo esc_attr($kendaraan->post_title); ?>">
+                <?php
+                // Set kendaraan_id untuk template inline-booking-form.php
+                $kendaraan_id = $post_id;
 
+<<<<<<< HEAD
                     <div class="rental-mobil-form-group">
                         <label for="rental-mobil-inline-booking-nama"><?php _e('Nama', 'rental-mobil-wp'); ?> <span class="required">*</span></label>
                         <input type="text" id="rental-mobil-inline-booking-nama" name="nama" required>
@@ -297,6 +298,11 @@ $whatsapp_message = rental_mobil_get_whatsapp_message();
                         </button>
                     </div>
                 </form>
+=======
+                // Include template inline-booking-form.php
+                include RENTAL_MOBIL_PLUGIN_DIR . 'templates/inline-booking-form.php';
+                ?>
+>>>>>>> c10b851801dc71997f8b2ec8278168e907cee452
             </div>
         </div>
     </div>
