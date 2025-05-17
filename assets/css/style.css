@@ -538,10 +538,12 @@
     z-index: 999;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    animation: pulse 2s infinite;
 }
 
 .rental-mobil-filter-toggle:hover {
     background-color: #005177;
+    animation: none;
 }
 
 .rental-mobil-filter-toggle i {
@@ -550,6 +552,19 @@
     font-size: 24px;
     width: 24px;
     height: 24px;
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 115, 170, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(0, 115, 170, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 115, 170, 0);
+    }
 }
 
 .rental-mobil-filter-title {
@@ -1153,6 +1168,26 @@ select option {
     padding: 30px;
 }
 
+/* Loading Container */
+.rental-mobil-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease;
+}
+
+.rental-mobil-loading-text {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #333;
+}
+
 .rental-mobil-spinner {
     width: 40px;
     height: 40px;
@@ -1166,6 +1201,15 @@ select option {
 @keyframes spin {
     to {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }
 
@@ -2060,15 +2104,18 @@ select option {
     z-index: 1003;
     align-items: flex-end;
     justify-content: center;
+    animation: fadeIn 0.3s ease;
 }
 
 .rental-mobil-mobile-share-content {
     width: 100%;
     max-width: 500px;
     background-color: #fff;
-    border-radius: 12px 12px 0 0;
+    border-radius: 16px 16px 0 0;
     padding: 20px;
     animation: slideUp 0.3s ease;
+    transform: translateY(0);
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.15);
 }
 
 @keyframes slideUp {
@@ -2093,17 +2140,31 @@ select option {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
+    color: #333;
 }
 
 .rental-mobil-mobile-share-close {
     font-size: 24px;
     cursor: pointer;
     color: #666;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    transition: background-color 0.3s;
+}
+
+.rental-mobil-mobile-share-close:hover {
+    background-color: #eee;
+    color: #333;
 }
 
 .rental-mobil-mobile-share-buttons {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 15px;
     padding: 10px 0;
 }
@@ -2118,23 +2179,60 @@ select option {
     background-color: #f9f9f9;
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .rental-mobil-mobile-share-item:hover {
     background-color: #f0f0f0;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.rental-mobil-mobile-share-item:active {
+    transform: translateY(0);
 }
 
 .rental-mobil-mobile-share-item .dashicons {
     font-size: 24px;
     width: 24px;
     height: 24px;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    padding: 8px;
+    border-radius: 50%;
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.rental-mobil-mobile-share-whatsapp .dashicons {
+    background-color: #25D366;
+}
+
+.rental-mobil-mobile-share-facebook .dashicons {
+    background-color: #1877F2;
+}
+
+.rental-mobil-mobile-share-twitter .dashicons {
+    background-color: #1DA1F2;
+}
+
+.rental-mobil-mobile-share-telegram .dashicons {
+    background-color: #0088cc;
+}
+
+.rental-mobil-mobile-share-email .dashicons {
+    background-color: #EA4335;
+}
+
+.rental-mobil-mobile-share-copy .dashicons {
+    background-color: #6c757d;
 }
 
 .rental-mobil-mobile-share-item-name {
     font-size: 12px;
     text-align: center;
+    font-weight: 500;
+    color: #333;
 }
 
 /* Copy URL Notification */
@@ -2745,25 +2843,178 @@ select option {
     }
 
     /* Quick View Modal pada mobile */
+    .rental-mobil-quick-view-modal .rental-mobil-modal-content {
+        max-width: 100%;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
     .rental-mobil-quick-view-container {
+        display: flex;
         flex-direction: column;
+        padding: 0;
     }
 
     .rental-mobil-quick-view-gallery,
     .rental-mobil-quick-view-details {
         width: 100%;
+        padding: 0;
+    }
+
+    /* Reorder elemen untuk mobile */
+    .rental-mobil-quick-view-title {
+        order: 1;
+        margin: 0 0 15px 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: #333;
+        text-align: left;
+        padding: 0;
     }
 
     .rental-mobil-quick-view-gallery {
-        margin-bottom: 20px;
+        order: 2;
+        margin-bottom: 15px;
+    }
+
+    /* Ukuran gambar pada mobile */
+    .rental-mobil-quick-view-main-image {
+        height: 200px;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: #f9f9f9;
+    }
+
+    .rental-mobil-quick-view-main-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+    }
+
+    /* Thumbnails pada mobile */
+    .rental-mobil-quick-view-thumbnails-wrapper {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .rental-mobil-quick-view-thumbnails {
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+        padding: 5px 0;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        max-width: calc(100% - 70px);
+    }
+
+    .rental-mobil-quick-view-thumbnails::-webkit-scrollbar {
+        display: none;
+    }
+
+    .rental-mobil-quick-view-thumbnail {
+        width: 50px;
+        height: 50px;
+        border-radius: 4px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .rental-mobil-quick-view-meta {
+        order: 3;
+        margin: 15px 0;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+    }
+
+    .rental-mobil-quick-view-meta-item {
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .rental-mobil-quick-view-meta-item:last-child {
+        margin-bottom: 0;
     }
 
     .rental-mobil-quick-view-prices {
+        order: 4;
+        margin: 0 0 15px 0;
+        display: flex;
         flex-direction: column;
+        background-color: #f0f7fc;
+        border-radius: 8px;
+        padding: 10px;
     }
 
     .rental-mobil-quick-view-price-item {
         width: 100%;
         margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(0, 115, 170, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .rental-mobil-quick-view-price-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .rental-mobil-quick-view-price-label {
+        font-weight: 600;
+        color: #555;
+    }
+
+    .rental-mobil-quick-view-price-value {
+        font-weight: 700;
+        color: #0073aa;
+        font-size: 16px;
+    }
+
+    .rental-mobil-quick-view-actions {
+        order: 5;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .rental-mobil-quick-view-actions .rental-mobil-button-booking {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+
+    /* Tombol share pada mobile */
+    .rental-mobil-quick-view-share.rental-mobil-mobile-share {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .rental-mobil-quick-view-share.rental-mobil-mobile-share .rental-mobil-button {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .rental-mobil-quick-view-share.rental-mobil-mobile-share .rental-mobil-button .dashicons {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
     }
 }

@@ -2,6 +2,29 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.7.5] - 2024-05-26
+
+### Diubah
+- Perbaikan tampilan quick view modal pada mobile agar lebih rapi dan sesuai dengan urutan: Judul, Gambar, Deskripsi/Detail, Harga, Tombol Booking dan Bagikan
+- Perbaikan tampilan modal share pada mobile dengan animasi dan desain yang lebih baik
+- Perbaikan tampilan tombol dan elemen UI pada mobile untuk pengalaman pengguna yang lebih baik
+
+## [1.7.4] - 2024-05-25
+
+### Ditambahkan
+- Efek pulse/gelombang pada tombol filter di mobile
+- Animasi loading saat memuat kendaraan/saat filter diterapkan/direset
+
+### Diubah
+- Filter mobile sekarang otomatis tertutup setelah tombol Terapkan ditekan
+
+## [1.7.3] - 2024-05-24
+
+### Diubah
+- Tampilan quick view modal pada mobile menjadi horizontal dengan urutan: Judul, Gambar, Deskripsi/Detail, Harga, Tombol Booking dan Bagikan
+- Perbaikan tampilan tombol pada quick view modal untuk mobile
+- Perbaikan layout elemen pada quick view modal untuk mobile
+
 ## [1.7.2] - 2024-05-23
 
 ### Ditambahkan

@@ -1255,6 +1255,11 @@
         filterForm.on('submit', function(e) {
             e.preventDefault();
 
+            // Sembunyikan filter pada mobile setelah submit
+            if ($(window).width() <= 768) {
+                closeFilterSidebar();
+            }
+
             // Buat formData yang hanya berisi field yang diisi
             const formValues = {};
             $.each($(this).serializeArray(), function(_, field) {
@@ -1343,7 +1348,12 @@
                 type: 'POST',
                 data: data + '&action=rental_mobil_filter&nonce=' + rental_mobil_ajax.nonce,
                 beforeSend: function() {
-                    $('#rental-mobil-results').html('<p>Memuat...</p>');
+                    $('#rental-mobil-results').html(`
+                        <div class="rental-mobil-loading-container">
+                            <div class="rental-mobil-spinner"></div>
+                            <div class="rental-mobil-loading-text">Memuat kendaraan...</div>
+                        </div>
+                    `);
                 },
                 success: function(response) {
                     if (response.success) {
