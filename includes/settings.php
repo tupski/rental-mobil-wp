@@ -1647,14 +1647,9 @@ function rental_mobil_get_form_fields() {
 }
 
 /**
- * Form Builder section callback
+ * Form Builder section callback - dipindahkan ke includes/form-builder.php
+ * untuk menghindari deklarasi fungsi ganda
  */
-function rental_mobil_form_builder_section_callback() {
-    echo '<p>' . __('Gunakan Form Builder untuk membuat dan mengelola field pada form booking kendaraan.', 'rental-mobil-wp') . '</p>';
-
-    // Tampilkan UI Form Builder
-    rental_mobil_form_builder_ui();
-}
 
 /**
  * AJAX handler untuk menyimpan pengaturan
