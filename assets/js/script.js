@@ -83,8 +83,11 @@
             // Pastikan sidebar memiliki tinggi yang cukup
             if ($(window).width() > 768) {
                 // Hanya terapkan di desktop
-                const sidebarHeight = sidebar.outerHeight();
                 const contentHeight = $('.rental-mobil-content').outerHeight();
+                const windowHeight = $(window).height();
+
+                // Hitung tinggi maksimum untuk filter
+                const maxHeight = windowHeight - 100; // 100px untuk padding atas dan bawah
 
                 // Pastikan sidebar memiliki tinggi yang cukup untuk sticky
                 sidebar.css('min-height', contentHeight + 'px');
@@ -93,8 +96,31 @@
                 sidebarInner.css({
                     'position': 'sticky',
                     'top': '50px',
-                    'max-height': 'calc(100vh - 100px)',
-                    'overflow-y': 'auto'
+                    'max-height': maxHeight + 'px',
+                    'overflow-y': 'auto',
+                    'padding-bottom': '20px'
+                });
+
+                // Tambahkan event scroll untuk mengatur posisi sticky
+                $(window).off('scroll.stickyFilter').on('scroll.stickyFilter', function() {
+                    const scrollTop = $(window).scrollTop();
+                    const layoutOffset = $('.rental-mobil-layout').offset().top;
+                    const footerOffset = $('footer').length ? $('footer').offset().top : $(document).height();
+
+                    // Jika scroll di atas layout, reset posisi
+                    if (scrollTop < layoutOffset) {
+                        sidebarInner.css('top', '50px');
+                        return;
+                    }
+
+                    // Jika scroll mendekati footer, sesuaikan posisi
+                    const distanceToFooter = footerOffset - (scrollTop + windowHeight);
+                    if (distanceToFooter < 50) {
+                        const newTop = 50 - (50 - distanceToFooter);
+                        sidebarInner.css('top', Math.max(newTop, 0) + 'px');
+                    } else {
+                        sidebarInner.css('top', '50px');
+                    }
                 });
             }
         }
@@ -145,6 +171,11 @@
             filterOverlay.addClass('active');
             // Mencegah scrolling pada body saat filter terbuka
             $('body').css('overflow', 'hidden');
+
+            // Pastikan sidebar terlihat dengan animasi slide
+            setTimeout(function() {
+                sidebar.css('transform', 'translateX(0)');
+            }, 10);
         });
 
         // Tutup filter sidebar
@@ -159,11 +190,16 @@
 
         // Fungsi untuk menutup filter sidebar
         function closeFilterSidebar() {
-            // Hapus class active dengan animasi
-            sidebar.removeClass('active');
-            filterOverlay.removeClass('active');
-            // Kembalikan scrolling pada body
-            $('body').css('overflow', '');
+            // Animasikan sidebar keluar layar terlebih dahulu
+            sidebar.css('transform', 'translateX(-100%)');
+
+            // Setelah animasi selesai, hapus class active
+            setTimeout(function() {
+                sidebar.removeClass('active');
+                filterOverlay.removeClass('active');
+                // Kembalikan scrolling pada body
+                $('body').css('overflow', '');
+            }, 300); // Sesuaikan dengan durasi animasi CSS (0.3s = 300ms)
         }
 
         // Search Functionality
@@ -967,16 +1003,28 @@
 
             // Validasi form secara manual
             let isValid = true;
-            const requiredFields = $(this).find('[required]:visible');
 
             // Reset semua error
             $(this).find('.error').removeClass('error');
 
-            // Validasi setiap field yang required dan visible
-            requiredFields.each(function() {
-                if (!$(this).val()) {
-                    $(this).addClass('error');
-                    isValid = false;
+            // Cari semua field yang required
+            $(this).find('[required]').each(function() {
+                // Periksa apakah field ini berada dalam container kondisional
+                const isConditionalField = $(this).closest('.rental-mobil-conditional-field').length > 0;
+
+                // Jika field kondisional, hanya validasi jika visible
+                if (isConditionalField) {
+                    // Jika field kondisional dan visible tapi kosong
+                    if ($(this).closest('.rental-mobil-conditional-field').is(':visible') && !$(this).val()) {
+                        $(this).addClass('error');
+                        isValid = false;
+                    }
+                } else {
+                    // Field normal (non-kondisional) yang required
+                    if (!$(this).val()) {
+                        $(this).addClass('error');
+                        isValid = false;
+                    }
                 }
             });
 

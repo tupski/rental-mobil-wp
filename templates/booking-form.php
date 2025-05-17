@@ -186,14 +186,16 @@ jQuery(document).ready(function($) {
         $('.rental-mobil-booking-form select').each(function() {
             $(this).select2({
                 width: '100%',
-                dropdownAutoWidth: true,
+                dropdownAutoWidth: false, // Ubah ke false agar tidak melebihi container
                 minimumResultsForSearch: 5,
                 dropdownParent: $('#rental-mobil-booking-modal'),
                 language: {
                     noResults: function() {
                         return "Tidak ada hasil yang ditemukan";
                     }
-                }
+                },
+                // Tambahkan template untuk memastikan dropdown tidak melebihi container
+                dropdownCssClass: 'rental-mobil-select2-dropdown'
             });
         });
     }
@@ -201,16 +203,26 @@ jQuery(document).ready(function($) {
     // Reinisialisasi Select2 saat modal dibuka
     $(document).on('click', '.rental-mobil-button-booking', function() {
         setTimeout(function() {
+            // Destroy Select2 yang sudah ada terlebih dahulu
+            $('.rental-mobil-booking-form select').each(function() {
+                if ($(this).hasClass('select2-hidden-accessible')) {
+                    $(this).select2('destroy');
+                }
+            });
+
+            // Inisialisasi ulang Select2
             $('.rental-mobil-booking-form select').select2({
                 width: '100%',
-                dropdownAutoWidth: true,
+                dropdownAutoWidth: false, // Ubah ke false agar tidak melebihi container
                 minimumResultsForSearch: 5,
                 dropdownParent: $('#rental-mobil-booking-modal'),
                 language: {
                     noResults: function() {
                         return "Tidak ada hasil yang ditemukan";
                     }
-                }
+                },
+                // Tambahkan template untuk memastikan dropdown tidak melebihi container
+                dropdownCssClass: 'rental-mobil-select2-dropdown'
             });
         }, 100);
     });

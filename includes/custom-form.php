@@ -345,12 +345,28 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
 
             // Validate form
             let isValid = true;
+
+            // Reset semua error
+            $(this).find('.error').removeClass('error');
+
+            // Cari semua field yang required
             $(this).find('[required]').each(function() {
-                if (!$(this).val()) {
-                    isValid = false;
-                    $(this).addClass('error');
+                // Periksa apakah field ini berada dalam container kondisional
+                const isConditionalField = $(this).closest('.rental-mobil-conditional-field').length > 0;
+
+                // Jika field kondisional, hanya validasi jika visible
+                if (isConditionalField) {
+                    // Jika field kondisional dan visible tapi kosong
+                    if ($(this).closest('.rental-mobil-conditional-field').is(':visible') && !$(this).val()) {
+                        $(this).addClass('error');
+                        isValid = false;
+                    }
                 } else {
-                    $(this).removeClass('error');
+                    // Field normal (non-kondisional) yang required
+                    if (!$(this).val()) {
+                        $(this).addClass('error');
+                        isValid = false;
+                    }
                 }
             });
 

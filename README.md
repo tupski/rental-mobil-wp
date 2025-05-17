@@ -90,6 +90,13 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil WP' >
 
 ## Changelog
 
+### 1.6.8
+* Peningkatan filter sidebar pada desktop agar tetap sticky dengan batasan dari awal card hingga akhir halaman
+* Scrollbar yang lebih baik untuk filter sidebar saat konten filter terlalu panjang
+* Animasi smooth saat filter sidebar bergerak mengikuti scroll
+* Perbaikan posisi filter sidebar saat mendekati footer
+* Optimasi performa untuk filter sticky dengan event scroll yang lebih efisien
+
 ### 1.6.7
 * Perbaikan dropdown Select2 yang tidak berfungsi pada modal booking untuk pengunjung non-admin
 * Perbaikan error JavaScript di console
@@ -204,6 +211,9 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil WP' >
 * Rilis pertama
 
 ## Upgrade Notice
+
+### 1.6.8
+Peningkatan filter sidebar pada desktop agar tetap sticky dengan batasan dari awal card hingga akhir halaman. Perbaikan posisi filter saat mendekati footer.
 
 ### 1.6.7
 Perbaikan penting untuk dropdown Select2 pada modal booking, error JavaScript, dan masalah validasi form. Sangat direkomendasikan untuk diupdate.

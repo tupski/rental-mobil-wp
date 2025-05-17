@@ -246,11 +246,34 @@
     top: 50px; /* Meningkatkan jarak dari atas */
     padding-right: 10px;
     padding-top: 10px; /* Tambahkan padding atas */
+    padding-bottom: 20px; /* Tambahkan padding bawah */
     z-index: 100; /* Pastikan filter tetap di atas konten lain */
     display: block; /* Pastikan elemen ditampilkan sebagai block */
     height: auto; /* Pastikan tinggi elemen sesuai dengan kontennya */
     will-change: position; /* Optimasi performa untuk sticky */
-    overflow: visible !important; /* Hapus scrollbar */
+    overflow-y: auto; /* Tambahkan scrollbar vertikal jika konten terlalu panjang */
+    scrollbar-width: thin; /* Scrollbar tipis untuk Firefox */
+    -ms-overflow-style: none; /* Sembunyikan scrollbar untuk IE/Edge */
+    transition: top 0.3s ease; /* Animasi perubahan posisi */
+}
+
+/* Styling scrollbar untuk Chrome/Safari */
+.rental-mobil-sidebar-inner::-webkit-scrollbar {
+    width: 5px;
+}
+
+.rental-mobil-sidebar-inner::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.rental-mobil-sidebar-inner::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.rental-mobil-sidebar-inner::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .rental-mobil-content {
@@ -942,10 +965,27 @@
 /* Select2 Styles untuk Modal */
 .select2-container {
     z-index: 99999 !important; /* Memastikan dropdown Select2 berada di atas modal */
+    max-width: 100% !important; /* Pastikan tidak melebihi lebar parent */
 }
 
 .select2-container--open .select2-dropdown {
     z-index: 99999 !important;
+    max-width: 100% !important; /* Pastikan dropdown tidak melebihi lebar layar */
+    width: 100% !important; /* Pastikan dropdown mengikuti lebar container */
+}
+
+.select2-dropdown {
+    max-width: 100% !important; /* Pastikan dropdown tidak melebihi lebar layar */
+    width: 100% !important; /* Pastikan dropdown mengikuti lebar container */
+}
+
+.select2-results {
+    max-width: 100% !important; /* Pastikan hasil tidak melebihi lebar dropdown */
+}
+
+.select2-results__options {
+    max-width: 100% !important; /* Pastikan opsi tidak melebihi lebar hasil */
+    word-wrap: break-word; /* Memastikan teks panjang bisa wrap */
 }
 
 .select2-container--open .select2-dropdown--below {
@@ -982,6 +1022,25 @@
     }
 
     .select2-container {
+        width: 100% !important;
+    }
+
+    /* Pastikan dropdown Select2 tidak melebihi lebar modal */
+    .rental-mobil-select2-dropdown {
+        max-width: 90vw !important;
+        width: 100% !important;
+    }
+
+    /* Pastikan opsi dalam dropdown tidak terpotong */
+    .rental-mobil-select2-dropdown .select2-results__option {
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    /* Pastikan dropdown tetap di dalam viewport */
+    .select2-container--open .select2-dropdown {
+        left: 0 !important;
+        right: 0 !important;
         width: 100% !important;
     }
 }
@@ -1193,10 +1252,22 @@
     margin-top: 10px;
 }
 
+.rental-mobil-form-actions {
+    position: relative;
+    z-index: 100000; /* Pastikan tombol booking selalu di atas */
+}
+
 .rental-mobil-form-actions .rental-mobil-button {
     width: 100%;
     padding: 12px;
     font-size: 16px;
+    position: relative;
+    z-index: 100000; /* Pastikan tombol booking selalu di atas */
+}
+
+.rental-mobil-button-submit {
+    position: relative;
+    z-index: 100000 !important; /* Pastikan tombol booking selalu di atas */
 }
 
 .required {
@@ -1636,7 +1707,7 @@
         display: none; /* Sembunyikan sidebar di mobile secara default */
     }
 
-    .rental-mobil-sidebar.active {
+    .rental-mobil-sidebar {
         display: block;
         position: fixed;
         top: 0;
@@ -1652,11 +1723,13 @@
         transform: translateX(-100%); /* Mulai dari luar layar */
         transition: transform 0.3s ease;
         will-change: transform; /* Optimasi performa animasi */
+        visibility: hidden; /* Sembunyikan tapi tetap bisa dianimasikan */
     }
 
     /* Animasi slide in ketika active */
     .rental-mobil-sidebar.active {
         transform: translateX(0); /* Slide in ke posisi normal */
+        visibility: visible; /* Tampilkan saat active */
     }
 
     /* Hanya ubah properti sidebar-inner saat dalam mode sidebar mobile (active) */

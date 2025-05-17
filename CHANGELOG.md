@@ -2,6 +2,23 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.6.8] - 2024-05-18
+
+### Ditambahkan
+- Peningkatan filter sidebar pada desktop agar tetap sticky dengan batasan dari awal card hingga akhir halaman
+- Scrollbar yang lebih baik untuk filter sidebar saat konten filter terlalu panjang
+- Animasi smooth saat filter sidebar bergerak mengikuti scroll
+- Efek slide animasi untuk filter mobile saat tombol filter diklik
+
+### Diperbaiki
+- Perbaikan posisi filter sidebar saat mendekati footer
+- Optimasi performa untuk filter sticky dengan event scroll yang lebih efisien
+- Perbaikan tampilan dropdown Select2 di mobile agar tidak melebihi lebar modal
+- Perbaikan masalah select option yang tidak muncul di mobile
+- Perbaikan tombol booking yang tidak bisa diklik di mobile
+- Perbaikan tampilan opsi dalam dropdown agar tidak terpotong
+- Perbaikan validasi form untuk field kondisional, field yang required hanya divalidasi saat kondisinya terpenuhi
+
 ## [1.6.7] - 2024-05-18
 
 ### Diperbaiki
