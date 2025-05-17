@@ -13,7 +13,7 @@ if (!defined('WPINC')) {
     <!-- Sidebar Filter (25%) -->
     <div class="rental-mobil-sidebar">
         <div class="rental-mobil-sidebar-inner">
-%
+            <!-- Include file filter-kendaraan.php -->
             <?php include RENTAL_MOBIL_PLUGIN_DIR . 'templates/filter-kendaraan.php'; ?>
         </div>
     </div>
