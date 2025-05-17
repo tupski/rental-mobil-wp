@@ -181,20 +181,6 @@ usort($form_fields, function($a, $b) {
 
 <script>
 jQuery(document).ready(function($) {
-    // Inisialisasi Select2 untuk semua select di inline form
-    if (typeof $.fn.select2 !== 'undefined') {
-        $('#rental-mobil-inline-booking-form select').each(function() {
-            $(this).select2({
-                width: '100%',
-                dropdownAutoWidth: true,
-                minimumResultsForSearch: 5,
-                language: {
-                    noResults: function() {
-                        return "Tidak ada hasil yang ditemukan";
-                    }
-                }
-            });
-        });
-    }
+    // Select2 telah dihapus dan diganti dengan select biasa
 });
 </script>

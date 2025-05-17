@@ -514,30 +514,7 @@
 
             modal.css('display', 'block');
 
-            // Reinisialisasi Select2 setelah modal dibuka
-            setTimeout(function() {
-                if (typeof $.fn.select2 !== 'undefined') {
-                    $('.rental-mobil-booking-form select').each(function() {
-                        // Destroy Select2 jika sudah diinisialisasi sebelumnya
-                        if ($(this).hasClass('select2-hidden-accessible')) {
-                            $(this).select2('destroy');
-                        }
-
-                        // Inisialisasi ulang Select2
-                        $(this).select2({
-                            width: '100%',
-                            dropdownAutoWidth: true,
-                            minimumResultsForSearch: 5,
-                            dropdownParent: $('#rental-mobil-booking-modal'),
-                            language: {
-                                noResults: function() {
-                                    return "Tidak ada hasil yang ditemukan";
-                                }
-                            }
-                        });
-                    });
-                }
-            }, 100);
+            // Select2 telah dihapus dan diganti dengan select biasa
 
             // Scroll ke form booking jika di mobile
             if ($(window).width() <= 768) {
@@ -1018,6 +995,10 @@
                     if ($(this).closest('.rental-mobil-conditional-field').is(':visible') && !$(this).val()) {
                         $(this).addClass('error');
                         isValid = false;
+                    }
+                    // Jika field kondisional dan tidak visible, hapus atribut required sementara
+                    else if (!$(this).closest('.rental-mobil-conditional-field').is(':visible')) {
+                        $(this).prop('required', false);
                     }
                 } else {
                     // Field normal (non-kondisional) yang required
@@ -1609,10 +1590,19 @@
                     // Tampilkan atau sembunyikan field
                     if (shouldShow) {
                         $(this).show();
+                        // Kembalikan atribut required jika field memiliki tanda bintang (required)
+                        $(this).find('input, select, textarea').each(function() {
+                            if ($(this).closest('.rental-mobil-form-group, .rental-mobil-custom-booking-field').find('label .required').length > 0) {
+                                $(this).prop('required', true);
+                            }
+                        });
                     } else {
                         $(this).hide();
-                        // Reset nilai field
-                        $(this).find('input, select').val('');
+                        // Reset nilai field dan hapus required
+                        $(this).find('input, select, textarea').val('').prop('required', false);
+
+                        // Reset select biasa
+                        $(this).find('select').val('');
                     }
                 }
             });
