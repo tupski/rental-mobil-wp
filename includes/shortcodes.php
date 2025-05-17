@@ -13,11 +13,6 @@ if (!defined('WPINC')) {
  */
 add_shortcode('daftar_kendaraan', 'rental_mobil_daftar_shortcode');
 function rental_mobil_daftar_shortcode($atts) {
-    // Cek lisensi
-    if (!rental_mobil_is_license_valid()) {
-        return rental_mobil_license_notice();
-    }
-
     // Dapatkan pengaturan urutan kendaraan shortcode
     $order_settings = rental_mobil_get_shortcode_order_settings();
 
@@ -57,11 +52,6 @@ function rental_mobil_daftar_shortcode($atts) {
  */
 add_shortcode('detail_kendaraan', 'rental_mobil_detail_shortcode');
 function rental_mobil_detail_shortcode($atts) {
-    // Cek lisensi
-    if (!rental_mobil_is_license_valid()) {
-        return rental_mobil_license_notice();
-    }
-
     $atts = shortcode_atts(array(
         'id' => 0,
     ), $atts, 'detail_kendaraan');
@@ -101,11 +91,6 @@ function rental_mobil_detail_shortcode($atts) {
  */
 add_shortcode('kendaraan_unggulan', 'rental_mobil_unggulan_shortcode');
 function rental_mobil_unggulan_shortcode($atts) {
-    // Cek apakah fitur kendaraan unggulan diaktifkan
-    if (!rental_mobil_is_feature_enabled('kendaraan_unggulan')) {
-        return rental_mobil_license_notice();
-    }
-
     // Dapatkan pengaturan slider
     $slider_settings = rental_mobil_get_slider_settings();
 
@@ -154,11 +139,6 @@ function rental_mobil_unggulan_shortcode($atts) {
  */
 add_shortcode('kendaraan_pilihan', 'rental_mobil_pilihan_shortcode');
 function rental_mobil_pilihan_shortcode($atts) {
-    // Cek apakah fitur kendaraan pilihan diaktifkan
-    if (!rental_mobil_is_feature_enabled('kendaraan_pilihan')) {
-        return rental_mobil_license_notice();
-    }
-
     // Dapatkan pengaturan urutan kendaraan
     $order_settings = rental_mobil_get_homepage_order_settings();
 
@@ -234,20 +214,3 @@ function rental_mobil_pilihan_shortcode($atts) {
     return ob_get_clean();
 }
 
-/**
- * Fungsi untuk memeriksa apakah fitur diaktifkan
- * Karena sistem lisensi telah dihapus, semua fitur selalu diaktifkan
- */
-function rental_mobil_is_feature_enabled($feature) {
-    // Semua fitur selalu diaktifkan karena sistem lisensi telah dihapus
-    return true;
-}
-
-/**
- * Fungsi untuk menampilkan pesan lisensi tidak valid
- * Fungsi ini tidak lagi digunakan, tetapi dipertahankan untuk kompatibilitas
- */
-function rental_mobil_license_notice() {
-    // Karena sistem lisensi telah dihapus, fungsi ini tidak lagi menampilkan pesan
-    return '';
-}

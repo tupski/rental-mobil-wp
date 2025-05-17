@@ -2,21 +2,15 @@
 
 Plugin WordPress untuk rental mobil dengan fitur menampilkan daftar kendaraan, detail, dan booking via WhatsApp.
 
-> Plugin ini memerlukan lisensi untuk menggunakan semua fitur premium
-
 ## Deskripsi
 
 Rental Mobil WP adalah plugin WordPress yang dirancang khusus untuk bisnis rental mobil. Plugin ini memungkinkan Anda menampilkan daftar kendaraan, detail kendaraan, dan sistem booking yang terintegrasi dengan WhatsApp.
 
 ### Fitur Utama
 
-#### Fitur Gratis
 * **Custom Post Type untuk Kendaraan** - Mengelola kendaraan dengan mudah
 * **Tampilan Responsif** - Kompatibel dengan semua tema WordPress, termasuk Divi
 * **Shortcode Dasar** - Tampilkan daftar kendaraan dan detail kendaraan di mana saja
-* **Pengaturan Dasar** - Konfigurasi dasar plugin
-
-#### Fitur Premium (Memerlukan Lisensi)
 * **Filter Kendaraan** - Filter berdasarkan merk, transmisi, bahan bakar, tipe, dan tahun kendaraan
 * **Booking via WhatsApp** - Form booking yang mengirim pesan langsung ke WhatsApp
 * **Pengaturan Kustom** - Konfigurasi nomor WhatsApp dan template pesan
@@ -44,14 +38,9 @@ Plugin ini menyediakan dua shortcode utama:
 
 1. Unggah folder `rental-mobil-wp` ke direktori `/wp-content/plugins/`
 2. Aktifkan plugin melalui menu 'Plugins' di WordPress
-3. Buka menu 'Rental Mobil' dan masuk ke tab 'Lisensi'
-4. Masukkan kunci lisensi yang Anda dapatkan saat membeli plugin
-5. Klik tombol 'Aktivasi Lisensi' untuk mengaktifkan fitur premium
-6. Buka menu 'Rental Mobil' untuk mengatur nomor WhatsApp dan template pesan
-7. Tambahkan kendaraan melalui menu 'Kendaraan'
-8. Gunakan shortcode untuk menampilkan daftar kendaraan dan detail kendaraan
-
-> **Catatan**: Tanpa lisensi yang valid, beberapa fitur premium tidak akan tersedia.
+3. Buka menu 'Rental Mobil WP' untuk mengatur nomor WhatsApp dan template pesan
+4. Tambahkan kendaraan melalui menu 'Semua Kendaraan'
+5. Gunakan shortcode untuk menampilkan daftar kendaraan dan detail kendaraan
 
 ## Penggunaan
 
@@ -84,21 +73,13 @@ Tambahkan shortcode `[detail_kendaraan id="ID"]` ke halaman atau post untuk mena
 
 Ya, plugin ini dirancang untuk kompatibel dengan semua tema WordPress, termasuk Divi. Tampilan responsif memastikan plugin terlihat baik di semua perangkat.
 
-### Bagaimana cara mendapatkan lisensi?
-
-Anda dapat membeli lisensi melalui website resmi kami. Lisensi tersedia dalam beberapa paket dengan jumlah domain yang berbeda.
-
-### Apa yang terjadi jika lisensi saya kedaluwarsa?
-
-Jika lisensi Anda kedaluwarsa, fitur premium akan dinonaktifkan. Anda masih dapat menggunakan fitur dasar, tetapi fitur premium seperti filter kendaraan, booking via WhatsApp, dan quick view tidak akan tersedia.
-
 ### Bagaimana cara menambahkan filter kendaraan?
 
-Filter kendaraan otomatis ditampilkan saat Anda menggunakan shortcode `[daftar_kendaraan]`. Anda dapat menambahkan merk, transmisi, bahan bakar, tipe, dan tahun kendaraan melalui menu 'Kendaraan'. Fitur ini memerlukan lisensi yang valid.
+Filter kendaraan otomatis ditampilkan saat Anda menggunakan shortcode `[daftar_kendaraan]`. Anda dapat menambahkan merk, transmisi, bahan bakar, tipe, dan tahun kendaraan melalui menu 'Rental Mobil WP'.
 
 ### Apakah saya bisa mengubah template pesan WhatsApp?
 
-Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di dashboard admin. Fitur ini memerlukan lisensi yang valid.
+Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil WP' > 'Pengaturan' > tab 'WhatsApp' di dashboard admin.
 
 ## Screenshots
 
@@ -125,7 +106,6 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil' di d
 * Memindahkan modal ke footer untuk meningkatkan kompatibilitas dengan tema
 * Meningkatkan margin atas modal untuk tampilan yang lebih baik
 * Perbaikan bug dan optimasi kode
-* Menambahkan sistem lisensi untuk fitur premium
 
 ### 1.4.6
 * Perbaikan paginasi agar berfungsi dengan benar
@@ -225,7 +205,7 @@ Perbaikan filter sticky yang tidak berfungsi dan memperbaiki nama fungsi untuk m
 Perbaikan tampilan harga mingguan dan bulanan pada card kendaraan unggulan dan perbaikan konflik nama fungsi dengan plugin lain.
 
 ### 1.4.7
-Perbaikan posisi modal agar tidak tertutup oleh menu sticky, memindahkan modal ke footer untuk meningkatkan kompatibilitas dengan tema, dan menambahkan sistem lisensi untuk fitur premium.
+Perbaikan posisi modal agar tidak tertutup oleh menu sticky, memindahkan modal ke footer untuk meningkatkan kompatibilitas dengan tema.
 
 ### 1.4.6
 Perbaikan paginasi agar berfungsi dengan benar dan menambahkan parameter halaman ke URL untuk mempertahankan posisi halaman saat refresh.
@@ -265,8 +245,8 @@ Rilis pertama
 
 ## Lisensi
 
-Plugin ini memerlukan lisensi untuk menggunakan semua fitur premium. Kode sumber plugin dilisensikan di bawah [GPL v2 atau yang lebih baru](https://www.gnu.org/licenses/gpl-2.0.html), tetapi fitur premium hanya tersedia dengan lisensi yang valid.
+Kode sumber plugin dilisensikan di bawah [GPL v2 atau yang lebih baru](https://www.gnu.org/licenses/gpl-2.0.html).
 
 ## Dukungan
 
-Jika Anda memiliki pertanyaan atau membutuhkan bantuan, silakan hubungi kami melalui email dukungan yang disediakan saat pembelian lisensi.
+Jika Anda memiliki pertanyaan atau membutuhkan bantuan, silakan hubungi kami melalui email dukungan.

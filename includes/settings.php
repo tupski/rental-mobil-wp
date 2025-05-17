@@ -1544,52 +1544,10 @@ function rental_mobil_shortcode_vehicle_order_callback() {
 }
 
 /**
- * Get license key (selalu kosong)
+ * Fungsi untuk memeriksa apakah lisensi valid (selalu mengembalikan true)
  */
-function rental_mobil_get_license_key() {
-    return '';
-}
-
-/**
- * Get license status (selalu valid)
- */
-function rental_mobil_get_license_status() {
-    return 'valid';
-}
-
-/**
- * Get license expires (selalu 1 tahun dari sekarang)
- */
-function rental_mobil_get_license_expires() {
-    return date('Y-m-d', strtotime('+1 year'));
-}
-
-/**
- * Get license customer name (selalu kosong)
- */
-function rental_mobil_get_license_customer() {
-    return 'Admin';
-}
-
-/**
- * Get license created date (selalu hari ini)
- */
-function rental_mobil_get_license_created_at() {
-    return date('Y-m-d');
-}
-
-/**
- * Get license domain count (selalu 1)
- */
-function rental_mobil_get_license_domain_count() {
-    return 1;
-}
-
-/**
- * Get license max domains (selalu 1)
- */
-function rental_mobil_get_license_max_domains() {
-    return 1;
+function rental_mobil_is_license_valid() {
+    return true;
 }
 
 /**
