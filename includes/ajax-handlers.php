@@ -465,6 +465,12 @@ function rental_mobil_get_kendaraan_data_ajax() {
         wp_send_json_error('Kendaraan tidak ditemukan');
     }
 
+    // Dapatkan pesan share
+    $share_message = rental_mobil_get_share_message();
+
+    // Dapatkan platform share
+    $share_platforms = rental_mobil_get_share_platforms();
+
     // Dapatkan meta data
     $harga_harian = get_post_meta($kendaraan_id, '_rental_mobil_harga_sewa', true);
     $harga_mingguan = get_post_meta($kendaraan_id, '_rental_mobil_harga_sewa_mingguan', true);
@@ -505,7 +511,9 @@ function rental_mobil_get_kendaraan_data_ajax() {
         'tahun' => $tahun,
         'is_featured' => !empty($is_featured),
         'is_popular' => !empty($is_popular),
-        'featured_image' => $featured_image
+        'featured_image' => $featured_image,
+        'share_message' => $share_message,
+        'share_platforms' => $share_platforms
     );
 
     wp_send_json_success($data);

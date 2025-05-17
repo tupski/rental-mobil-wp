@@ -2,6 +2,19 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.7.1] - 2024-05-22
+
+### Ditambahkan
+- Tombol "Bagikan" tunggal di mobile yang menampilkan popup modal dengan platform berbagi
+- Pengaturan untuk tombol "Salin URL" di tab Share
+- Notifikasi saat URL berhasil disalin
+
+### Diubah
+- Tampilan tombol close di filter mobile agar lebih mudah diklik
+- Filter mobile sekarang otomatis tertutup saat tombol Terapkan atau Reset ditekan
+- Overlay filter mobile dengan transparansi 25% untuk bagian di luar sidebar
+- Filter mobile sekarang otomatis tertutup saat overlay diklik
+
 ## [1.7.0] - 2024-05-21
 
 ### Diubah

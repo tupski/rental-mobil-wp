@@ -1656,14 +1656,59 @@ function rental_mobil_get_admin_filter_options() {
  * Get share platforms
  */
 function rental_mobil_get_share_platforms() {
-    $options = rental_mobil_get_options();
-    $share_platforms = isset($options['share_platforms']) ? $options['share_platforms'] : array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
+    // Hapus cache opsi untuk memastikan data terbaru
+    wp_cache_delete('rental_mobil_options', 'options');
+    wp_cache_delete('alloptions', 'options');
 
-    if (!is_array($share_platforms)) {
-        $share_platforms = array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
+    // Dapatkan opsi langsung dari database
+    $options = get_option('rental_mobil_options', array());
+
+    // Periksa apakah share_platforms ada dan merupakan array
+    $share_platforms = isset($options['share_platforms']) && is_array($options['share_platforms'])
+        ? $options['share_platforms']
+        : array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
+
+    // Tambahkan debugging jika diperlukan
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('Share Platforms: ' . print_r($share_platforms, true));
     }
 
     return $share_platforms;
+}
+
+/**
+ * Check if copy URL button is enabled
+ */
+function rental_mobil_is_copy_url_enabled() {
+    $share_platforms = rental_mobil_get_share_platforms();
+    return in_array('copy', $share_platforms);
+}
+
+/**
+ * Get share message
+ */
+function rental_mobil_get_share_message() {
+    // Hapus cache opsi untuk memastikan data terbaru
+    wp_cache_delete('rental_mobil_options', 'options');
+    wp_cache_delete('alloptions', 'options');
+
+    // Dapatkan opsi langsung dari database
+    $options = get_option('rental_mobil_options', array());
+
+    // Default message
+    $default_message = "Saya menemukan kendaraan {nama_kendaraan} yang menarik di {site_name}. Cek di sini: {url}";
+
+    // Periksa apakah share_message ada
+    $share_message = isset($options['share_message']) && !empty($options['share_message'])
+        ? $options['share_message']
+        : $default_message;
+
+    // Tambahkan debugging jika diperlukan
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('Share Message: ' . $share_message);
+    }
+
+    return $share_message;
 }
 
 /**
@@ -1950,6 +1995,12 @@ function rental_mobil_share_platforms_callback() {
         <label for="share_email">
             <input type="checkbox" id="share_email" name="rental_mobil_options[share_platforms][]" value="email" <?php checked(in_array('email', $share_platforms)); ?>>
             <?php _e('Email', 'rental-mobil-wp'); ?>
+        </label>
+        <br>
+
+        <label for="share_copy">
+            <input type="checkbox" id="share_copy" name="rental_mobil_options[share_platforms][]" value="copy" <?php checked(in_array('copy', $share_platforms)); ?>>
+            <?php _e('Salin URL', 'rental-mobil-wp'); ?>
         </label>
     </fieldset>
     <p class="description"><?php _e('Pilih platform share yang ingin ditampilkan pada detail kendaraan.', 'rental-mobil-wp'); ?></p>

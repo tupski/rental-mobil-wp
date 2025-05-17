@@ -688,55 +688,177 @@
                 openZoomModal(imgSrc, data.title);
             });
 
-            // Tambahkan event click untuk tombol share
-            $('.rental-mobil-share-button').off('click').on('click', function() {
-                const platform = $(this).data('platform');
-                const title = $('.rental-mobil-quick-view-title').text();
+            // Fungsi untuk mendapatkan data share
+            function getShareData(kendaraanId, callback) {
+                $.ajax({
+                    url: rental_mobil_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'rental_mobil_get_kendaraan_data',
+                        nonce: rental_mobil_ajax.nonce,
+                        kendaraan_id: kendaraanId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            // Dapatkan path URL saat ini (tanpa domain dan query string)
+                            const currentPath = window.location.pathname;
 
-                console.log('Share platform:', platform);
-                console.log('Share title:', title);
+                            // Dapatkan parameter URL saat ini
+                            const urlParams = new URLSearchParams(window.location.search);
 
-                // Dapatkan path URL saat ini (tanpa domain dan query string)
-                const currentPath = window.location.pathname;
+                            // Tentukan base URL berdasarkan halaman saat ini
+                            let baseUrl;
+                            if (currentPath.includes('daftar-kendaraan')) {
+                                baseUrl = window.location.origin + '/daftar-kendaraan/';
+                            } else if (currentPath.includes('daftar-mobil-rental')) {
+                                baseUrl = window.location.origin + '/daftar-mobil-rental/';
+                            } else {
+                                // Gunakan path saat ini jika bukan salah satu di atas
+                                baseUrl = window.location.origin + currentPath;
+                            }
 
-                // Dapatkan parameter URL saat ini
-                const urlParams = new URLSearchParams(window.location.search);
+                            // Buat URL untuk berbagi dengan parameter kata_kunci
+                            const title = $('.rental-mobil-quick-view-title').text();
+                            urlParams.set('kata_kunci', title);
+                            urlParams.set('halaman', '1');
 
-                // Tentukan base URL berdasarkan halaman saat ini
-                let baseUrl;
-                if (currentPath.includes('daftar-kendaraan')) {
-                    baseUrl = window.location.origin + '/daftar-kendaraan/';
-                } else if (currentPath.includes('daftar-mobil-rental')) {
-                    baseUrl = window.location.origin + '/daftar-mobil-rental/';
-                } else {
-                    // Gunakan path saat ini jika bukan salah satu di atas
-                    baseUrl = window.location.origin + currentPath;
-                }
+                            // Buat URL lengkap
+                            const shareUrl = baseUrl + '?' + urlParams.toString();
+                            console.log('Share URL:', shareUrl);
 
-                // Buat URL untuk berbagi dengan parameter kata_kunci
-                urlParams.set('kata_kunci', title);
-                urlParams.set('halaman', '1');
+                            // Dapatkan pesan share dari respons AJAX
+                            let shareMessage = response.data.share_message || "Saya menemukan kendaraan {nama_kendaraan} yang menarik di {site_name}. Cek di sini: {url}";
 
-                // Buat URL lengkap
-                const shareUrl = baseUrl + '?' + urlParams.toString();
-                console.log('Share URL:', shareUrl);
+                            // Ganti placeholder dengan nilai sebenarnya
+                            shareMessage = shareMessage.replace('{nama_kendaraan}', title);
+                            shareMessage = shareMessage.replace('{site_name}', window.location.hostname);
+                            shareMessage = shareMessage.replace('{url}', shareUrl);
+                            shareMessage = shareMessage.replace('{harga_harian}', response.data.harga_harian);
+
+                            console.log('Share message:', shareMessage);
+
+                            // Periksa apakah platform yang dipilih ada dalam daftar platform yang diizinkan
+                            const sharePlatforms = response.data.share_platforms || ['whatsapp', 'facebook', 'twitter', 'telegram', 'email'];
+
+                            callback({
+                                title: title,
+                                shareUrl: shareUrl,
+                                shareMessage: shareMessage,
+                                sharePlatforms: sharePlatforms,
+                                data: response.data
+                            });
+                        } else {
+                            console.error('Gagal mendapatkan data kendaraan');
+                            callback(null);
+                        }
+                    },
+                    error: function() {
+                        console.error('Gagal mendapatkan data kendaraan');
+                        callback(null);
+                    }
+                });
+            }
+
+            // Fungsi untuk melakukan share
+            function doShare(platform, shareData) {
+                if (!shareData) return;
+
+                const { shareUrl, shareMessage, title } = shareData;
 
                 switch(platform) {
                     case 'whatsapp':
-                        window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(title + ' - ' + shareUrl), '_blank');
+                        window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(shareMessage), '_blank');
                         break;
                     case 'facebook':
                         window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank');
                         break;
                     case 'twitter':
-                        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(title) + '&url=' + encodeURIComponent(shareUrl), '_blank');
+                        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareMessage), '_blank');
                         break;
                     case 'telegram':
-                        window.open('https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(title), '_blank');
+                        window.open('https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareMessage), '_blank');
                         break;
                     case 'email':
-                        window.open('mailto:?subject=' + encodeURIComponent('Info Rental Mobil: ' + title) + '&body=' + encodeURIComponent('Lihat info tentang ' + title + ' di ' + shareUrl), '_blank');
+                        window.open('mailto:?subject=' + encodeURIComponent('Info Rental Mobil: ' + title) + '&body=' + encodeURIComponent(shareMessage), '_blank');
                         break;
+                    case 'copy':
+                        // Salin pesan ke clipboard
+                        const tempInput = document.createElement('textarea');
+                        tempInput.value = shareMessage;
+                        document.body.appendChild(tempInput);
+                        tempInput.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(tempInput);
+
+                        // Tampilkan notifikasi
+                        const notification = $('<div class="rental-mobil-copy-notification">URL berhasil disalin!</div>');
+                        $('body').append(notification);
+
+                        // Hilangkan notifikasi setelah beberapa detik
+                        setTimeout(function() {
+                            notification.fadeOut(300, function() {
+                                $(this).remove();
+                            });
+                        }, 2000);
+                        break;
+                }
+            }
+
+            // Tambahkan event click untuk tombol share di desktop
+            $('.rental-mobil-share-button').off('click').on('click', function() {
+                const platform = $(this).data('platform');
+                const kendaraanId = $('.rental-mobil-quick-view-booking').data('id');
+
+                console.log('Share platform:', platform);
+                console.log('Share kendaraan ID:', kendaraanId);
+
+                // Dapatkan data share dan lakukan share
+                getShareData(kendaraanId, function(shareData) {
+                    if (shareData && shareData.sharePlatforms.includes(platform)) {
+                        doShare(platform, shareData);
+                    } else {
+                        console.error('Platform share tidak diizinkan:', platform);
+                    }
+                });
+            });
+
+            // Tambahkan event click untuk tombol share di mobile
+            $('.rental-mobil-mobile-share-button').off('click').on('click', function() {
+                // Tampilkan modal share
+                $('.rental-mobil-mobile-share-modal').css('display', 'flex');
+            });
+
+            // Tambahkan event click untuk tombol close di modal share
+            $('.rental-mobil-mobile-share-close').off('click').on('click', function() {
+                // Sembunyikan modal share
+                $('.rental-mobil-mobile-share-modal').css('display', 'none');
+            });
+
+            // Tambahkan event click untuk item share di modal mobile
+            $('.rental-mobil-mobile-share-item').off('click').on('click', function() {
+                const platform = $(this).data('platform');
+                const kendaraanId = $('.rental-mobil-quick-view-booking').data('id');
+
+                console.log('Mobile share platform:', platform);
+                console.log('Mobile share kendaraan ID:', kendaraanId);
+
+                // Dapatkan data share dan lakukan share
+                getShareData(kendaraanId, function(shareData) {
+                    if (shareData && shareData.sharePlatforms.includes(platform)) {
+                        doShare(platform, shareData);
+
+                        // Sembunyikan modal share setelah share
+                        $('.rental-mobil-mobile-share-modal').css('display', 'none');
+                    } else {
+                        console.error('Platform share tidak diizinkan:', platform);
+                    }
+                });
+            });
+
+            // Tutup modal share jika klik di luar modal
+            $('.rental-mobil-mobile-share-modal').off('click').on('click', function(e) {
+                if (e.target === this) {
+                    $(this).css('display', 'none');
                 }
             });
 
@@ -865,48 +987,96 @@
                 console.log('Zoom Share platform:', platform);
                 console.log('Zoom Share title:', title);
 
-                // Dapatkan path URL saat ini (tanpa domain dan query string)
-                const currentPath = window.location.pathname;
-
-                // Dapatkan parameter URL saat ini
+                // Dapatkan kendaraan ID dari URL atau data
+                let kendaraanId = 0;
                 const urlParams = new URLSearchParams(window.location.search);
-
-                // Tentukan base URL berdasarkan halaman saat ini
-                let baseUrl;
-                if (currentPath.includes('daftar-kendaraan')) {
-                    baseUrl = window.location.origin + '/daftar-kendaraan/';
-                } else if (currentPath.includes('daftar-mobil-rental')) {
-                    baseUrl = window.location.origin + '/daftar-mobil-rental/';
-                } else {
-                    // Gunakan path saat ini jika bukan salah satu di atas
-                    baseUrl = window.location.origin + currentPath;
+                if (urlParams.has('id')) {
+                    kendaraanId = urlParams.get('id');
+                } else if ($('.rental-mobil-quick-view-booking').length) {
+                    kendaraanId = $('.rental-mobil-quick-view-booking').data('id');
                 }
 
-                // Buat URL untuk berbagi dengan parameter kata_kunci
-                urlParams.set('kata_kunci', title);
-                urlParams.set('halaman', '1');
+                console.log('Zoom Share kendaraan ID:', kendaraanId);
 
-                // Buat URL lengkap
-                const shareUrl = baseUrl + '?' + urlParams.toString();
-                console.log('Zoom Share URL:', shareUrl);
+                // Dapatkan pesan share dan platform dari AJAX
+                $.ajax({
+                    url: rental_mobil_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'rental_mobil_get_kendaraan_data',
+                        nonce: rental_mobil_ajax.nonce,
+                        kendaraan_id: kendaraanId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            // Dapatkan path URL saat ini (tanpa domain dan query string)
+                            const currentPath = window.location.pathname;
 
-                switch(platform) {
-                    case 'whatsapp':
-                        window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(title + ' - ' + shareUrl), '_blank');
-                        break;
-                    case 'facebook':
-                        window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank');
-                        break;
-                    case 'twitter':
-                        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(title) + '&url=' + encodeURIComponent(shareUrl), '_blank');
-                        break;
-                    case 'telegram':
-                        window.open('https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(title), '_blank');
-                        break;
-                    case 'email':
-                        window.open('mailto:?subject=' + encodeURIComponent('Info Rental Mobil: ' + title) + '&body=' + encodeURIComponent('Lihat info tentang ' + title + ' di ' + shareUrl), '_blank');
-                        break;
-                }
+                            // Dapatkan parameter URL saat ini
+                            const urlParams = new URLSearchParams(window.location.search);
+
+                            // Tentukan base URL berdasarkan halaman saat ini
+                            let baseUrl;
+                            if (currentPath.includes('daftar-kendaraan')) {
+                                baseUrl = window.location.origin + '/daftar-kendaraan/';
+                            } else if (currentPath.includes('daftar-mobil-rental')) {
+                                baseUrl = window.location.origin + '/daftar-mobil-rental/';
+                            } else {
+                                // Gunakan path saat ini jika bukan salah satu di atas
+                                baseUrl = window.location.origin + currentPath;
+                            }
+
+                            // Buat URL untuk berbagi dengan parameter kata_kunci
+                            urlParams.set('kata_kunci', title);
+                            urlParams.set('halaman', '1');
+
+                            // Buat URL lengkap
+                            const shareUrl = baseUrl + '?' + urlParams.toString();
+                            console.log('Zoom Share URL:', shareUrl);
+
+                            // Dapatkan pesan share dari respons AJAX
+                            let shareMessage = response.data.share_message || "Saya menemukan kendaraan {nama_kendaraan} yang menarik di {site_name}. Cek di sini: {url}";
+
+                            // Ganti placeholder dengan nilai sebenarnya
+                            shareMessage = shareMessage.replace('{nama_kendaraan}', title);
+                            shareMessage = shareMessage.replace('{site_name}', window.location.hostname);
+                            shareMessage = shareMessage.replace('{url}', shareUrl);
+                            shareMessage = shareMessage.replace('{harga_harian}', response.data.harga_harian);
+
+                            console.log('Zoom Share message:', shareMessage);
+
+                            // Periksa apakah platform yang dipilih ada dalam daftar platform yang diizinkan
+                            const sharePlatforms = response.data.share_platforms || ['whatsapp', 'facebook', 'twitter', 'telegram', 'email'];
+
+                            if (sharePlatforms.includes(platform)) {
+                                switch(platform) {
+                                    case 'whatsapp':
+                                        window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(shareMessage), '_blank');
+                                        break;
+                                    case 'facebook':
+                                        window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank');
+                                        break;
+                                    case 'twitter':
+                                        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareMessage), '_blank');
+                                        break;
+                                    case 'telegram':
+                                        window.open('https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareMessage), '_blank');
+                                        break;
+                                    case 'email':
+                                        window.open('mailto:?subject=' + encodeURIComponent('Info Rental Mobil: ' + title) + '&body=' + encodeURIComponent(shareMessage), '_blank');
+                                        break;
+                                }
+                            } else {
+                                console.error('Platform share tidak diizinkan:', platform);
+                            }
+                        } else {
+                            console.error('Gagal mendapatkan data kendaraan');
+                        }
+                    },
+                    error: function() {
+                        console.error('Gagal mendapatkan data kendaraan');
+                    }
+                });
             });
 
             // Tampilkan modal
