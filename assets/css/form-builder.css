@@ -187,8 +187,35 @@
     font-weight: 600;
 }
 
+.rental-mobil-form-preview-form {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
 .rental-mobil-form-preview-field {
     margin-bottom: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+    box-sizing: border-box;
+}
+
+/* Field width classes */
+.rental-mobil-field-width-100 {
+    width: 100%;
+}
+
+.rental-mobil-field-width-75 {
+    width: 75%;
+}
+
+.rental-mobil-field-width-50 {
+    width: 50%;
+}
+
+.rental-mobil-field-width-25 {
+    width: 25%;
 }
 
 .rental-mobil-form-preview-field label {
@@ -231,17 +258,31 @@
     background-color: #005177;
 }
 
+/* Conditional Field Styles */
+.rental-mobil-field-conditional-settings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.rental-mobil-field-conditional-settings select,
+.rental-mobil-field-conditional-settings input {
+    flex: 1;
+    min-width: 120px;
+}
+
 /* Responsive styles */
 @media screen and (max-width: 782px) {
     .rental-mobil-modal-content {
         width: 90%;
         margin: 20% auto;
     }
-    
+
     .rental-mobil-form-builder-field-type {
         display: none;
     }
-    
+
     .rental-mobil-form-builder-fields-header .rental-mobil-form-builder-field-type {
         display: none;
     }

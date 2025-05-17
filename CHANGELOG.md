@@ -2,6 +2,15 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.6.3] - 2024-05-16
+
+### Ditambahkan
+- Fitur ukuran field pada form builder (25%, 50%, 75%, 100%)
+- Tampilan form yang lebih dinamis dan rapi dengan field yang dapat diatur ukurannya
+- Responsif pada perangkat mobile
+- Fitur conditional form di form builder (field yang hanya muncul jika kondisi terpenuhi)
+- Tombol bagikan di lightbox image yang sama dengan tombol bagikan di quick view
+
 ## [1.6.2] - 2024-05-16
 
 ### Diperbaiki

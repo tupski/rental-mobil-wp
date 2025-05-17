@@ -33,10 +33,45 @@ if (!defined('WPINC')) {
             </div>
 
             <div class="rental-mobil-zoom-actions">
-                <button class="rental-mobil-zoom-share">
-                    <span class="dashicons dashicons-share"></span>
-                    <span class="rental-mobil-zoom-action-text">Bagikan</span>
-                </button>
+                <?php
+                // Dapatkan platform share dari pengaturan
+                $share_platforms = rental_mobil_get_share_platforms();
+
+                if (!empty($share_platforms)) :
+                ?>
+                <div class="rental-mobil-zoom-share-container">
+                    <span class="rental-mobil-zoom-share-label"><?php _e('Bagikan:', 'rental-mobil-wp'); ?></span>
+                    <div class="rental-mobil-zoom-share-buttons">
+                        <?php foreach ($share_platforms as $platform) :
+                            // Tentukan ikon yang sesuai untuk setiap platform
+                            $icon_class = 'dashicons-share';
+                            $platform_name = ucfirst($platform);
+
+                            if ($platform === 'whatsapp') {
+                                $icon_class = 'dashicons-whatsapp';
+                                $platform_name = 'WhatsApp';
+                            } elseif ($platform === 'facebook') {
+                                $icon_class = 'dashicons-facebook';
+                                $platform_name = 'Facebook';
+                            } elseif ($platform === 'twitter') {
+                                $icon_class = 'dashicons-twitter';
+                                $platform_name = 'Twitter';
+                            } elseif ($platform === 'telegram') {
+                                $icon_class = 'dashicons-format-chat';
+                                $platform_name = 'Telegram';
+                            } elseif ($platform === 'email') {
+                                $icon_class = 'dashicons-email';
+                                $platform_name = 'Email';
+                            }
+                        ?>
+                            <button class="rental-mobil-zoom-share-button rental-mobil-zoom-share-<?php echo esc_attr($platform); ?>" data-platform="<?php echo esc_attr($platform); ?>" title="<?php echo esc_attr($platform_name); ?>">
+                                <span class="dashicons <?php echo esc_attr($icon_class); ?>"></span>
+                                <span class="rental-mobil-tooltip"><?php echo esc_html($platform_name); ?></span>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

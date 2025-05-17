@@ -122,6 +122,9 @@
         const today = new Date().toISOString().split('T')[0];
         $('.rental-mobil-booking-form input[type="date"]').attr('min', today);
 
+        // Inisialisasi conditional logic untuk form
+        initConditionalLogic();
+
         // Initialize time picker for time fields
         $('.rental-mobil-time-picker').each(function() {
             $(this).on('focus', function() {
@@ -799,7 +802,11 @@
             initZoomThumbnailNavigation();
 
             // Inisialisasi tombol share
-            $('.rental-mobil-zoom-share').on('click', function() {
+            $('.rental-mobil-zoom-share-button').off('click').on('click', function() {
+                const platform = $(this).data('platform');
+                console.log('Zoom Share platform:', platform);
+                console.log('Zoom Share title:', title);
+
                 // Dapatkan path URL saat ini (tanpa domain dan query string)
                 const currentPath = window.location.pathname;
 
@@ -821,66 +828,26 @@
                 urlParams.set('kata_kunci', title);
                 urlParams.set('halaman', '1');
 
-                // Tambahkan nonce jika ada di URL saat ini
-                const nonceParam = urlParams.get('rental_mobil_filter_nonce');
-                if (nonceParam) {
-                    urlParams.set('rental_mobil_filter_nonce', nonceParam);
-                }
-
                 // Buat URL lengkap
                 const shareUrl = baseUrl + '?' + urlParams.toString();
+                console.log('Zoom Share URL:', shareUrl);
 
-                if (navigator.share) {
-                    navigator.share({
-                        title: title,
-                        url: shareUrl
-                    })
-                    .catch(console.error);
-                } else {
-                    // Fallback untuk browser yang tidak mendukung Web Share API
-                    // Gunakan Clipboard API jika tersedia
-                    if (navigator.clipboard) {
-                        navigator.clipboard.writeText(shareUrl)
-                            .then(() => {
-                                alert('URL telah disalin ke clipboard');
-                            })
-                            .catch(err => {
-                                console.error('Gagal menyalin URL: ', err);
-                                alert('Gagal menyalin URL. Silakan coba lagi.');
-                            });
-                    } else {
-                        // Fallback untuk browser yang tidak mendukung Clipboard API
-                        try {
-                            // Gunakan navigator.clipboard API jika tersedia
-                            if (navigator.clipboard) {
-                                navigator.clipboard.writeText(shareUrl)
-                                    .then(() => {
-                                        alert('URL telah disalin ke clipboard');
-                                    })
-                                    .catch(() => {
-                                        alert('Gagal menyalin URL. Silakan coba lagi.');
-                                    });
-                            } else {
-                                // Fallback lama jika tidak ada pilihan lain
-                                const tempInput = $('<input>');
-                                $('body').append(tempInput);
-                                tempInput.val(shareUrl).select();
-
-                                // Gunakan document.execCommand dengan peringatan
-                                // eslint-disable-next-line deprecation/deprecation
-                                const successful = document.execCommand('copy');
-                                if (successful) {
-                                    alert('URL telah disalin ke clipboard');
-                                } else {
-                                    alert('Gagal menyalin URL. Silakan coba lagi.');
-                                }
-                                tempInput.remove();
-                            }
-                        } catch (err) {
-                            console.error('Gagal menyalin URL: ', err);
-                            alert('Gagal menyalin URL. Silakan coba lagi.');
-                        }
-                    }
+                switch(platform) {
+                    case 'whatsapp':
+                        window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(title + ' - ' + shareUrl), '_blank');
+                        break;
+                    case 'facebook':
+                        window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank');
+                        break;
+                    case 'twitter':
+                        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(title) + '&url=' + encodeURIComponent(shareUrl), '_blank');
+                        break;
+                    case 'telegram':
+                        window.open('https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(title), '_blank');
+                        break;
+                    case 'email':
+                        window.open('mailto:?subject=' + encodeURIComponent('Info Rental Mobil: ' + title) + '&body=' + encodeURIComponent('Lihat info tentang ' + title + ' di ' + shareUrl), '_blank');
+                        break;
                 }
             });
 
@@ -1493,6 +1460,46 @@
                 }
             });
         }
+    }
+
+    // Fungsi untuk menginisialisasi conditional logic pada form
+    function initConditionalLogic() {
+        // Tambahkan event listener untuk semua input dan select di form booking
+        $('.rental-mobil-booking-form input, .rental-mobil-booking-form select, .rental-mobil-custom-booking-form input, .rental-mobil-custom-booking-form select').on('change', function() {
+            const fieldId = $(this).attr('name');
+            const fieldValue = $(this).val();
+
+            // Cek semua field conditional
+            $('.rental-mobil-conditional-field').each(function() {
+                const conditionalField = $(this).data('conditional-field');
+                const conditionalOperator = $(this).data('conditional-operator');
+                const conditionalValue = $(this).data('conditional-value');
+
+                // Jika field ini tergantung pada field yang berubah
+                if (conditionalField === fieldId) {
+                    let shouldShow = false;
+
+                    // Evaluasi kondisi
+                    if (conditionalOperator === 'equal') {
+                        shouldShow = fieldValue === conditionalValue;
+                    } else if (conditionalOperator === 'not_equal') {
+                        shouldShow = fieldValue !== conditionalValue;
+                    }
+
+                    // Tampilkan atau sembunyikan field
+                    if (shouldShow) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                        // Reset nilai field
+                        $(this).find('input, select').val('');
+                    }
+                }
+            });
+        });
+
+        // Trigger change event pada semua field untuk menginisialisasi kondisi
+        $('.rental-mobil-booking-form input, .rental-mobil-booking-form select, .rental-mobil-custom-booking-form input, .rental-mobil-custom-booking-form select').first().trigger('change');
     }
 
     // Fungsi untuk menginisialisasi filter dari parameter URL

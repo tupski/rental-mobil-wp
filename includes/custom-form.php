@@ -84,49 +84,65 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
     <form class="rental-mobil-custom-booking-form" id="rental-mobil-custom-booking-form">
         <input type="hidden" id="rental-mobil-custom-booking-kendaraan-id" name="kendaraan_id" value="<?php echo esc_attr($kendaraan_id); ?>">
         <input type="hidden" id="rental-mobil-custom-booking-kendaraan-title" name="kendaraan_title" value="<?php echo esc_attr($kendaraan_title); ?>">
-        
-        <?php foreach ($form_fields as $field) : ?>
-            <div class="rental-mobil-custom-booking-field">
+
+        <?php foreach ($form_fields as $field) :
+            // Tentukan ukuran field, default 100%
+            $field_width = isset($field['width']) ? $field['width'] : '100';
+
+            // Tentukan atribut conditional
+            $conditional_attrs = '';
+            $conditional_class = '';
+            $conditional_style = '';
+
+            if (isset($field['conditional']) && !empty($field['conditional'])) {
+                $conditional_attrs = 'data-conditional-field="' . esc_attr($field['conditional']['field']) . '" ';
+                $conditional_attrs .= 'data-conditional-operator="' . esc_attr($field['conditional']['operator']) . '" ';
+                $conditional_attrs .= 'data-conditional-value="' . esc_attr($field['conditional']['value']) . '"';
+                $conditional_class = 'rental-mobil-conditional-field';
+                $conditional_style = 'style="display:none;"';
+            }
+        ?>
+            <div class="rental-mobil-custom-booking-field rental-mobil-field-width-<?php echo esc_attr($field_width); ?> <?php echo esc_attr($conditional_class); ?>" <?php echo $conditional_attrs; ?> <?php echo $conditional_style; ?>>
                 <label for="rental-mobil-custom-booking-<?php echo esc_attr($field['id']); ?>">
                     <?php echo esc_html($field['label']); ?>
                     <?php if ($field['required']) : ?>
                         <span class="required">*</span>
                     <?php endif; ?>
                 </label>
-                
+
                 <?php switch ($field['type']) {
                     case 'text':
                     case 'email':
                     case 'tel':
                     case 'number':
                         ?>
-                        <input 
-                            type="<?php echo esc_attr($field['type']); ?>" 
-                            id="rental-mobil-custom-booking-<?php echo esc_attr($field['id']); ?>" 
-                            name="<?php echo esc_attr($field['id']); ?>" 
-                            placeholder="<?php echo esc_attr($field['placeholder']); ?>" 
+                        <input
+                            type="<?php echo esc_attr($field['type']); ?>"
+                            id="rental-mobil-custom-booking-<?php echo esc_attr($field['id']); ?>"
+                            name="<?php echo esc_attr($field['id']); ?>"
+                            placeholder="<?php echo esc_attr($field['placeholder']); ?>"
                             <?php echo $field['required'] ? 'required' : ''; ?>
                         >
                         <?php
                         break;
                     case 'date':
                         ?>
-                        <input 
-                            type="date" 
-                            id="rental-mobil-custom-booking-<?php echo esc_attr($field['id']); ?>" 
-                            name="<?php echo esc_attr($field['id']); ?>" 
+                        <input
+                            type="date"
+                            id="rental-mobil-custom-booking-<?php echo esc_attr($field['id']); ?>"
+                            name="<?php echo esc_attr($field['id']); ?>"
                             <?php echo $field['required'] ? 'required' : ''; ?>
                         >
                         <?php
                         break;
                     case 'time':
                         ?>
-                        <input 
-                            type="text" 
-                            id="rental-mobil-custom-booking-<?php echo esc_attr($field['id']); ?>" 
-                            name="<?php echo esc_attr($field['id']); ?>" 
-                            class="rental-mobil-time-picker" 
-                            placeholder="HH:MM" 
+                        <input
+                            type="text"
+                            id="rental-mobil-custom-booking-<?php echo esc_attr($field['id']); ?>"
+                            name="<?php echo esc_attr($field['id']); ?>"
+                            class="rental-mobil-time-picker"
+                            placeholder="HH:MM"
                             <?php echo $field['required'] ? 'required' : ''; ?>
                             readonly
                         >
@@ -134,9 +150,9 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
                         break;
                     case 'select':
                         ?>
-                        <select 
-                            id="rental-mobil-custom-booking-<?php echo esc_attr($field['id']); ?>" 
-                            name="<?php echo esc_attr($field['id']); ?>" 
+                        <select
+                            id="rental-mobil-custom-booking-<?php echo esc_attr($field['id']); ?>"
+                            name="<?php echo esc_attr($field['id']); ?>"
                             <?php echo $field['required'] ? 'required' : ''; ?>
                         >
                             <option value=""><?php _e('-- Pilih --', 'rental-mobil-wp'); ?></option>
@@ -150,10 +166,10 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
                         break;
                     case 'textarea':
                         ?>
-                        <textarea 
-                            id="rental-mobil-custom-booking-<?php echo esc_attr($field['id']); ?>" 
-                            name="<?php echo esc_attr($field['id']); ?>" 
-                            placeholder="<?php echo esc_attr($field['placeholder']); ?>" 
+                        <textarea
+                            id="rental-mobil-custom-booking-<?php echo esc_attr($field['id']); ?>"
+                            name="<?php echo esc_attr($field['id']); ?>"
+                            placeholder="<?php echo esc_attr($field['placeholder']); ?>"
                             <?php echo $field['required'] ? 'required' : ''; ?>
                         ></textarea>
                         <?php
@@ -161,7 +177,7 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
                 } ?>
             </div>
         <?php endforeach; ?>
-        
+
         <div class="rental-mobil-custom-booking-submit">
             <button type="submit" class="rental-mobil-button"><?php _e('Booking Sekarang', 'rental-mobil-wp'); ?></button>
         </div>
@@ -173,23 +189,23 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
         $('.rental-mobil-time-picker').on('focus', function() {
             const input = $(this);
             let options = input.next('.rental-mobil-time-picker-options');
-            
+
             if (options.length === 0) {
                 // Create options container
                 options = $('<div class="rental-mobil-time-picker-options"></div>');
                 input.after(options);
-                
+
                 // Add time options (only 00 and 30 minutes)
                 for (let hour = 0; hour < 24; hour++) {
                     const hourFormatted = hour.toString().padStart(2, '0');
-                    
+
                     // Add option for XX:00
                     options.append(`<div class="rental-mobil-time-picker-option" data-value="${hourFormatted}:00">${hourFormatted}:00</div>`);
-                    
+
                     // Add option for XX:30
                     options.append(`<div class="rental-mobil-time-picker-option" data-value="${hourFormatted}:30">${hourFormatted}:30</div>`);
                 }
-                
+
                 // Handle option click
                 options.on('click', '.rental-mobil-time-picker-option', function() {
                     const value = $(this).data('value');
@@ -197,17 +213,17 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
                     options.hide();
                 });
             }
-            
+
             // Position options
             const inputOffset = input.offset();
             const inputHeight = input.outerHeight();
-            
+
             options.css({
                 top: inputOffset.top + inputHeight + 'px',
                 left: inputOffset.left + 'px',
                 width: input.outerWidth() + 'px'
             }).show();
-            
+
             // Hide options when clicking outside
             $(document).one('click', function(e) {
                 if (!$(e.target).hasClass('rental-mobil-time-picker') && !$(e.target).hasClass('rental-mobil-time-picker-option')) {
@@ -219,13 +235,13 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
         // Form submission
         $('#rental-mobil-custom-booking-form').on('submit', function(e) {
             e.preventDefault();
-            
+
             // Collect form data
             const formData = {};
             $(this).serializeArray().forEach(function(item) {
                 formData[item.name] = item.value;
             });
-            
+
             // Validate form
             let isValid = true;
             $(this).find('[required]').each(function() {
@@ -236,12 +252,12 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
                     $(this).removeClass('error');
                 }
             });
-            
+
             if (!isValid) {
                 alert('Mohon lengkapi semua field yang wajib diisi.');
                 return;
             }
-            
+
             // Format tanggal
             if (formData.tanggal_sewa) {
                 const tanggalObj = new Date(formData.tanggal_sewa);
@@ -251,7 +267,7 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
                     year: 'numeric'
                 });
             }
-            
+
             // Kirim ke WhatsApp
             $.ajax({
                 url: rental_mobil_ajax.ajax_url,
@@ -266,10 +282,10 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
                         // Buka WhatsApp
                         const whatsappUrl = `https://wa.me/${response.data.whatsapp_number}?text=${encodeURIComponent(response.data.message)}`;
                         window.open(whatsappUrl, '_blank');
-                        
+
                         // Reset form
                         $('#rental-mobil-custom-booking-form')[0].reset();
-                        
+
                         // Tampilkan pesan sukses
                         alert('Booking berhasil dikirim. Anda akan diarahkan ke WhatsApp.');
                     } else {
@@ -298,49 +314,49 @@ function rental_mobil_custom_booking_ajax() {
         wp_send_json_error(array('message' => 'Invalid nonce'));
         return;
     }
-    
+
     // Get form data
     $form_data = isset($_POST['form_data']) ? $_POST['form_data'] : array();
-    
+
     if (empty($form_data) || !isset($form_data['kendaraan_id'])) {
         wp_send_json_error(array('message' => 'Invalid form data'));
         return;
     }
-    
+
     // Get kendaraan data
     $kendaraan_id = intval($form_data['kendaraan_id']);
     $kendaraan = get_post($kendaraan_id);
-    
+
     if (!$kendaraan || $kendaraan->post_type !== 'kendaraan') {
         wp_send_json_error(array('message' => 'Invalid kendaraan'));
         return;
     }
-    
+
     // Get WhatsApp number
     $options = rental_mobil_get_options();
     $whatsapp_number = isset($options['whatsapp_number']) ? $options['whatsapp_number'] : '';
-    
+
     // Clean WhatsApp number
     $whatsapp_number = preg_replace('/[^0-9]/', '', $whatsapp_number);
-    
+
     // Add country code if needed
     if (substr($whatsapp_number, 0, 1) === '0') {
         $whatsapp_number = '62' . substr($whatsapp_number, 1);
     }
-    
+
     // Build message
     $message = "Halo, saya ingin booking kendaraan:\n\n";
     $message .= "Kendaraan: " . $kendaraan->post_title . "\n";
-    
+
     // Add form fields to message
     $options = rental_mobil_get_options();
     $form_fields = isset($options['form_fields']) ? $options['form_fields'] : array();
-    
+
     // Urutkan fields berdasarkan order
     usort($form_fields, function($a, $b) {
         return $a['order'] - $b['order'];
     });
-    
+
     foreach ($form_fields as $field) {
         if (isset($form_data[$field['id']]) && $form_data[$field['id']] !== '') {
             // Format tanggal jika ada
@@ -356,9 +372,9 @@ function rental_mobil_custom_booking_ajax() {
             }
         }
     }
-    
+
     $message .= "\nTerima kasih.";
-    
+
     wp_send_json_success(array(
         'whatsapp_number' => $whatsapp_number,
         'message' => $message

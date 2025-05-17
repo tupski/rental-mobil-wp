@@ -208,9 +208,43 @@ function rental_mobil_form_builder_ui() {
                 </div>
 
                 <div class="rental-mobil-field-form-group">
+                    <label for="rental-mobil-field-width"><?php _e('Ukuran Field', 'rental-mobil-wp'); ?></label>
+                    <select id="rental-mobil-field-width">
+                        <option value="100"><?php _e('100% (Full Width)', 'rental-mobil-wp'); ?></option>
+                        <option value="75"><?php _e('75% (3/4 Width)', 'rental-mobil-wp'); ?></option>
+                        <option value="50"><?php _e('50% (Half Width)', 'rental-mobil-wp'); ?></option>
+                        <option value="25"><?php _e('25% (Quarter Width)', 'rental-mobil-wp'); ?></option>
+                    </select>
+                    <p class="description"><?php _e('Ukuran field pada form booking', 'rental-mobil-wp'); ?></p>
+                </div>
+
+                <div class="rental-mobil-field-form-group rental-mobil-field-conditional-container" style="display: none;">
+                    <label><?php _e('Kondisi Tampilan', 'rental-mobil-wp'); ?></label>
+                    <div class="rental-mobil-field-conditional-settings">
+                        <select id="rental-mobil-field-conditional-field">
+                            <option value=""><?php _e('-- Pilih Field --', 'rental-mobil-wp'); ?></option>
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                        <select id="rental-mobil-field-conditional-operator">
+                            <option value="equal"><?php _e('Sama dengan', 'rental-mobil-wp'); ?></option>
+                            <option value="not_equal"><?php _e('Tidak sama dengan', 'rental-mobil-wp'); ?></option>
+                        </select>
+                        <input type="text" id="rental-mobil-field-conditional-value" placeholder="<?php _e('Nilai', 'rental-mobil-wp'); ?>">
+                    </div>
+                    <p class="description"><?php _e('Field ini hanya akan ditampilkan jika kondisi terpenuhi', 'rental-mobil-wp'); ?></p>
+                </div>
+
+                <div class="rental-mobil-field-form-group">
                     <label>
                         <input type="checkbox" id="rental-mobil-field-required">
                         <?php _e('Wajib diisi', 'rental-mobil-wp'); ?>
+                    </label>
+                </div>
+
+                <div class="rental-mobil-field-form-group">
+                    <label>
+                        <input type="checkbox" id="rental-mobil-field-conditional-enabled">
+                        <?php _e('Aktifkan kondisi tampilan', 'rental-mobil-wp'); ?>
                     </label>
                 </div>
 

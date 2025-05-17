@@ -80,8 +80,24 @@ usort($form_fields, function($a, $b) {
     <input type="hidden" id="rental-mobil-booking-kendaraan-id" name="kendaraan_id" value="<?php echo esc_attr($kendaraan_id); ?>">
     <input type="hidden" id="rental-mobil-booking-kendaraan-title" name="kendaraan_title" value="<?php echo esc_attr(get_the_title($kendaraan_id)); ?>">
 
-    <?php foreach ($form_fields as $field) : ?>
-        <div class="rental-mobil-form-group">
+    <?php foreach ($form_fields as $field) :
+        // Tentukan ukuran field, default 100%
+        $field_width = isset($field['width']) ? $field['width'] : '100';
+
+        // Tentukan atribut conditional
+        $conditional_attrs = '';
+        $conditional_class = '';
+        $conditional_style = '';
+
+        if (isset($field['conditional']) && !empty($field['conditional'])) {
+            $conditional_attrs = 'data-conditional-field="' . esc_attr($field['conditional']['field']) . '" ';
+            $conditional_attrs .= 'data-conditional-operator="' . esc_attr($field['conditional']['operator']) . '" ';
+            $conditional_attrs .= 'data-conditional-value="' . esc_attr($field['conditional']['value']) . '"';
+            $conditional_class = 'rental-mobil-conditional-field';
+            $conditional_style = 'style="display:none;"';
+        }
+    ?>
+        <div class="rental-mobil-form-group rental-mobil-field-width-<?php echo esc_attr($field_width); ?> <?php echo esc_attr($conditional_class); ?>" <?php echo $conditional_attrs; ?> <?php echo $conditional_style; ?>>
             <label for="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>">
                 <?php echo esc_html($field['label']); ?>
                 <?php if ($field['required']) : ?>
@@ -95,42 +111,42 @@ usort($form_fields, function($a, $b) {
                 case 'tel':
                 case 'number':
                     ?>
-                    <input 
-                        type="<?php echo esc_attr($field['type']); ?>" 
-                        id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>" 
-                        name="<?php echo esc_attr($field['id']); ?>" 
-                        placeholder="<?php echo esc_attr($field['placeholder']); ?>" 
+                    <input
+                        type="<?php echo esc_attr($field['type']); ?>"
+                        id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>"
+                        name="<?php echo esc_attr($field['id']); ?>"
+                        placeholder="<?php echo esc_attr($field['placeholder']); ?>"
                         <?php echo $field['required'] ? 'required' : ''; ?>
                     >
                     <?php
                     break;
                 case 'date':
                     ?>
-                    <input 
-                        type="date" 
-                        id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>" 
-                        name="<?php echo esc_attr($field['id']); ?>" 
+                    <input
+                        type="date"
+                        id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>"
+                        name="<?php echo esc_attr($field['id']); ?>"
                         <?php echo $field['required'] ? 'required' : ''; ?>
                     >
                     <?php
                     break;
                 case 'time':
                     ?>
-                    <input 
-                        type="text" 
-                        id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>" 
-                        name="<?php echo esc_attr($field['id']); ?>" 
-                        class="rental-mobil-time-picker" 
-                        placeholder="HH:MM" 
+                    <input
+                        type="text"
+                        id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>"
+                        name="<?php echo esc_attr($field['id']); ?>"
+                        class="rental-mobil-time-picker"
+                        placeholder="HH:MM"
                         <?php echo $field['required'] ? 'required' : ''; ?>
                     >
                     <?php
                     break;
                 case 'select':
                     ?>
-                    <select 
-                        id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>" 
-                        name="<?php echo esc_attr($field['id']); ?>" 
+                    <select
+                        id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>"
+                        name="<?php echo esc_attr($field['id']); ?>"
                         <?php echo $field['required'] ? 'required' : ''; ?>
                     >
                         <option value=""><?php _e('-- Pilih --', 'rental-mobil-wp'); ?></option>
@@ -144,10 +160,10 @@ usort($form_fields, function($a, $b) {
                     break;
                 case 'textarea':
                     ?>
-                    <textarea 
-                        id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>" 
-                        name="<?php echo esc_attr($field['id']); ?>" 
-                        placeholder="<?php echo esc_attr($field['placeholder']); ?>" 
+                    <textarea
+                        id="rental-mobil-booking-<?php echo esc_attr($field['id']); ?>"
+                        name="<?php echo esc_attr($field['id']); ?>"
+                        placeholder="<?php echo esc_attr($field['placeholder']); ?>"
                         <?php echo $field['required'] ? 'required' : ''; ?>
                     ></textarea>
                     <?php
