@@ -3,7 +3,7 @@
  * Plugin Name: Rental Mobil WP
  * Plugin URI: https://tupski.web.id/rental-mobil-wp
  * Description: Plugin WordPress untuk rental mobil dengan fitur menampilkan daftar kendaraan, detail, dan booking.
- * Version: 1.6.8
+ * Version: 1.7.0
  * Author: Angga Artupas
  * Author URI: https://tupski.web.id
  * Text Domain: rental-mobil-wp
@@ -20,7 +20,7 @@ if (!defined('WPINC')) {
 }
 
 // Definisikan konstanta plugin
-define('RENTAL_MOBIL_VERSION', '1.6.8');
+define('RENTAL_MOBIL_VERSION', '1.7.0');
 define('RENTAL_MOBIL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('RENTAL_MOBIL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('RENTAL_MOBIL_PLUGIN_FILE', __FILE__);
@@ -164,25 +164,15 @@ function rental_mobil_wp_admin_menu() {
         __('Rental Mobil WP', 'rental-mobil-wp'),
         __('Rental Mobil WP', 'rental-mobil-wp'),
         'manage_options',
-        'rental-mobil-dashboard',
-        'rental_mobil_dashboard_page',
+        'edit.php?post_type=kendaraan',
+        '',
         'dashicons-car',
         30
     );
 
-    // Submenu: Semua Kendaraan
-    add_submenu_page(
-        'rental-mobil-dashboard',
-        __('Semua Kendaraan', 'rental-mobil-wp'),
-        __('Semua Kendaraan', 'rental-mobil-wp'),
-        'manage_options',
-        'edit.php?post_type=kendaraan',
-        ''
-    );
-
     // Submenu: Tambah Kendaraan Baru
     add_submenu_page(
-        'rental-mobil-dashboard',
+        'edit.php?post_type=kendaraan',
         __('Tambah Kendaraan Baru', 'rental-mobil-wp'),
         __('Tambah Baru', 'rental-mobil-wp'),
         'manage_options',
@@ -192,7 +182,7 @@ function rental_mobil_wp_admin_menu() {
 
     // Submenu: Merk Kendaraan
     add_submenu_page(
-        'rental-mobil-dashboard',
+        'edit.php?post_type=kendaraan',
         __('Merk Kendaraan', 'rental-mobil-wp'),
         __('Merk Kendaraan', 'rental-mobil-wp'),
         'manage_options',
@@ -202,7 +192,7 @@ function rental_mobil_wp_admin_menu() {
 
     // Submenu: Transmisi
     add_submenu_page(
-        'rental-mobil-dashboard',
+        'edit.php?post_type=kendaraan',
         __('Transmisi', 'rental-mobil-wp'),
         __('Transmisi', 'rental-mobil-wp'),
         'manage_options',
@@ -212,7 +202,7 @@ function rental_mobil_wp_admin_menu() {
 
     // Submenu: Bahan Bakar
     add_submenu_page(
-        'rental-mobil-dashboard',
+        'edit.php?post_type=kendaraan',
         __('Bahan Bakar', 'rental-mobil-wp'),
         __('Bahan Bakar', 'rental-mobil-wp'),
         'manage_options',
@@ -222,7 +212,7 @@ function rental_mobil_wp_admin_menu() {
 
     // Submenu: Tipe Kendaraan
     add_submenu_page(
-        'rental-mobil-dashboard',
+        'edit.php?post_type=kendaraan',
         __('Tipe Kendaraan', 'rental-mobil-wp'),
         __('Tipe Kendaraan', 'rental-mobil-wp'),
         'manage_options',
@@ -232,7 +222,7 @@ function rental_mobil_wp_admin_menu() {
 
     // Submenu: Tahun Kendaraan
     add_submenu_page(
-        'rental-mobil-dashboard',
+        'edit.php?post_type=kendaraan',
         __('Tahun Kendaraan', 'rental-mobil-wp'),
         __('Tahun Kendaraan', 'rental-mobil-wp'),
         'manage_options',
@@ -242,7 +232,7 @@ function rental_mobil_wp_admin_menu() {
 
     // Submenu: Pengaturan
     add_submenu_page(
-        'rental-mobil-dashboard',
+        'edit.php?post_type=kendaraan',
         __('Pengaturan Rental Mobil', 'rental-mobil-wp'),
         __('Pengaturan', 'rental-mobil-wp'),
         'manage_options',
@@ -251,12 +241,7 @@ function rental_mobil_wp_admin_menu() {
     );
 }
 
-// Halaman dashboard
-function rental_mobil_dashboard_page() {
-    // Redirect ke halaman daftar kendaraan
-    wp_redirect(admin_url('edit.php?post_type=kendaraan'));
-    exit;
-}
+
 
 // Inisialisasi plugin
 add_action('init', 'rental_mobil_wp_init');

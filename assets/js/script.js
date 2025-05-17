@@ -43,6 +43,9 @@
         const inlineMinuteDropdown = $('#rental-mobil-inline-booking-jam-minute');
         const inlineTimeInput = $('#rental-mobil-inline-booking-jam');
 
+        // Inisialisasi filter dari URL saat halaman dimuat
+        initFilterFromUrl();
+
         // Inisialisasi formData untuk paginasi awal
         let initialFormData = filterForm.serialize();
 
@@ -1082,12 +1085,11 @@
         filterForm.on('submit', function(e) {
             e.preventDefault();
 
-            const formData = $(this).serialize();
-
-            // Update URL dengan parameter filter
+            // Buat formData yang hanya berisi field yang diisi
             const formValues = {};
             $.each($(this).serializeArray(), function(_, field) {
-                if (field.value) {
+                // Hanya sertakan field yang memiliki nilai dan bukan field nonce atau _wp_http_referer
+                if (field.value && field.name !== 'rental_mobil_filter_nonce' && field.name !== '_wp_http_referer') {
                     formValues[field.name] = field.value;
                 }
             });
@@ -1110,8 +1112,17 @@
             const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
             window.history.pushState({ path: newUrl }, '', newUrl);
 
+            // Buat formData untuk AJAX request
+            const formData = new URLSearchParams();
+            for (const [key, value] of Object.entries(formValues)) {
+                formData.append(key, value);
+            }
+
+            // Tambahkan nonce untuk keamanan
+            formData.append('rental_mobil_filter_nonce', $('input[name="rental_mobil_filter_nonce"]').val());
+
             // Tambahkan paged=1 untuk reset ke halaman pertama saat filter
-            loadKendaraan(formData, 1);
+            loadKendaraan(formData.toString(), 1);
         });
 
         // Fungsi untuk memuat kendaraan dengan AJAX
@@ -1125,10 +1136,23 @@
             // Dapatkan parameter filter dari formData
             const formParams = new URLSearchParams(formData);
 
+            // Hapus semua parameter yang tidak diinginkan dari URL
+            const validParams = ['kata_kunci', 'merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order', 'halaman'];
+            Array.from(urlParams.keys()).forEach(key => {
+                if (!validParams.includes(key)) {
+                    urlParams.delete(key);
+                }
+            });
+
             // Tambahkan atau perbarui parameter filter ke URL
             formParams.forEach((value, key) => {
-                if (value) {
-                    urlParams.set(key, value);
+                // Konversi nama parameter ke format bahasa Indonesia
+                let paramName = key;
+                if (key === 'keyword') paramName = 'kata_kunci';
+
+                // Hanya tambahkan parameter yang valid dan memiliki nilai
+                if (value && !['rental_mobil_filter_nonce', '_wp_http_referer'].includes(key)) {
+                    urlParams.set(paramName, value);
                 }
             });
 
@@ -1231,6 +1255,46 @@
                 closeFilterSidebar();
             }
         });
+
+        // Fungsi untuk menginisialisasi filter dari URL
+        function initFilterFromUrl() {
+            // Dapatkan parameter URL
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Mapping parameter URL ke field filter
+            const paramMapping = {
+                'kata_kunci': { field: '#rental-mobil-filter-keyword', type: 'input' },
+                'merk': { field: '#rental-mobil-filter-merk', type: 'select' },
+                'transmisi': { field: '#rental-mobil-filter-transmisi', type: 'select' },
+                'bahan_bakar': { field: '#rental-mobil-filter-bahan-bakar', type: 'select' },
+                'tipe': { field: '#rental-mobil-filter-tipe', type: 'select' },
+                'tahun': { field: '#rental-mobil-filter-tahun', type: 'select' },
+                'orderby': { field: '#rental-mobil-filter-orderby', type: 'select' },
+                'order': { field: '#rental-mobil-filter-order', type: 'select' }
+            };
+
+            // Cek apakah ada parameter filter di URL
+            let hasFilter = false;
+
+            // Isi form filter berdasarkan parameter URL
+            for (const [param, config] of Object.entries(paramMapping)) {
+                if (urlParams.has(param)) {
+                    const value = urlParams.get(param);
+                    if (value) {
+                        $(config.field).val(value);
+                        hasFilter = true;
+                    }
+                }
+            }
+
+            // Selalu terapkan filter, baik dari URL atau pengaturan default
+            // Tunggu sebentar untuk memastikan form sudah terisi
+            setTimeout(function() {
+                // Terapkan filter tanpa submit form (untuk menghindari redirect)
+                const formData = filterForm.serialize();
+                loadKendaraan(formData, urlParams.get('halaman') || 1);
+            }, 100);
+        }
 
         // Fungsi untuk menampilkan filter aktif
         function renderActiveFilters(filters) {
@@ -1643,68 +1707,6 @@
         $('.rental-mobil-booking-form input, .rental-mobil-booking-form select, .rental-mobil-custom-booking-form input, .rental-mobil-custom-booking-form select').first().trigger('change');
     }
 
-    // Fungsi untuk menginisialisasi filter dari parameter URL
-    function initFilterFromUrl() {
-        const $ = jQuery;
-        const urlParams = new URLSearchParams(window.location.search);
-        let hasFilter = false;
 
-        // Mapping parameter URL ke field form
-        if (urlParams.has('kata_kunci')) {
-            $('#rental-mobil-filter-keyword').val(urlParams.get('kata_kunci'));
-            hasFilter = true;
-        }
-
-        if (urlParams.has('merk')) {
-            $('#rental-mobil-filter-merk').val(urlParams.get('merk'));
-            hasFilter = true;
-        }
-
-        if (urlParams.has('transmisi')) {
-            $('#rental-mobil-filter-transmisi').val(urlParams.get('transmisi'));
-            hasFilter = true;
-        }
-
-        if (urlParams.has('bahan_bakar')) {
-            $('#rental-mobil-filter-bahan-bakar').val(urlParams.get('bahan_bakar'));
-            hasFilter = true;
-        }
-
-        if (urlParams.has('tipe')) {
-            $('#rental-mobil-filter-tipe').val(urlParams.get('tipe'));
-            hasFilter = true;
-        }
-
-        if (urlParams.has('tahun')) {
-            $('#rental-mobil-filter-tahun').val(urlParams.get('tahun'));
-            hasFilter = true;
-        }
-
-        if (urlParams.has('orderby')) {
-            $('#rental-mobil-filter-orderby').val(urlParams.get('orderby'));
-            hasFilter = true;
-        }
-
-        if (urlParams.has('order')) {
-            $('#rental-mobil-filter-order').val(urlParams.get('order'));
-            hasFilter = true;
-        }
-
-        // Cek parameter halaman
-        if (urlParams.has('halaman')) {
-            currentPage = parseInt(urlParams.get('halaman')) || 1;
-            hasFilter = true;
-        } else if (urlParams.has('paged')) {
-            // Untuk kompatibilitas dengan parameter lama
-            currentPage = parseInt(urlParams.get('paged')) || 1;
-            hasFilter = true;
-        }
-
-        // Jika ada parameter filter, submit form dan muat halaman yang benar
-        if (hasFilter) {
-            // Trigger submit form untuk menerapkan filter
-            $('#rental-mobil-filter-form').trigger('submit');
-        }
-    }
 
 })(jQuery);

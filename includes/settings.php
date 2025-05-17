@@ -1166,6 +1166,29 @@ function rental_mobil_validate_options($input) {
         $output['frontend_filter_options'] = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
     }
 
+    // Sanitize filter sort options
+    if (isset($input['filter_sort_field'])) {
+        $valid_fields = array('harga_harian', 'dipublish', 'judul');
+        $output['filter_sort_field'] = in_array($input['filter_sort_field'], $valid_fields) ? $input['filter_sort_field'] : 'harga_harian';
+    }
+
+    if (isset($input['filter_sort_price'])) {
+        $valid_orders = array('high_to_low', 'low_to_high');
+        $output['filter_sort_price'] = in_array($input['filter_sort_price'], $valid_orders) ? $input['filter_sort_price'] : 'high_to_low';
+    }
+
+    if (isset($input['filter_sort_date'])) {
+        $valid_orders = array('newest', 'oldest');
+        $output['filter_sort_date'] = in_array($input['filter_sort_date'], $valid_orders) ? $input['filter_sort_date'] : 'newest';
+    }
+
+    if (isset($input['filter_sort_title'])) {
+        $valid_orders = array('a_to_z', 'z_to_a');
+        $output['filter_sort_title'] = in_array($input['filter_sort_title'], $valid_orders) ? $input['filter_sort_title'] : 'a_to_z';
+    }
+
+
+
     // Sanitize admin filter options
     if (isset($input['admin_filter_options']) && is_array($input['admin_filter_options'])) {
         $valid_filters = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'featured', 'popular');
@@ -1796,7 +1819,6 @@ function rental_mobil_filter_sort_options_callback() {
     $price_order = rental_mobil_get_option('filter_sort_price', 'high_to_low');
     $date_order = rental_mobil_get_option('filter_sort_date', 'newest');
     $title_order = rental_mobil_get_option('filter_sort_title', 'a_to_z');
-    $random = rental_mobil_get_option('filter_sort_random', '0');
     ?>
     <div class="rental-mobil-filter-sort-options">
         <div class="rental-mobil-filter-sort-row">
@@ -1832,13 +1854,6 @@ function rental_mobil_filter_sort_options_callback() {
                     <option value="z_to_a" <?php selected($title_order, 'z_to_a'); ?>><?php _e('Z - A', 'rental-mobil-wp'); ?></option>
                 </select>
             </div>
-        </div>
-
-        <div class="rental-mobil-filter-sort-random">
-            <label>
-                <input type="checkbox" name="rental_mobil_options[filter_sort_random]" value="1" <?php checked($random, '1'); ?>>
-                <?php _e('Tampilkan kendaraan secara acak di frontend', 'rental-mobil-wp'); ?>
-            </label>
         </div>
     </div>
     <p class="description"><?php _e('Pilih opsi pengurutan default untuk daftar kendaraan.', 'rental-mobil-wp'); ?></p>
@@ -2378,15 +2393,6 @@ function rental_mobil_get_option($key, $default = '') {
 function rental_mobil_get_frontend_sort_settings() {
     $options = rental_mobil_get_options();
     $sort_field = isset($options['filter_sort_field']) ? $options['filter_sort_field'] : 'harga_harian';
-    $random = isset($options['filter_sort_random']) && $options['filter_sort_random'] === '1';
-
-    // Jika random diaktifkan, gunakan 'rand' sebagai orderby
-    if ($random) {
-        return array(
-            'orderby' => 'rand',
-            'order' => 'DESC'
-        );
-    }
 
     // Tentukan orderby dan order berdasarkan field yang dipilih
     if ($sort_field === 'harga_harian') {

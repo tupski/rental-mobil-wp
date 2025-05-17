@@ -2,6 +2,31 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.7.0] - 2024-05-21
+
+### Diubah
+- Menghapus pengaturan acak kendaraan di tab Filter untuk menyederhanakan pengaturan urutan
+- Pengaturan urutan kendaraan di tab Filter sekarang langsung diaplikasikan tanpa perlu menekan tombol reset
+
+### Diperbaiki
+- Masalah pengaturan urutan yang tidak langsung diaplikasikan di frontend
+
+## [1.6.9] - 2024-05-20
+
+### Ditambahkan
+- Inisialisasi filter otomatis dari parameter URL saat halaman dimuat
+- Dukungan untuk filter langsung melalui URL (contoh: /?kata_kunci=Kia%20Rio)
+
+### Diubah
+- Perbaikan format URL filter agar lebih bersih tanpa parameter yang tidak diperlukan
+- Pengaturan urutan kendaraan di tab Filter sekarang menggunakan dropdown select
+- Struktur menu admin yang lebih sederhana dengan menghapus menu duplikat "Rental Mobil WP"
+
+### Diperbaiki
+- Masalah pengaturan acak yang hilang setelah disimpan
+- Masalah urutan kendaraan yang tidak langsung diaplikasikan
+- Masalah parameter yang tidak diinginkan di URL filter
+
 ## [1.6.8] - 2024-05-18
 
 ### Ditambahkan
