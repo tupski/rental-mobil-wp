@@ -4,7 +4,7 @@ Donate link:
 Tags: car rental, rental, booking, whatsapp, mobil
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.6.5
+Stable tag: 1.6.6
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -84,6 +84,17 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 4. Pengaturan Plugin
 
 == Changelog ==
+
+= 1.6.6 =
+* Memperbaiki masalah placeholder conditional di pesan WhatsApp
+* Menambahkan tombol formatting untuk textarea WhatsApp (bold, italic, strikethrough, monospace)
+* Menambahkan preview pesan WhatsApp dengan modal
+* Memperbaiki masalah pengaturan yang tidak tersimpan setelah update
+* Memastikan pengaturan filter tetap tersimpan setelah update
+* Memperbaiki tampilan form booking agar field width diterapkan dengan benar
+* Memperbaiki tampilan field agar tidak terlalu kecil
+* Memastikan Select2 dimuat dengan benar untuk field select
+* Optimasi kode dan perbaikan bug
 
 = 1.6.5 =
 * Menambahkan pengaturan urutan daftar kendaraan di tab Filter
@@ -215,6 +226,9 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 * Rilis pertama
 
 == Upgrade Notice ==
+
+= 1.6.6 =
+Memperbaiki masalah placeholder conditional di pesan WhatsApp, menambahkan tombol formatting, dan memperbaiki masalah pengaturan yang tidak tersimpan.
 
 = 1.6.5 =
 Menambahkan pengaturan urutan daftar kendaraan, pesan bagikan yang bisa dikustomisasi, dan dokumentasi lengkap.

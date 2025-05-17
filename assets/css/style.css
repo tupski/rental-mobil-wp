@@ -1044,9 +1044,9 @@
 .rental-mobil-booking-form {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
     margin-left: -10px;
     margin-right: -10px;
+    width: 100%;
 }
 
 .rental-mobil-form-group {
@@ -1091,10 +1091,16 @@
 }
 
 .rental-mobil-form-group input,
-.rental-mobil-form-group select {
-    padding: 10px;
+.rental-mobil-form-group select,
+.rental-mobil-form-group textarea {
+    padding: 10px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    height: auto;
+    min-height: 36px;
+    width: 100%;
 }
 
 /* Time Dropdown Styles */

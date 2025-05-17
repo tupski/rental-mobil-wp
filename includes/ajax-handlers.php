@@ -607,29 +607,51 @@ function rental_mobil_get_whatsapp_ajax() {
     // Ganti placeholder dengan data sebenarnya
     $message = str_replace($placeholders, $values, $message_template);
 
-    // Tambahkan field conditional dengan label ke pesan
-    if (!empty($conditional_fields)) {
-        // Cari posisi yang tepat untuk menambahkan field conditional (sebelum "Terima kasih" atau di akhir pesan)
-        $thank_you_pos = strpos($message, "Terima kasih");
-        if ($thank_you_pos !== false) {
-            $before_thank_you = substr($message, 0, $thank_you_pos);
-            $after_thank_you = substr($message, $thank_you_pos);
+    // Proses placeholder conditional dalam template pesan
+    for ($i = 0; $i < count($conditional_fields); $i++) {
+        $placeholder = $conditional_fields[$i];
+        $value = $conditional_values[$i];
+        $label = $conditional_labels[$i];
 
-            // Tambahkan field conditional
-            $conditional_message = "";
-            for ($i = 0; $i < count($conditional_fields); $i++) {
-                $conditional_message .= $conditional_labels[$i] . ": " . $conditional_values[$i] . "\n";
-            }
-
-            $message = $before_thank_you . $conditional_message . $after_thank_you;
-        } else {
-            // Jika tidak ada "Terima kasih", tambahkan di akhir pesan
-            $message .= "\n";
-            for ($i = 0; $i < count($conditional_fields); $i++) {
-                $message .= $conditional_labels[$i] . ": " . $conditional_values[$i] . "\n";
-            }
+        // Jika placeholder ada dalam template pesan, ganti dengan nilai
+        if (strpos($message, $placeholder) !== false) {
+            $message = str_replace($placeholder, $value, $message);
+        }
+        // Jika placeholder tanpa kurung kurawal ada dalam template pesan, ganti dengan nilai
+        else if (strpos($message, trim($placeholder, '{}')) !== false) {
+            $message = str_replace(trim($placeholder, '{}'), $value, $message);
+        }
+        // Jika label + placeholder ada dalam template pesan (misalnya "Alamat Pengantaran: {alamat_pengantaran}")
+        else if (strpos($message, $label . ': ' . $placeholder) !== false) {
+            $message = str_replace($label . ': ' . $placeholder, $label . ': ' . $value, $message);
+        }
+        // Jika hanya placeholder ada dalam template pesan (misalnya "{alamat_pengantaran}")
+        else if (strpos($message, $placeholder) !== false) {
+            $message = str_replace($placeholder, $label . ': ' . $value, $message);
         }
     }
+
+    // Hapus baris yang hanya berisi placeholder conditional yang tidak terpenuhi
+    $lines = explode("\n", $message);
+    $filtered_lines = array();
+
+    foreach ($lines as $line) {
+        // Cek apakah baris hanya berisi placeholder
+        $is_placeholder_only = false;
+        foreach ($conditional_fields as $placeholder) {
+            if (trim($line) === $placeholder || trim($line) === trim($placeholder, '{}')) {
+                $is_placeholder_only = true;
+                break;
+            }
+        }
+
+        // Jika bukan placeholder saja atau baris kosong, tambahkan ke hasil
+        if (!$is_placeholder_only) {
+            $filtered_lines[] = $line;
+        }
+    }
+
+    $message = implode("\n", $filtered_lines);
 
     wp_send_json_success(array(
         'whatsapp_number' => $whatsapp_number,

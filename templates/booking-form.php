@@ -178,3 +178,42 @@ usort($form_fields, function($a, $b) {
         </button>
     </div>
 </form>
+
+<script>
+jQuery(document).ready(function($) {
+    // Inisialisasi Select2 untuk semua select
+    if (typeof $.fn.select2 !== 'undefined') {
+        $('.rental-mobil-booking-form select').each(function() {
+            $(this).select2({
+                width: '100%',
+                dropdownAutoWidth: true,
+                minimumResultsForSearch: 5,
+                language: {
+                    noResults: function() {
+                        return "Tidak ada hasil yang ditemukan";
+                    }
+                }
+            });
+        });
+    } else {
+        // Jika Select2 belum dimuat, muat dari CDN
+        $.getScript('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', function() {
+            $('head').append('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">');
+
+            // Inisialisasi Select2 setelah dimuat
+            $('.rental-mobil-booking-form select').each(function() {
+                $(this).select2({
+                    width: '100%',
+                    dropdownAutoWidth: true,
+                    minimumResultsForSearch: 5,
+                    language: {
+                        noResults: function() {
+                            return "Tidak ada hasil yang ditemukan";
+                        }
+                    }
+                });
+            });
+        });
+    }
+});
+</script>

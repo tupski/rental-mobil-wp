@@ -481,61 +481,98 @@ function rental_mobil_whatsapp_message_callback() {
     $default_message = "Halo, saya ingin menyewa kendaraan *{nama_kendaraan}* dengan detail berikut:\n\nNama: {nama}\nDomisili: {domisili}\nTanggal Sewa: {tanggal_sewa}\nJam Sewa: {jam_sewa}\nDurasi Sewa: {durasi_sewa} {satuan_durasi}\n\nMohon informasi lebih lanjut. Terima kasih.";
     $whatsapp_message = isset($options['whatsapp_message']) ? $options['whatsapp_message'] : $default_message;
     ?>
-    <textarea id="whatsapp_message" name="rental_mobil_options[whatsapp_message]" rows="10" class="large-text"><?php echo esc_textarea($whatsapp_message); ?></textarea>
-    <div class="description">
-        <?php _e('Template pesan WhatsApp. Gunakan placeholder berikut:', 'rental-mobil-wp'); ?>
-        <br>
-        <div class="rental-mobil-placeholders">
-            <span class="rental-mobil-placeholder-item" data-placeholder="{nama_kendaraan}">
-                <code>{nama_kendaraan}</code> - <?php _e('Nama kendaraan', 'rental-mobil-wp'); ?>
-            </span>
+    <div class="rental-mobil-whatsapp-message-container">
+        <div class="rental-mobil-formatting-toolbar">
+            <button type="button" class="button rental-mobil-format-button" data-format="bold" title="<?php _e('Bold', 'rental-mobil-wp'); ?>"><strong>B</strong></button>
+            <button type="button" class="button rental-mobil-format-button" data-format="italic" title="<?php _e('Italic', 'rental-mobil-wp'); ?>"><em>I</em></button>
+            <button type="button" class="button rental-mobil-format-button" data-format="strikethrough" title="<?php _e('Strikethrough', 'rental-mobil-wp'); ?>"><s>S</s></button>
+            <button type="button" class="button rental-mobil-format-button" data-format="monospace" title="<?php _e('Monospace', 'rental-mobil-wp'); ?>"><code>M</code></button>
+            <button type="button" class="button rental-mobil-format-button" data-format="newline" title="<?php _e('New Line', 'rental-mobil-wp'); ?>">↵</button>
+            <button type="button" class="button rental-mobil-preview-button" title="<?php _e('Preview', 'rental-mobil-wp'); ?>"><span class="dashicons dashicons-visibility"></span></button>
+        </div>
+        <textarea id="whatsapp_message" name="rental_mobil_options[whatsapp_message]" rows="10" class="large-text"><?php echo esc_textarea($whatsapp_message); ?></textarea>
+        <div class="description">
+            <?php _e('Template pesan WhatsApp. Gunakan placeholder berikut:', 'rental-mobil-wp'); ?>
             <br>
-            <?php
-            // Dapatkan form fields dari pengaturan
-            $form_fields = rental_mobil_get_form_fields();
-
-            // Tampilkan placeholder untuk setiap field
-            if (!empty($form_fields)) {
-                foreach ($form_fields as $field) {
-                    echo '<span class="rental-mobil-placeholder-item" data-placeholder="{' . esc_attr($field['id']) . '}">';
-                    echo '<code>{' . esc_html($field['id']) . '}</code> - ' . esc_html($field['label']);
-                    echo '</span><br>';
-                }
-            } else {
-                // Tampilkan placeholder default jika form fields belum diatur
-                ?>
-                <span class="rental-mobil-placeholder-item" data-placeholder="{nama}">
-                    <code>{nama}</code> - <?php _e('Nama pemesan', 'rental-mobil-wp'); ?>
+            <div class="rental-mobil-placeholders">
+                <span class="rental-mobil-placeholder-item" data-placeholder="{nama_kendaraan}">
+                    <code>{nama_kendaraan}</code> - <?php _e('Nama kendaraan', 'rental-mobil-wp'); ?>
                 </span>
                 <br>
-                <span class="rental-mobil-placeholder-item" data-placeholder="{domisili}">
-                    <code>{domisili}</code> - <?php _e('Domisili pemesan', 'rental-mobil-wp'); ?>
-                </span>
-                <br>
-                <span class="rental-mobil-placeholder-item" data-placeholder="{tanggal_sewa}">
-                    <code>{tanggal_sewa}</code> - <?php _e('Tanggal sewa', 'rental-mobil-wp'); ?>
-                </span>
-                <br>
-                <span class="rental-mobil-placeholder-item" data-placeholder="{jam_sewa}">
-                    <code>{jam_sewa}</code> - <?php _e('Jam sewa', 'rental-mobil-wp'); ?>
-                </span>
-                <br>
-                <span class="rental-mobil-placeholder-item" data-placeholder="{durasi_sewa}">
-                    <code>{durasi_sewa}</code> - <?php _e('Durasi sewa', 'rental-mobil-wp'); ?>
-                </span>
-                <br>
-                <span class="rental-mobil-placeholder-item" data-placeholder="{satuan_durasi}">
-                    <code>{satuan_durasi}</code> - <?php _e('Satuan durasi (hari/minggu/bulan/tahun)', 'rental-mobil-wp'); ?>
-                </span>
                 <?php
-            }
-            ?>
-            <br>
-            <strong><?php _e('Catatan:', 'rental-mobil-wp'); ?></strong> <?php _e('Placeholder akan otomatis dibuat untuk setiap field form yang Anda tambahkan dengan format {id_field}.', 'rental-mobil-wp'); ?>
+                // Dapatkan form fields dari pengaturan
+                $form_fields = rental_mobil_get_form_fields();
+
+                // Tampilkan placeholder untuk setiap field
+                if (!empty($form_fields)) {
+                    foreach ($form_fields as $field) {
+                        echo '<span class="rental-mobil-placeholder-item" data-placeholder="{' . esc_attr($field['id']) . '}">';
+                        echo '<code>{' . esc_html($field['id']) . '}</code> - ' . esc_html($field['label']);
+                        echo '</span><br>';
+                    }
+                } else {
+                    // Tampilkan placeholder default jika form fields belum diatur
+                    ?>
+                    <span class="rental-mobil-placeholder-item" data-placeholder="{nama}">
+                        <code>{nama}</code> - <?php _e('Nama pemesan', 'rental-mobil-wp'); ?>
+                    </span>
+                    <br>
+                    <span class="rental-mobil-placeholder-item" data-placeholder="{domisili}">
+                        <code>{domisili}</code> - <?php _e('Domisili pemesan', 'rental-mobil-wp'); ?>
+                    </span>
+                    <br>
+                    <span class="rental-mobil-placeholder-item" data-placeholder="{tanggal_sewa}">
+                        <code>{tanggal_sewa}</code> - <?php _e('Tanggal sewa', 'rental-mobil-wp'); ?>
+                    </span>
+                    <br>
+                    <span class="rental-mobil-placeholder-item" data-placeholder="{jam_sewa}">
+                        <code>{jam_sewa}</code> - <?php _e('Jam sewa', 'rental-mobil-wp'); ?>
+                    </span>
+                    <br>
+                    <span class="rental-mobil-placeholder-item" data-placeholder="{durasi_sewa}">
+                        <code>{durasi_sewa}</code> - <?php _e('Durasi sewa', 'rental-mobil-wp'); ?>
+                    </span>
+                    <br>
+                    <span class="rental-mobil-placeholder-item" data-placeholder="{satuan_durasi}">
+                        <code>{satuan_durasi}</code> - <?php _e('Satuan durasi (hari/minggu/bulan/tahun)', 'rental-mobil-wp'); ?>
+                    </span>
+                    <?php
+                }
+                ?>
+                <br>
+                <strong><?php _e('Catatan:', 'rental-mobil-wp'); ?></strong> <?php _e('Placeholder akan otomatis dibuat untuk setiap field form yang Anda tambahkan dengan format {id_field}.', 'rental-mobil-wp'); ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Preview -->
+    <div id="rental-mobil-whatsapp-preview-modal" class="rental-mobil-modal">
+        <div class="rental-mobil-modal-content">
+            <span class="rental-mobil-modal-close">&times;</span>
+            <h3><?php _e('Preview Pesan WhatsApp', 'rental-mobil-wp'); ?></h3>
+            <div class="rental-mobil-whatsapp-preview">
+                <div class="rental-mobil-whatsapp-chat">
+                    <div class="rental-mobil-whatsapp-message">
+                        <div id="rental-mobil-whatsapp-preview-content"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <style>
+        .rental-mobil-whatsapp-message-container {
+            position: relative;
+        }
+        .rental-mobil-formatting-toolbar {
+            margin-bottom: 5px;
+            display: flex;
+            gap: 5px;
+        }
+        .rental-mobil-format-button {
+            min-width: 30px;
+            text-align: center;
+        }
         .rental-mobil-placeholders {
             margin-top: 10px;
         }
@@ -555,6 +592,89 @@ function rental_mobil_whatsapp_message_callback() {
             padding: 2px 4px;
             border-radius: 3px;
             border: 1px solid #e0e0e0;
+        }
+
+        /* Modal styles */
+        .rental-mobil-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .rental-mobil-modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .rental-mobil-modal-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .rental-mobil-modal-close:hover {
+            color: black;
+        }
+
+        /* WhatsApp preview styles */
+        .rental-mobil-whatsapp-chat {
+            background-color: #e5ddd5;
+            padding: 20px;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .rental-mobil-whatsapp-message {
+            background-color: #dcf8c6;
+            padding: 10px 15px;
+            border-radius: 7.5px;
+            max-width: 85%;
+            margin-left: auto;
+            position: relative;
+            box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+        }
+        .rental-mobil-whatsapp-message:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: -10px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid #dcf8c6;
+            border-right: 10px solid transparent;
+        }
+        #rental-mobil-whatsapp-preview-content {
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        #rental-mobil-whatsapp-preview-content strong {
+            font-weight: bold;
+        }
+        #rental-mobil-whatsapp-preview-content em {
+            font-style: italic;
+        }
+        #rental-mobil-whatsapp-preview-content s {
+            text-decoration: line-through;
+        }
+        #rental-mobil-whatsapp-preview-content code {
+            font-family: monospace;
+            background: none;
+            padding: 0;
+            border: none;
         }
     </style>
 
@@ -576,10 +696,85 @@ function rental_mobil_whatsapp_message_callback() {
             // Masukkan placeholder pada posisi kursor
             textarea.val(textBefore + placeholder + textAfter);
 
-            // Kembalikan fokus ke textarea dan atur posisi kursor setelah placeholder
+            // Atur kursor setelah placeholder
+            const newPos = startPos + placeholder.length;
             textarea.focus();
-            const newCursorPos = startPos + placeholder.length;
-            textarea[0].setSelectionRange(newCursorPos, newCursorPos);
+            textarea[0].setSelectionRange(newPos, newPos);
+        });
+
+        // Fungsi untuk menambahkan format ke teks yang dipilih
+        $('.rental-mobil-format-button').on('click', function() {
+            const format = $(this).data('format');
+            const textarea = $('#whatsapp_message');
+
+            // Dapatkan posisi kursor dan teks yang dipilih
+            const startPos = textarea[0].selectionStart;
+            const endPos = textarea[0].selectionEnd;
+            const selectedText = textarea.val().substring(startPos, endPos);
+            const textBefore = textarea.val().substring(0, startPos);
+            const textAfter = textarea.val().substring(endPos);
+
+            let formattedText = '';
+
+            // Terapkan format sesuai dengan jenis format
+            switch(format) {
+                case 'bold':
+                    formattedText = '*' + selectedText + '*';
+                    break;
+                case 'italic':
+                    formattedText = '_' + selectedText + '_';
+                    break;
+                case 'strikethrough':
+                    formattedText = '~' + selectedText + '~';
+                    break;
+                case 'monospace':
+                    formattedText = '```' + selectedText + '```';
+                    break;
+                case 'newline':
+                    formattedText = '\n';
+                    break;
+                default:
+                    formattedText = selectedText;
+            }
+
+            // Masukkan teks yang sudah diformat ke textarea
+            textarea.val(textBefore + formattedText + textAfter);
+
+            // Atur kursor setelah teks yang diformat
+            const newPos = startPos + formattedText.length;
+            textarea.focus();
+            textarea[0].setSelectionRange(newPos, newPos);
+        });
+
+        // Fungsi untuk menampilkan preview pesan WhatsApp
+        $('.rental-mobil-preview-button').on('click', function() {
+            const message = $('#whatsapp_message').val();
+            const previewContent = $('#rental-mobil-whatsapp-preview-content');
+
+            // Format pesan untuk preview
+            let formattedMessage = message
+                .replace(/\*([^*]+)\*/g, '<strong>$1</strong>') // Bold
+                .replace(/_([^_]+)_/g, '<em>$1</em>') // Italic
+                .replace(/~([^~]+)~/g, '<s>$1</s>') // Strikethrough
+                .replace(/```([^`]+)```/g, '<code>$1</code>'); // Monospace
+
+            // Tampilkan pesan di preview
+            previewContent.html(formattedMessage);
+
+            // Tampilkan modal preview
+            $('#rental-mobil-whatsapp-preview-modal').css('display', 'block');
+        });
+
+        // Tutup modal saat tombol close diklik
+        $('.rental-mobil-modal-close').on('click', function() {
+            $('#rental-mobil-whatsapp-preview-modal').css('display', 'none');
+        });
+
+        // Tutup modal saat klik di luar modal
+        $(window).on('click', function(event) {
+            if (event.target.id === 'rental-mobil-whatsapp-preview-modal') {
+                $('#rental-mobil-whatsapp-preview-modal').css('display', 'none');
+            }
         });
     });
     </script>
@@ -2067,6 +2262,10 @@ function rental_mobil_trakteer_button($type = 'overlay') {
  * Get specific option with default value
  */
 function rental_mobil_get_option($key, $default = '') {
+    // Hapus cache opsi untuk memastikan data terbaru
+    wp_cache_delete('rental_mobil_options', 'options');
+    wp_cache_delete('alloptions', 'options');
+
     $options = rental_mobil_get_options();
     return isset($options[$key]) ? $options[$key] : $default;
 }

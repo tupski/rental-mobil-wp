@@ -3,7 +3,7 @@
  * Plugin Name: Rental Mobil WP
  * Plugin URI: https://tupski.web.id/rental-mobil-wp
  * Description: Plugin WordPress untuk rental mobil dengan fitur menampilkan daftar kendaraan, detail, dan booking.
- * Version: 1.6.5
+ * Version: 1.6.6
  * Author: Angga Artupas
  * Author URI: https://tupski.web.id
  * Text Domain: rental-mobil-wp
@@ -20,7 +20,7 @@ if (!defined('WPINC')) {
 }
 
 // Definisikan konstanta plugin
-define('RENTAL_MOBIL_VERSION', '1.6.5');
+define('RENTAL_MOBIL_VERSION', '1.6.6');
 define('RENTAL_MOBIL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('RENTAL_MOBIL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('RENTAL_MOBIL_PLUGIN_FILE', __FILE__);
@@ -40,7 +40,14 @@ function rental_mobil_wp_activate() {
     if (!empty($existing_options)) {
         // Jika pengaturan sudah ada, pastikan disimpan dengan autoload=yes
         update_option('rental_mobil_options', $existing_options, 'yes');
+
+        // Hapus cache opsi untuk memastikan data terbaru
+        wp_cache_delete('rental_mobil_options', 'options');
+        wp_cache_delete('alloptions', 'options');
     }
+
+    // Simpan versi plugin di database
+    update_option('rental_mobil_version', RENTAL_MOBIL_VERSION, 'yes');
 }
 
 // Tambahkan fungsi untuk flush rewrite rules saat plugin diaktifkan
@@ -268,8 +275,12 @@ function rental_mobil_wp_init() {
         // Jika versi berbeda, pastikan pengaturan disimpan dengan benar
         $existing_options = get_option('rental_mobil_options', array());
         if (!empty($existing_options)) {
-            // Pastikan disimpan dengan autoload=yes
+            // Pastikan disimpan dengan autoload=yes dan tidak ada data yang hilang
             update_option('rental_mobil_options', $existing_options, 'yes');
+
+            // Hapus cache opsi untuk memastikan data terbaru
+            wp_cache_delete('rental_mobil_options', 'options');
+            wp_cache_delete('alloptions', 'options');
         }
 
         // Update versi plugin di database
