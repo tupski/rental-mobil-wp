@@ -85,19 +85,17 @@
                 // Hanya terapkan di desktop
                 const sidebarHeight = sidebar.outerHeight();
                 const contentHeight = $('.rental-mobil-content').outerHeight();
-                const filterHeight = filterContainer.outerHeight();
-                const windowHeight = $(window).height();
 
-                // Periksa apakah filter lebih tinggi dari jendela
-                if (filterHeight > windowHeight - 100) {
-                    // Jika filter terlalu tinggi, atur max-height agar tidak ada scrollbar
-                    sidebarInner.css('max-height', 'none');
-                    // Pastikan sidebar memiliki tinggi yang cukup
-                    sidebar.css('min-height', contentHeight + 'px');
-                } else if (contentHeight > sidebarHeight) {
-                    // Pastikan sidebar memiliki tinggi yang cukup untuk sticky
-                    sidebar.css('min-height', contentHeight + 'px');
-                }
+                // Pastikan sidebar memiliki tinggi yang cukup untuk sticky
+                sidebar.css('min-height', contentHeight + 'px');
+
+                // Pastikan filter selalu sticky
+                sidebarInner.css({
+                    'position': 'sticky',
+                    'top': '50px',
+                    'max-height': 'calc(100vh - 100px)',
+                    'overflow-y': 'auto'
+                });
             }
         }
 
@@ -640,6 +638,33 @@
             quickViewModal.css('display', 'none');
         });
 
+        // Tambahkan event handler untuk tombol booking di quick-view modal
+        $(document).on('click', '.rental-mobil-quick-view-booking', function() {
+            const kendaraanId = $(this).data('id');
+            const kendaraanTitle = $(this).data('title');
+
+            // Set data ke form booking
+            $('#rental-mobil-booking-kendaraan-id').val(kendaraanId);
+            $('#rental-mobil-booking-kendaraan-title').val(kendaraanTitle);
+
+            // Set judul dinamis
+            $('.rental-mobil-modal-title-kendaraan').text(kendaraanTitle);
+            $('.rental-mobil-modal-subtitle-kendaraan').text(kendaraanTitle);
+
+            // Tampilkan modal booking
+            modal.css('display', 'block');
+
+            // Tutup modal quick-view
+            quickViewModal.css('display', 'none');
+
+            // Scroll ke form booking jika di mobile
+            if ($(window).width() <= 768) {
+                $('html, body').animate({
+                    scrollTop: $('#rental-mobil-inline-booking-form').offset().top - 20
+                }, 500);
+            }
+        });
+
         // Zoom Modal Functionality
         function openZoomModal(imgSrc, title) {
             // Set gambar
@@ -1025,17 +1050,23 @@
         function initPagination(formData) {
             // Delegasi event untuk tombol paginasi
             $(document).off('click', '.rental-mobil-pagination-links a').on('click', '.rental-mobil-pagination-links a', function(e) {
-                // Tidak perlu e.preventDefault() karena kita ingin menggunakan URL
-                // Namun kita tetap mempertahankan fungsi AJAX untuk kompatibilitas
+                e.preventDefault(); // Selalu mencegah perilaku default
+
                 const page = $(this).data('page');
 
-                // Jika pengguna menekan tombol Ctrl atau Command saat mengklik, biarkan browser menangani link
+                // Jika pengguna menekan tombol Ctrl atau Command saat mengklik, buka di tab baru
                 if (e.ctrlKey || e.metaKey) {
-                    return true;
+                    // Buat URL dengan parameter halaman
+                    const urlParams = new URLSearchParams(window.location.search);
+                    urlParams.set('halaman', page);
+                    const newUrl = window.location.pathname + '?' + urlParams.toString();
+
+                    // Buka di tab baru
+                    window.open(newUrl, '_blank');
+                    return;
                 }
 
-                // Jika tidak, gunakan AJAX untuk memuat konten tanpa refresh halaman
-                e.preventDefault();
+                // Gunakan AJAX untuk memuat konten tanpa refresh halaman
                 loadKendaraan(formData, page);
             });
         }

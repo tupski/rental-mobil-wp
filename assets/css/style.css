@@ -250,6 +250,8 @@
     display: block; /* Pastikan elemen ditampilkan sebagai block */
     height: auto; /* Pastikan tinggi elemen sesuai dengan kontennya */
     will-change: position; /* Optimasi performa untuk sticky */
+    max-height: calc(100vh - 100px); /* Batasi tinggi maksimum */
+    overflow-y: auto; /* Tambahkan scrollbar jika konten terlalu panjang */
 }
 
 .rental-mobil-content {
