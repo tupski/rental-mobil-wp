@@ -47,21 +47,28 @@ if (!defined('WPINC')) {
                         <?php foreach ($share_platforms as $platform) :
                             // Tentukan ikon yang sesuai untuk setiap platform
                             $icon_class = 'dashicons-share';
+                            $platform_name = ucfirst($platform);
+
                             if ($platform === 'whatsapp') {
                                 $icon_class = 'dashicons-whatsapp';
+                                $platform_name = 'WhatsApp';
                             } elseif ($platform === 'facebook') {
                                 $icon_class = 'dashicons-facebook';
+                                $platform_name = 'Facebook';
                             } elseif ($platform === 'twitter') {
                                 $icon_class = 'dashicons-twitter';
+                                $platform_name = 'Twitter';
                             } elseif ($platform === 'telegram') {
                                 $icon_class = 'dashicons-format-chat';
+                                $platform_name = 'Telegram';
                             } elseif ($platform === 'email') {
                                 $icon_class = 'dashicons-email';
+                                $platform_name = 'Email';
                             }
                         ?>
-                            <button class="rental-mobil-share-button rental-mobil-share-<?php echo esc_attr($platform); ?>" data-platform="<?php echo esc_attr($platform); ?>" title="<?php echo esc_attr(ucfirst($platform)); ?>">
+                            <button class="rental-mobil-share-button rental-mobil-share-<?php echo esc_attr($platform); ?>" data-platform="<?php echo esc_attr($platform); ?>" title="<?php echo esc_attr($platform_name); ?>">
                                 <span class="dashicons <?php echo esc_attr($icon_class); ?>"></span>
-                                <span class="rental-mobil-tooltip"><?php echo esc_html(ucfirst($platform)); ?></span>
+                                <span class="rental-mobil-tooltip"><?php echo esc_html($platform_name); ?></span>
                             </button>
                         <?php endforeach; ?>
                     </div>

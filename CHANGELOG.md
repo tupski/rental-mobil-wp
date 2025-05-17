@@ -2,6 +2,14 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.6.2] - 2024-05-16
+
+### Diperbaiki
+- Masalah gambar yang tidak terload di quick view modal
+- Tombol bagikan yang tidak berfungsi dengan benar
+- Masalah nama kendaraan yang salah di booking modal
+- Tooltip pada tombol bagikan yang menampilkan nama platform dengan benar
+
 ## [1.6.1] - 2024-05-15
 
 ### Ditambahkan

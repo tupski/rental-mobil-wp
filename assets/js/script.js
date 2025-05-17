@@ -421,10 +421,33 @@
             }
         });
 
-        // Buka Modal Booking
-        bookingButtons.on('click', function() {
-            const kendaraanId = $(this).data('id');
-            const kendaraanTitle = $(this).data('title');
+        // Fungsi untuk membuka modal booking
+        function openBookingModal(kendaraanId, kendaraanTitle) {
+            console.log('Open Booking Modal:', kendaraanId, kendaraanTitle);
+
+            // Jika tidak ada judul, coba dapatkan dari AJAX
+            if (!kendaraanTitle) {
+                $.ajax({
+                    url: rental_mobil_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'rental_mobil_get_kendaraan_data',
+                        nonce: rental_mobil_ajax.nonce,
+                        kendaraan_id: kendaraanId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            openBookingModal(kendaraanId, response.data.title);
+                        } else {
+                            console.error('Gagal mendapatkan data kendaraan');
+                        }
+                    },
+                    error: function() {
+                        console.error('Gagal mendapatkan data kendaraan');
+                    }
+                });
+                return;
+            }
 
             $('#rental-mobil-booking-kendaraan-id').val(kendaraanId);
             $('#rental-mobil-booking-kendaraan-title').val(kendaraanTitle);
@@ -441,6 +464,13 @@
                     scrollTop: $('#rental-mobil-inline-booking-form').offset().top - 20
                 }, 500);
             }
+        }
+
+        // Buka Modal Booking dari tombol di card
+        bookingButtons.on('click', function() {
+            const kendaraanId = $(this).data('id');
+            const kendaraanTitle = $(this).data('title');
+            openBookingModal(kendaraanId, kendaraanTitle);
         });
 
         // Tutup Modal
@@ -502,6 +532,12 @@
             const isFeatured = card.data('featured') === 1;
             const isPopular = card.data('popular') === 1;
 
+            // Dapatkan featured image dari card
+            let featuredImageSrc = '';
+            if (card.find('.rental-mobil-card-image img').length > 0) {
+                featuredImageSrc = card.find('.rental-mobil-card-image img').attr('src');
+            }
+
             // Tampilkan quick view dengan data dari card
             displayQuickView(kendaraanId, {
                 title: title,
@@ -513,12 +549,15 @@
                 bahan_bakar: bahanBakar,
                 tahun: tahun,
                 is_featured: isFeatured,
-                is_popular: isPopular
+                is_popular: isPopular,
+                featured_image: featuredImageSrc
             });
         }
 
         // Fungsi untuk menampilkan quick view
         function displayQuickView(kendaraanId, data) {
+            console.log('Display Quick View Data:', data);
+
             // Set data ke quick view modal
             $('.rental-mobil-quick-view-title').text(data.title);
             $('.rental-mobil-quick-view-booking').attr('data-id', kendaraanId).attr('data-title', data.title);
@@ -573,7 +612,14 @@
 
             // Set gambar utama
             let featuredImageSrc = data.featured_image || '';
-            $('.rental-mobil-quick-view-featured-image').attr('src', featuredImageSrc);
+            console.log('Featured Image:', featuredImageSrc);
+
+            if (featuredImageSrc) {
+                $('.rental-mobil-quick-view-featured-image').attr('src', featuredImageSrc);
+            } else {
+                // Jika tidak ada gambar, gunakan placeholder
+                $('.rental-mobil-quick-view-featured-image').attr('src', rental_mobil_ajax.plugin_url + '/assets/images/no-image.jpg');
+            }
 
             // Tambahkan event click untuk zoom gambar
             $('.rental-mobil-quick-view-main-image').off('click').on('click', function() {
@@ -584,6 +630,10 @@
             // Tambahkan event click untuk tombol share
             $('.rental-mobil-share-button').off('click').on('click', function() {
                 const platform = $(this).data('platform');
+                const title = $('.rental-mobil-quick-view-title').text();
+
+                console.log('Share platform:', platform);
+                console.log('Share title:', title);
 
                 // Dapatkan path URL saat ini (tanpa domain dan query string)
                 const currentPath = window.location.pathname;
@@ -608,6 +658,7 @@
 
                 // Buat URL lengkap
                 const shareUrl = baseUrl + '?' + urlParams.toString();
+                console.log('Share URL:', shareUrl);
 
                 switch(platform) {
                     case 'whatsapp':
@@ -698,31 +749,17 @@
         // Tambahkan event handler untuk tombol booking di quick-view modal
         $(document).on('click', '.rental-mobil-quick-view-booking', function() {
             const kendaraanId = $(this).data('id');
-            const kendaraanTitle = $(this).data('title');
+            // Ambil judul dari elemen title di quick view, bukan dari data attribute
+            const kendaraanTitle = $('.rental-mobil-quick-view-title').text();
 
             // Pastikan kita mendapatkan judul yang benar
-            console.log('Booking kendaraan:', kendaraanId, kendaraanTitle);
-
-            // Set data ke form booking
-            $('#rental-mobil-booking-kendaraan-id').val(kendaraanId);
-            $('#rental-mobil-booking-kendaraan-title').val(kendaraanTitle);
-
-            // Set judul dinamis
-            $('.rental-mobil-modal-title-kendaraan').text(kendaraanTitle);
-            $('.rental-mobil-modal-subtitle-kendaraan').text(kendaraanTitle);
-
-            // Tampilkan modal booking
-            modal.css('display', 'block');
+            console.log('Booking kendaraan dari quick view:', kendaraanId, kendaraanTitle);
 
             // Tutup modal quick-view
             quickViewModal.css('display', 'none');
 
-            // Scroll ke form booking jika di mobile
-            if ($(window).width() <= 768) {
-                $('html, body').animate({
-                    scrollTop: $('#rental-mobil-inline-booking-form').offset().top - 20
-                }, 500);
-            }
+            // Buka modal booking
+            openBookingModal(kendaraanId, kendaraanTitle);
         });
 
         // Zoom Modal Functionality
@@ -1065,18 +1102,7 @@
                         $('.rental-mobil-button-booking').on('click', function() {
                             const kendaraanId = $(this).data('id');
                             const kendaraanTitle = $(this).data('title');
-
-                            $('#rental-mobil-booking-kendaraan-id').val(kendaraanId);
-                            $('#rental-mobil-booking-kendaraan-title').val(kendaraanTitle);
-
-                            modal.css('display', 'block');
-
-                            // Scroll ke form booking jika di mobile
-                            if ($(window).width() <= 768) {
-                                $('html, body').animate({
-                                    scrollTop: $('#rental-mobil-inline-booking-form').offset().top - 20
-                                }, 500);
-                            }
+                            openBookingModal(kendaraanId, kendaraanTitle);
                         });
 
                         // Reinitialize quick view triggers
@@ -1474,7 +1500,6 @@
         const $ = jQuery;
         const urlParams = new URLSearchParams(window.location.search);
         let hasFilter = false;
-        let currentPage = 1;
 
         // Mapping parameter URL ke field form
         if (urlParams.has('kata_kunci')) {

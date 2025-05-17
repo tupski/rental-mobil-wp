@@ -3,7 +3,7 @@
  * Plugin Name: Rental Mobil WP
  * Plugin URI: https://tupski.web.id/rental-mobil-wp
  * Description: Plugin WordPress untuk rental mobil dengan fitur menampilkan daftar kendaraan, detail, dan booking.
- * Version: 1.6.1
+ * Version: 1.6.2
  * Author: Angga Artupas
  * Author URI: https://tupski.web.id
  * Text Domain: rental-mobil-wp
@@ -20,7 +20,7 @@ if (!defined('WPINC')) {
 }
 
 // Definisikan konstanta plugin
-define('RENTAL_MOBIL_VERSION', '1.6.1');
+define('RENTAL_MOBIL_VERSION', '1.6.2');
 define('RENTAL_MOBIL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('RENTAL_MOBIL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('RENTAL_MOBIL_PLUGIN_FILE', __FILE__);
@@ -106,7 +106,8 @@ function rental_mobil_wp_enqueue_scripts() {
         // Localize script untuk AJAX
         wp_localize_script('rental-mobil-script', 'rental_mobil_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('rental_mobil_nonce')
+            'nonce' => wp_create_nonce('rental_mobil_nonce'),
+            'plugin_url' => RENTAL_MOBIL_PLUGIN_URL
         ));
     }
 }
