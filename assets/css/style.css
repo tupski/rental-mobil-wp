@@ -250,8 +250,7 @@
     display: block; /* Pastikan elemen ditampilkan sebagai block */
     height: auto; /* Pastikan tinggi elemen sesuai dengan kontennya */
     will-change: position; /* Optimasi performa untuk sticky */
-    max-height: calc(100vh - 100px); /* Batasi tinggi maksimum */
-    overflow-y: auto; /* Tambahkan scrollbar jika konten terlalu panjang */
+    overflow-y: visible; /* Hapus scrollbar */
 }
 
 .rental-mobil-content {
@@ -419,6 +418,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 1px solid #ddd;
     height: auto; /* Pastikan tinggi sesuai dengan konten */
+    overflow: visible; /* Pastikan tidak ada scrollbar */
 }
 
 /* Floating Filter Button untuk Mobile */
@@ -2135,10 +2135,10 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    margin-top: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
 }
 
 .rental-mobil-quick-view-share-label {
@@ -2153,19 +2153,30 @@
 }
 
 .rental-mobil-share-button {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .rental-mobil-share-button:hover {
-    transform: scale(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.rental-mobil-share-button .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .rental-mobil-share-whatsapp {
@@ -2189,7 +2200,7 @@
 }
 
 .rental-mobil-share-email {
-    background-color: #D44638;
+    background-color: #EA4335;
     color: #fff;
 }
 

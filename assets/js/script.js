@@ -549,8 +549,30 @@
             // Tambahkan event click untuk tombol share
             $('.rental-mobil-share-button').off('click').on('click', function() {
                 const platform = $(this).data('platform');
-                const currentUrl = window.location.href;
-                const shareUrl = currentUrl.includes('?') ? currentUrl : currentUrl + '?kata_kunci=' + encodeURIComponent(title);
+
+                // Dapatkan path URL saat ini (tanpa domain dan query string)
+                const currentPath = window.location.pathname;
+
+                // Dapatkan parameter URL saat ini
+                const urlParams = new URLSearchParams(window.location.search);
+
+                // Tentukan base URL berdasarkan halaman saat ini
+                let baseUrl;
+                if (currentPath.includes('daftar-kendaraan')) {
+                    baseUrl = window.location.origin + '/daftar-kendaraan/';
+                } else if (currentPath.includes('daftar-mobil-rental')) {
+                    baseUrl = window.location.origin + '/daftar-mobil-rental/';
+                } else {
+                    // Gunakan path saat ini jika bukan salah satu di atas
+                    baseUrl = window.location.origin + currentPath;
+                }
+
+                // Buat URL untuk berbagi dengan parameter kata_kunci
+                urlParams.set('kata_kunci', title);
+                urlParams.set('halaman', '1');
+
+                // Buat URL lengkap
+                const shareUrl = baseUrl + '?' + urlParams.toString();
 
                 switch(platform) {
                     case 'whatsapp':
@@ -642,6 +664,9 @@
         $(document).on('click', '.rental-mobil-quick-view-booking', function() {
             const kendaraanId = $(this).data('id');
             const kendaraanTitle = $(this).data('title');
+
+            // Pastikan kita mendapatkan judul yang benar
+            console.log('Booking kendaraan:', kendaraanId, kendaraanTitle);
 
             // Set data ke form booking
             $('#rental-mobil-booking-kendaraan-id').val(kendaraanId);

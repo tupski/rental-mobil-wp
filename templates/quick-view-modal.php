@@ -34,6 +34,38 @@ if (!defined('WPINC')) {
                         <span class="dashicons dashicons-arrow-right-alt2"></span>
                     </button>
                 </div>
+
+                <?php
+                // Dapatkan platform share dari pengaturan
+                $share_platforms = rental_mobil_get_share_platforms();
+
+                if (!empty($share_platforms)) :
+                ?>
+                <div class="rental-mobil-quick-view-share">
+                    <span class="rental-mobil-quick-view-share-label"><?php _e('Bagikan:', 'rental-mobil-wp'); ?></span>
+                    <div class="rental-mobil-quick-view-share-buttons">
+                        <?php foreach ($share_platforms as $platform) :
+                            // Tentukan ikon yang sesuai untuk setiap platform
+                            $icon_class = 'dashicons-share';
+                            if ($platform === 'whatsapp') {
+                                $icon_class = 'dashicons-whatsapp';
+                            } elseif ($platform === 'facebook') {
+                                $icon_class = 'dashicons-facebook';
+                            } elseif ($platform === 'twitter') {
+                                $icon_class = 'dashicons-twitter';
+                            } elseif ($platform === 'telegram') {
+                                $icon_class = 'dashicons-format-chat';
+                            } elseif ($platform === 'email') {
+                                $icon_class = 'dashicons-email';
+                            }
+                        ?>
+                            <button class="rental-mobil-share-button rental-mobil-share-<?php echo esc_attr($platform); ?>" data-platform="<?php echo esc_attr($platform); ?>">
+                                <span class="dashicons <?php echo esc_attr($icon_class); ?>"></span>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
 
             <div class="rental-mobil-quick-view-details">
@@ -69,23 +101,7 @@ if (!defined('WPINC')) {
                         <?php _e('Booking Sekarang', 'rental-mobil-wp'); ?>
                     </button>
 
-                    <?php
-                    // Dapatkan platform share dari pengaturan
-                    $share_platforms = rental_mobil_get_share_platforms();
 
-                    if (!empty($share_platforms)) :
-                    ?>
-                    <div class="rental-mobil-quick-view-share">
-                        <span class="rental-mobil-quick-view-share-label"><?php _e('Bagikan:', 'rental-mobil-wp'); ?></span>
-                        <div class="rental-mobil-quick-view-share-buttons">
-                            <?php foreach ($share_platforms as $platform) : ?>
-                                <button class="rental-mobil-share-button rental-mobil-share-<?php echo esc_attr($platform); ?>" data-platform="<?php echo esc_attr($platform); ?>">
-                                    <span class="dashicons dashicons-<?php echo esc_attr($platform === 'email' ? 'email' : 'share'); ?>"></span>
-                                </button>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>
