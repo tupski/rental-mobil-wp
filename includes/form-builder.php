@@ -14,7 +14,7 @@ if (!defined('WPINC')) {
 add_action('rental_mobil_settings_tabs', 'rental_mobil_add_form_builder_tab');
 function rental_mobil_add_form_builder_tab($active_tab) {
     ?>
-    <a href="?page=rental-mobil&tab=form_builder" class="nav-tab <?php echo $active_tab == 'form_builder' ? 'nav-tab-active' : ''; ?>">
+    <a href="admin.php?page=rental-mobil-settings&tab=form_builder" class="nav-tab <?php echo $active_tab == 'form_builder' ? 'nav-tab-active' : ''; ?>">
         <span class="dashicons dashicons-feedback"></span> <?php _e('Form Builder', 'rental-mobil-wp'); ?>
     </a>
     <?php

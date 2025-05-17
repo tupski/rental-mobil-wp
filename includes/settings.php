@@ -9,6 +9,18 @@ if (!defined('WPINC')) {
 }
 
 /**
+ * Tambahkan filter untuk mengizinkan akses ke halaman pengaturan
+ */
+add_filter('admin_init', 'rental_mobil_allow_settings_access', 5);
+function rental_mobil_allow_settings_access() {
+    // Periksa apakah ini adalah halaman pengaturan plugin
+    if (isset($_GET['page']) && $_GET['page'] === 'rental-mobil-settings') {
+        // Hapus filter yang mungkin membatasi akses
+        remove_all_filters('admin_page_access_denied');
+    }
+}
+
+/**
  * Register settings
  */
 add_action('admin_init', 'rental_mobil_register_settings');
@@ -209,6 +221,9 @@ function rental_mobil_register_settings() {
         'rental_mobil_homepage',
         'rental_mobil_homepage_section'
     );
+
+    // Panggil hook untuk memungkinkan plugin lain menambahkan pengaturan
+    do_action('rental_mobil_register_settings');
 }
 
 /**
@@ -311,7 +326,7 @@ function rental_mobil_documentation_section_callback() {
     // Tambahkan tombol Trakteer
     echo '<div class="rental-mobil-trakteer-button" style="margin-top: 20px; margin-bottom: 20px;">';
     echo '<p>' . __('Jika Anda menyukai plugin ini, Anda dapat mendukung pengembang dengan mentraktir kopi:', 'rental-mobil-wp') . '</p>';
-    echo '<a href="https://trakteer.id/username-anda" target="_blank" style="display: inline-block;">';
+    echo '<a href="https://trakteer.id/tupski" target="_blank" style="display: inline-block;">';
     echo '<img src="https://cdn.trakteer.id/images/embed/trbtn-red-1.png" alt="Trakteer Saya" height="40" style="border:0px;height:40px;">';
     echo '</a>';
     echo '</div>';
@@ -878,6 +893,11 @@ function rental_mobil_validate_options($input) {
  * Settings page
  */
 function rental_mobil_settings_page() {
+    // Verifikasi hak akses
+    if (!current_user_can('manage_options')) {
+        wp_die(__('Maaf, Anda tidak memiliki izin untuk mengakses halaman ini.', 'rental-mobil-wp'));
+    }
+
     // Cek tab aktif
     $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'documentation';
     ?>
@@ -887,22 +907,22 @@ function rental_mobil_settings_page() {
         <!-- Header removed -->
 
         <h2 class="nav-tab-wrapper">
-            <a href="?page=rental-mobil-settings&tab=documentation" class="nav-tab <?php echo $active_tab == 'documentation' ? 'nav-tab-active' : ''; ?>">
+            <a href="admin.php?page=rental-mobil-settings&tab=documentation" class="nav-tab <?php echo $active_tab == 'documentation' ? 'nav-tab-active' : ''; ?>">
                 <span class="dashicons dashicons-book"></span> <?php _e('Dokumentasi', 'rental-mobil-wp'); ?>
             </a>
-            <a href="?page=rental-mobil-settings&tab=whatsapp" class="nav-tab <?php echo $active_tab == 'whatsapp' ? 'nav-tab-active' : ''; ?>">
+            <a href="admin.php?page=rental-mobil-settings&tab=whatsapp" class="nav-tab <?php echo $active_tab == 'whatsapp' ? 'nav-tab-active' : ''; ?>">
                 <span class="dashicons dashicons-whatsapp"></span> <?php _e('WhatsApp', 'rental-mobil-wp'); ?>
             </a>
-            <a href="?page=rental-mobil-settings&tab=style" class="nav-tab <?php echo $active_tab == 'style' ? 'nav-tab-active' : ''; ?>">
+            <a href="admin.php?page=rental-mobil-settings&tab=style" class="nav-tab <?php echo $active_tab == 'style' ? 'nav-tab-active' : ''; ?>">
                 <span class="dashicons dashicons-admin-appearance"></span> <?php _e('Tampilan', 'rental-mobil-wp'); ?>
             </a>
-            <a href="?page=rental-mobil-settings&tab=filter" class="nav-tab <?php echo $active_tab == 'filter' ? 'nav-tab-active' : ''; ?>">
+            <a href="admin.php?page=rental-mobil-settings&tab=filter" class="nav-tab <?php echo $active_tab == 'filter' ? 'nav-tab-active' : ''; ?>">
                 <span class="dashicons dashicons-filter"></span> <?php _e('Filter', 'rental-mobil-wp'); ?>
             </a>
-            <a href="?page=rental-mobil-settings&tab=share" class="nav-tab <?php echo $active_tab == 'share' ? 'nav-tab-active' : ''; ?>">
+            <a href="admin.php?page=rental-mobil-settings&tab=share" class="nav-tab <?php echo $active_tab == 'share' ? 'nav-tab-active' : ''; ?>">
                 <span class="dashicons dashicons-share"></span> <?php _e('Share', 'rental-mobil-wp'); ?>
             </a>
-            <a href="?page=rental-mobil-settings&tab=homepage" class="nav-tab <?php echo $active_tab == 'homepage' ? 'nav-tab-active' : ''; ?>">
+            <a href="admin.php?page=rental-mobil-settings&tab=homepage" class="nav-tab <?php echo $active_tab == 'homepage' ? 'nav-tab-active' : ''; ?>">
                 <span class="dashicons dashicons-admin-home"></span> <?php _e('Homepage', 'rental-mobil-wp'); ?>
             </a>
             <?php do_action('rental_mobil_settings_tabs', $active_tab); ?>

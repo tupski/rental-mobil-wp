@@ -147,21 +147,98 @@ function rental_mobil_wp_admin_menu() {
         __('Rental Mobil WP', 'rental-mobil-wp'),
         __('Rental Mobil WP', 'rental-mobil-wp'),
         'manage_options',
-        'edit.php?post_type=kendaraan',
-        '',
+        'rental-mobil-dashboard',
+        'rental_mobil_dashboard_page',
         'dashicons-car',
         30
     );
 
+    // Submenu: Semua Kendaraan
+    add_submenu_page(
+        'rental-mobil-dashboard',
+        __('Semua Kendaraan', 'rental-mobil-wp'),
+        __('Semua Kendaraan', 'rental-mobil-wp'),
+        'manage_options',
+        'edit.php?post_type=kendaraan',
+        ''
+    );
+
+    // Submenu: Tambah Kendaraan Baru
+    add_submenu_page(
+        'rental-mobil-dashboard',
+        __('Tambah Kendaraan Baru', 'rental-mobil-wp'),
+        __('Tambah Baru', 'rental-mobil-wp'),
+        'manage_options',
+        'post-new.php?post_type=kendaraan',
+        ''
+    );
+
+    // Submenu: Merk Kendaraan
+    add_submenu_page(
+        'rental-mobil-dashboard',
+        __('Merk Kendaraan', 'rental-mobil-wp'),
+        __('Merk Kendaraan', 'rental-mobil-wp'),
+        'manage_options',
+        'edit-tags.php?taxonomy=merk_kendaraan&post_type=kendaraan',
+        ''
+    );
+
+    // Submenu: Transmisi
+    add_submenu_page(
+        'rental-mobil-dashboard',
+        __('Transmisi', 'rental-mobil-wp'),
+        __('Transmisi', 'rental-mobil-wp'),
+        'manage_options',
+        'edit-tags.php?taxonomy=transmisi&post_type=kendaraan',
+        ''
+    );
+
+    // Submenu: Bahan Bakar
+    add_submenu_page(
+        'rental-mobil-dashboard',
+        __('Bahan Bakar', 'rental-mobil-wp'),
+        __('Bahan Bakar', 'rental-mobil-wp'),
+        'manage_options',
+        'edit-tags.php?taxonomy=bahan_bakar&post_type=kendaraan',
+        ''
+    );
+
+    // Submenu: Tipe Kendaraan
+    add_submenu_page(
+        'rental-mobil-dashboard',
+        __('Tipe Kendaraan', 'rental-mobil-wp'),
+        __('Tipe Kendaraan', 'rental-mobil-wp'),
+        'manage_options',
+        'edit-tags.php?taxonomy=tipe_kendaraan&post_type=kendaraan',
+        ''
+    );
+
+    // Submenu: Tahun Kendaraan
+    add_submenu_page(
+        'rental-mobil-dashboard',
+        __('Tahun Kendaraan', 'rental-mobil-wp'),
+        __('Tahun Kendaraan', 'rental-mobil-wp'),
+        'manage_options',
+        'edit-tags.php?taxonomy=tahun_kendaraan&post_type=kendaraan',
+        ''
+    );
+
     // Submenu: Pengaturan
     add_submenu_page(
-        'edit.php?post_type=kendaraan',
+        'rental-mobil-dashboard',
         __('Pengaturan Rental Mobil', 'rental-mobil-wp'),
         __('Pengaturan', 'rental-mobil-wp'),
         'manage_options',
         'rental-mobil-settings',
         'rental_mobil_settings_page'
     );
+}
+
+// Halaman dashboard
+function rental_mobil_dashboard_page() {
+    // Redirect ke halaman daftar kendaraan
+    wp_redirect(admin_url('edit.php?post_type=kendaraan'));
+    exit;
 }
 
 // Inisialisasi plugin

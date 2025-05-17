@@ -39,7 +39,7 @@ function rental_mobil_register_post_types() {
         'public'             => true,
         'publicly_queryable' => true,
         'show_ui'            => true,
-        'show_in_menu'       => true,
+        'show_in_menu'       => false, // Sembunyikan dari menu utama
         'query_var'          => true,
         'rewrite'            => array('slug' => 'rental'),
         'capability_type'    => 'post',
