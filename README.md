@@ -90,6 +90,13 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil WP' >
 
 ## Changelog
 
+### 1.6.7
+* Perbaikan dropdown Select2 yang tidak berfungsi pada modal booking untuk pengunjung non-admin
+* Perbaikan error JavaScript di console
+* Perbaikan masalah validasi form pada field yang tidak terlihat
+* Perbaikan tombol booking yang tidak berfungsi setelah kembali dari WhatsApp
+* Peningkatan z-index untuk dropdown Select2 agar tidak tertutup oleh elemen lain
+
 ### 1.4.9
 * Perbaikan filter sticky yang tidak berfungsi
 * Memperbaiki nama fungsi untuk menambahkan custom CSS
@@ -197,6 +204,9 @@ Ya, Anda dapat mengubah template pesan WhatsApp melalui menu 'Rental Mobil WP' >
 * Rilis pertama
 
 ## Upgrade Notice
+
+### 1.6.7
+Perbaikan penting untuk dropdown Select2 pada modal booking, error JavaScript, dan masalah validasi form. Sangat direkomendasikan untuk diupdate.
 
 ### 1.4.9
 Perbaikan filter sticky yang tidak berfungsi dan memperbaiki nama fungsi untuk menambahkan custom CSS.

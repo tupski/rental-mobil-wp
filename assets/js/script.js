@@ -463,6 +463,12 @@
                 return;
             }
 
+            // Reset form sebelum mengisi data baru
+            bookingForm[0].reset();
+
+            // Hapus semua error class
+            bookingForm.find('.error').removeClass('error');
+
             $('#rental-mobil-booking-kendaraan-id').val(kendaraanId);
             $('#rental-mobil-booking-kendaraan-title').val(kendaraanTitle);
 
@@ -736,7 +742,7 @@
                         if (featuredImageSrc) {
                             $('.rental-mobil-quick-view-thumbnails').append(`
                                 <div class="rental-mobil-quick-view-thumbnail active" data-src="${featuredImageSrc}">
-                                    <img src="${featuredImageSrc}" alt="${title}">
+                                    <img src="${featuredImageSrc}" alt="${data.title}">
                                 </div>
                             `);
                         }
@@ -745,7 +751,7 @@
                         $.each(response.data.gallery, function(_, image) {
                             $('.rental-mobil-quick-view-thumbnails').append(`
                                 <div class="rental-mobil-quick-view-thumbnail" data-src="${image.url}">
-                                    <img src="${image.thumbnail}" alt="${title}">
+                                    <img src="${image.thumbnail}" alt="${data.title}">
                                 </div>
                             `);
                         });
@@ -959,6 +965,27 @@
             // Update time input dari dropdown
             updateTimeInput();
 
+            // Validasi form secara manual
+            let isValid = true;
+            const requiredFields = $(this).find('[required]:visible');
+
+            // Reset semua error
+            $(this).find('.error').removeClass('error');
+
+            // Validasi setiap field yang required dan visible
+            requiredFields.each(function() {
+                if (!$(this).val()) {
+                    $(this).addClass('error');
+                    isValid = false;
+                }
+            });
+
+            // Jika form tidak valid, tampilkan pesan dan hentikan submit
+            if (!isValid) {
+                alert('Mohon lengkapi semua field yang wajib diisi.');
+                return;
+            }
+
             const kendaraanId = $('#rental-mobil-booking-kendaraan-id').val();
 
             // Collect all form data
@@ -1009,6 +1036,15 @@
 
                         // Reset form dan tutup modal
                         bookingForm[0].reset();
+
+                        // Destroy dan reinisialisasi Select2
+                        bookingForm.find('select').each(function() {
+                            if ($(this).hasClass('select2-hidden-accessible')) {
+                                $(this).select2('destroy');
+                            }
+                        });
+
+                        // Tutup modal
                         modal.css('display', 'none');
                     } else {
                         alert('Terjadi kesalahan. Silakan coba lagi.');
@@ -1306,7 +1342,8 @@
         // Inisialisasi quick view trigger untuk slider
         $('.rental-mobil-slider .rental-mobil-quick-view-trigger').on('click', function() {
             const kendaraanId = $(this).data('id');
-            openQuickView(kendaraanId);
+            // Gunakan jQuery untuk menemukan dan memicu klik pada elemen dengan data-id yang sama
+            $('.rental-mobil-quick-view-trigger[data-id="' + kendaraanId + '"]').first().trigger('click');
         });
     }
 

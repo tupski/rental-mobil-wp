@@ -2,6 +2,16 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.6.7] - 2024-05-18
+
+### Diperbaiki
+- Masalah dropdown Select2 yang tidak berfungsi pada modal booking untuk pengunjung non-admin
+- Error "openQuickView is not defined" dan "title is not defined" di console
+- Masalah validasi form pada field yang tidak terlihat
+- Tombol booking yang tidak berfungsi setelah kembali dari WhatsApp
+- Peningkatan z-index untuk dropdown Select2 agar tidak tertutup oleh elemen lain
+- Perbaikan validasi form secara manual untuk memastikan hanya field yang visible yang divalidasi
+
 ## [1.6.3] - 2024-05-16
 
 ### Ditambahkan

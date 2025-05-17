@@ -1105,6 +1105,14 @@
     margin-bottom: 15px;
 }
 
+/* Style untuk field error */
+.rental-mobil-form-group input.error,
+.rental-mobil-form-group select.error,
+.rental-mobil-form-group textarea.error {
+    border: 1px solid #e74c3c;
+    background-color: #fef5f5;
+}
+
 /* Field width classes for actual form */
 .rental-mobil-field-width-100 {
     width: 100%;
