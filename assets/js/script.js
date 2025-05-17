@@ -472,6 +472,31 @@
 
             modal.css('display', 'block');
 
+            // Reinisialisasi Select2 setelah modal dibuka
+            setTimeout(function() {
+                if (typeof $.fn.select2 !== 'undefined') {
+                    $('.rental-mobil-booking-form select').each(function() {
+                        // Destroy Select2 jika sudah diinisialisasi sebelumnya
+                        if ($(this).hasClass('select2-hidden-accessible')) {
+                            $(this).select2('destroy');
+                        }
+
+                        // Inisialisasi ulang Select2
+                        $(this).select2({
+                            width: '100%',
+                            dropdownAutoWidth: true,
+                            minimumResultsForSearch: 5,
+                            dropdownParent: $('#rental-mobil-booking-modal'),
+                            language: {
+                                noResults: function() {
+                                    return "Tidak ada hasil yang ditemukan";
+                                }
+                            }
+                        });
+                    });
+                }
+            }, 100);
+
             // Scroll ke form booking jika di mobile
             if ($(window).width() <= 768) {
                 $('html, body').animate({

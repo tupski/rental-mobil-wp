@@ -202,31 +202,28 @@ function rental_mobil_render_custom_booking_form($kendaraan_id, $kendaraan_title
         function initSelect2() {
             $('.rental-mobil-custom-booking-field select').each(function() {
                 const select = $(this);
-                const optionsCount = select.find('option').length - 1; // Exclude the placeholder option
 
-                // Only use Select2 if there are more than 10 options
-                if (optionsCount > 10) {
-                    select.select2({
-                        width: '100%',
-                        dropdownAutoWidth: true,
-                        placeholder: select.find('option:first').text(),
-                        allowClear: true,
-                        dropdownCssClass: 'rental-mobil-select2-dropdown',
-                        minimumResultsForSearch: 5, // Show search box if more than 5 options
-                        language: {
-                            noResults: function() {
-                                return "Tidak ada hasil yang ditemukan";
-                            }
+                // Selalu gunakan Select2 untuk semua select
+                select.select2({
+                    width: '100%',
+                    dropdownAutoWidth: true,
+                    placeholder: select.find('option:first').text(),
+                    allowClear: true,
+                    dropdownCssClass: 'rental-mobil-select2-dropdown',
+                    minimumResultsForSearch: 5, // Show search box if more than 5 options
+                    language: {
+                        noResults: function() {
+                            return "Tidak ada hasil yang ditemukan";
                         }
-                    });
+                    }
+                });
 
-                    // Focus search field when dropdown opens
-                    select.on('select2:open', function() {
-                        setTimeout(function() {
-                            $('.select2-search__field').focus();
-                        }, 100);
-                    });
-                }
+                // Focus search field when dropdown opens
+                select.on('select2:open', function() {
+                    setTimeout(function() {
+                        $('.select2-search__field').focus();
+                    }, 100);
+                });
             });
         }
 

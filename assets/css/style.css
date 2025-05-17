@@ -939,6 +939,53 @@
     z-index: 10000; /* Memastikan modal berada di atas elemen lain */
 }
 
+/* Select2 Styles untuk Modal */
+.select2-container {
+    z-index: 99999 !important; /* Memastikan dropdown Select2 berada di atas modal */
+}
+
+.select2-container--open .select2-dropdown {
+    z-index: 99999 !important;
+}
+
+.select2-container--open .select2-dropdown--below {
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #0073aa;
+    color: white;
+}
+
+.select2-container--default .select2-selection--single {
+    height: 38px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 28px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px;
+}
+
+/* Perbaikan untuk modal pada perangkat mobile */
+@media (max-width: 768px) {
+    .rental-mobil-modal-content {
+        width: 90%;
+        margin: 70px auto 30px;
+    }
+
+    .select2-container {
+        width: 100% !important;
+    }
+}
+
 @keyframes modalFadeIn {
     from {
         opacity: 0;

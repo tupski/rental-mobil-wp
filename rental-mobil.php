@@ -103,6 +103,10 @@ function rental_mobil_wp_enqueue_scripts() {
     wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css', array(), '5.15.4');
     wp_enqueue_style('rental-mobil-icons', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/icons.css', array('font-awesome'), RENTAL_MOBIL_VERSION);
 
+    // Enqueue Select2 untuk semua pengguna (termasuk yang tidak login)
+    wp_enqueue_style('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array(), '4.1.0');
+    wp_enqueue_script('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), '4.1.0', true);
+
     // Enqueue style.css jika file ada
     if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'assets/css/style.css')) {
         wp_enqueue_style('rental-mobil-style', RENTAL_MOBIL_PLUGIN_URL . 'assets/css/style.css', array(), RENTAL_MOBIL_VERSION);
@@ -115,7 +119,7 @@ function rental_mobil_wp_enqueue_scripts() {
 
     // Enqueue script.js jika file ada
     if (file_exists(RENTAL_MOBIL_PLUGIN_DIR . 'assets/js/script.js')) {
-        wp_enqueue_script('rental-mobil-script', RENTAL_MOBIL_PLUGIN_URL . 'assets/js/script.js', array('jquery'), RENTAL_MOBIL_VERSION, true);
+        wp_enqueue_script('rental-mobil-script', RENTAL_MOBIL_PLUGIN_URL . 'assets/js/script.js', array('jquery', 'select2'), RENTAL_MOBIL_VERSION, true);
 
         // Localize script untuk AJAX
         wp_localize_script('rental-mobil-script', 'rental_mobil_ajax', array(

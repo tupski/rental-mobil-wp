@@ -188,6 +188,7 @@ jQuery(document).ready(function($) {
                 width: '100%',
                 dropdownAutoWidth: true,
                 minimumResultsForSearch: 5,
+                dropdownParent: $('#rental-mobil-booking-modal'),
                 language: {
                     noResults: function() {
                         return "Tidak ada hasil yang ditemukan";
@@ -195,25 +196,23 @@ jQuery(document).ready(function($) {
                 }
             });
         });
-    } else {
-        // Jika Select2 belum dimuat, muat dari CDN
-        $.getScript('https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', function() {
-            $('head').append('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">');
-
-            // Inisialisasi Select2 setelah dimuat
-            $('.rental-mobil-booking-form select').each(function() {
-                $(this).select2({
-                    width: '100%',
-                    dropdownAutoWidth: true,
-                    minimumResultsForSearch: 5,
-                    language: {
-                        noResults: function() {
-                            return "Tidak ada hasil yang ditemukan";
-                        }
-                    }
-                });
-            });
-        });
     }
+
+    // Reinisialisasi Select2 saat modal dibuka
+    $(document).on('click', '.rental-mobil-button-booking', function() {
+        setTimeout(function() {
+            $('.rental-mobil-booking-form select').select2({
+                width: '100%',
+                dropdownAutoWidth: true,
+                minimumResultsForSearch: 5,
+                dropdownParent: $('#rental-mobil-booking-modal'),
+                language: {
+                    noResults: function() {
+                        return "Tidak ada hasil yang ditemukan";
+                    }
+                }
+            });
+        }, 100);
+    });
 });
 </script>
