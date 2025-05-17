@@ -496,8 +496,6 @@ function rental_mobil_get_whatsapp_ajax() {
         'message' => $message
     ));
 }
-<<<<<<< HEAD
-=======
 
 /**
  * AJAX handler untuk menyimpan form fields
@@ -565,4 +563,3 @@ function rental_mobil_save_form_fields_ajax() {
         'form_fields' => $sanitized_fields
     ));
 }
->>>>>>> c10b851801dc71997f8b2ec8278168e907cee452

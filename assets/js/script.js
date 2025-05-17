@@ -836,20 +836,6 @@
 
             const kendaraanId = $('#rental-mobil-booking-kendaraan-id').val();
 
-<<<<<<< HEAD
-            // Validasi form
-            if (!jamSewa) {
-                alert('Silakan pilih jam dan menit untuk waktu sewa.');
-                return;
-            }
-
-            // Format tanggal
-            const tanggalObj = new Date(tanggalSewa);
-            const formattedTanggal = tanggalObj.toLocaleDateString('id-ID', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-=======
             // Collect all form data
             const formData = $(this).serializeArray();
             const formValues = {};
@@ -857,7 +843,6 @@
             // Convert form data to object
             $.each(formData, function(_, field) {
                 formValues[field.name] = field.value;
->>>>>>> c10b851801dc71997f8b2ec8278168e907cee452
             });
 
             // Format date fields if they exist
@@ -1044,13 +1029,6 @@
                 // Namun kita tetap mempertahankan fungsi AJAX untuk kompatibilitas
                 const page = $(this).data('page');
 
-<<<<<<< HEAD
-                // Gunakan formData jika tersedia, jika tidak gunakan initialFormData
-                const dataToUse = formData || initialFormData;
-
-                // Muat kendaraan dengan halaman yang dipilih dan scroll ke atas
-                loadKendaraan(dataToUse, page);
-=======
                 // Jika pengguna menekan tombol Ctrl atau Command saat mengklik, biarkan browser menangani link
                 if (e.ctrlKey || e.metaKey) {
                     return true;
@@ -1059,7 +1037,6 @@
                 // Jika tidak, gunakan AJAX untuk memuat konten tanpa refresh halaman
                 e.preventDefault();
                 loadKendaraan(formData, page);
->>>>>>> c10b851801dc71997f8b2ec8278168e907cee452
             });
         }
 
@@ -1133,20 +1110,6 @@
 
             const kendaraanId = $('#rental-mobil-inline-booking-kendaraan-id').val();
 
-<<<<<<< HEAD
-            // Validasi form
-            if (!jamSewa) {
-                alert('Silakan pilih jam dan menit untuk waktu sewa.');
-                return;
-            }
-
-            // Format tanggal
-            const tanggalObj = new Date(tanggalSewa);
-            const formattedTanggal = tanggalObj.toLocaleDateString('id-ID', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-=======
             // Collect all form data
             const formData = $(this).serializeArray();
             const formValues = {};
@@ -1154,7 +1117,6 @@
             // Convert form data to object
             $.each(formData, function(_, field) {
                 formValues[field.name] = field.value;
->>>>>>> c10b851801dc71997f8b2ec8278168e907cee452
             });
 
             // Format date fields if they exist
