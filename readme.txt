@@ -4,7 +4,7 @@ Donate link:
 Tags: car rental, rental, booking, whatsapp, mobil
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -84,6 +84,17 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 4. Pengaturan Plugin
 
 == Changelog ==
+
+= 1.6.5 =
+* Menambahkan pengaturan urutan daftar kendaraan di tab Filter
+* Menambahkan opsi pengurutan berdasarkan harga, tanggal publikasi, judul, dan acak
+* Menambahkan textarea untuk memodifikasi pesan bagikan di tab Share
+* Menambahkan placeholder yang bisa diklik di pengaturan pesan bagikan
+* Menambahkan DOKUMENTASI.md dengan cara penggunaan plugin dan shortcode
+* Menambahkan link ke dokumentasi lengkap di tab Dokumentasi
+* Memindahkan pengaturan filter dari tab Tampilan ke tab Filter
+* Mengubah default filter frontend agar tidak menampilkan opsi urutan
+* Optimasi kode dan perbaikan bug
 
 = 1.6.4 =
 * Perbaikan filter di mobile agar hanya tampil di sidebar saat tombol filter diklik
@@ -204,6 +215,9 @@ Ya, Anda dapat menambahkan field kustom lainnya dengan memodifikasi file `includ
 * Rilis pertama
 
 == Upgrade Notice ==
+
+= 1.6.5 =
+Menambahkan pengaturan urutan daftar kendaraan, pesan bagikan yang bisa dikustomisasi, dan dokumentasi lengkap.
 
 = 1.6.4 =
 Perbaikan filter di mobile, format otomatis nomor WhatsApp, placeholder yang bisa diklik, dukungan placeholder conditional, opsi ukuran field, dan implementasi Select2 untuk field select.

@@ -104,6 +104,15 @@ function rental_mobil_register_settings() {
         'rental_mobil_filter_section'
     );
 
+    // Pengaturan Urutan Daftar Kendaraan
+    add_settings_field(
+        'filter_sort_options',
+        __('Urutkan Daftar Kendaraan', 'rental-mobil-wp'),
+        'rental_mobil_filter_sort_options_callback',
+        'rental_mobil_filter',
+        'rental_mobil_filter_section'
+    );
+
     // Tab Share
     add_settings_section(
         'rental_mobil_share_section',
@@ -117,6 +126,15 @@ function rental_mobil_register_settings() {
         'share_platforms',
         __('Platform Share', 'rental-mobil-wp'),
         'rental_mobil_share_platforms_callback',
+        'rental_mobil_share',
+        'rental_mobil_share_section'
+    );
+
+    // Pengaturan Pesan Share
+    add_settings_field(
+        'share_message',
+        __('Pesan Share', 'rental-mobil-wp'),
+        'rental_mobil_share_message_callback',
         'rental_mobil_share',
         'rental_mobil_share_section'
     );
@@ -162,14 +180,7 @@ function rental_mobil_register_settings() {
         'rental_mobil_style_section'
     );
 
-    // Pengaturan Filter
-    add_settings_field(
-        'filter_options',
-        __('Opsi Filter yang Ditampilkan', 'rental-mobil-wp'),
-        'rental_mobil_filter_options_callback',
-        'rental_mobil_style',
-        'rental_mobil_style_section'
-    );
+    // Pengaturan Filter dihapus karena sudah ada di tab Filter
 
     // Pengaturan Posisi Ikon Filter di Mobile
     add_settings_field(
@@ -319,6 +330,10 @@ function rental_mobil_documentation_section_callback() {
     echo '</div>';
 
     echo '</div>';
+
+    echo '<h3>' . __('Dokumentasi Lengkap', 'rental-mobil-wp') . '</h3>';
+    echo '<p>' . __('Untuk dokumentasi lengkap, silakan kunjungi:', 'rental-mobil-wp') . '</p>';
+    echo '<p><a href="https://github.com/tupski/rental-mobil-wp/blob/main/DOKUMENTASI.md" target="_blank" class="button button-primary">' . __('Buka Dokumentasi Lengkap', 'rental-mobil-wp') . '</a></p>';
 
     echo '<h3>' . __('Kontribusi', 'rental-mobil-wp') . '</h3>';
     echo '<p>' . sprintf(__('Plugin ini open source dan Anda dapat berkontribusi di %s', 'rental-mobil-wp'), '<a href="https://github.com/tupski/rental-mobil-wp" target="_blank">GitHub</a>') . '</p>';
@@ -920,6 +935,11 @@ function rental_mobil_validate_options($input) {
         $output['share_platforms'] = array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
     }
 
+    // Sanitize share message
+    if (isset($input['share_message'])) {
+        $output['share_message'] = sanitize_textarea_field($input['share_message']);
+    }
+
     // Sanitize license key
     if (isset($input['license_key'])) {
         $output['license_key'] = sanitize_text_field($input['license_key']);
@@ -1332,10 +1352,10 @@ function rental_mobil_get_shortcode_order_settings() {
  */
 function rental_mobil_get_frontend_filter_options() {
     $options = rental_mobil_get_options();
-    $frontend_filter_options = isset($options['frontend_filter_options']) ? $options['frontend_filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+    $frontend_filter_options = isset($options['frontend_filter_options']) ? $options['frontend_filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun');
 
     if (!is_array($frontend_filter_options)) {
-        $frontend_filter_options = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+        $frontend_filter_options = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun');
     }
 
     return $frontend_filter_options;
@@ -1401,10 +1421,10 @@ function rental_mobil_filter_section_callback() {
  */
 function rental_mobil_frontend_filter_options_callback() {
     $options = rental_mobil_get_options();
-    $frontend_filter_options = isset($options['frontend_filter_options']) ? $options['frontend_filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+    $frontend_filter_options = isset($options['frontend_filter_options']) ? $options['frontend_filter_options'] : array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun');
 
     if (!is_array($frontend_filter_options)) {
-        $frontend_filter_options = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'orderby', 'order');
+        $frontend_filter_options = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun');
     }
     ?>
     <fieldset>
@@ -1522,6 +1542,72 @@ function rental_mobil_share_section_callback() {
 }
 
 /**
+ * Filter sort options callback
+ */
+function rental_mobil_filter_sort_options_callback() {
+    ?>
+    <div class="rental-mobil-filter-sort-options">
+        <h4><?php _e('Harga Harian', 'rental-mobil-wp'); ?></h4>
+        <div class="rental-mobil-filter-sort-option">
+            <label>
+                <input type="radio" name="rental_mobil_options[filter_sort_price]" value="high_to_low" <?php checked(rental_mobil_get_option('filter_sort_price', 'high_to_low'), 'high_to_low'); ?>>
+                <?php _e('Tertinggi - Terendah', 'rental-mobil-wp'); ?>
+            </label>
+            <label>
+                <input type="radio" name="rental_mobil_options[filter_sort_price]" value="low_to_high" <?php checked(rental_mobil_get_option('filter_sort_price', 'high_to_low'), 'low_to_high'); ?>>
+                <?php _e('Terendah - Tertinggi', 'rental-mobil-wp'); ?>
+            </label>
+        </div>
+
+        <h4><?php _e('Dipublish', 'rental-mobil-wp'); ?></h4>
+        <div class="rental-mobil-filter-sort-option">
+            <label>
+                <input type="radio" name="rental_mobil_options[filter_sort_date]" value="newest" <?php checked(rental_mobil_get_option('filter_sort_date', 'newest'), 'newest'); ?>>
+                <?php _e('Terbaru - Terlama', 'rental-mobil-wp'); ?>
+            </label>
+            <label>
+                <input type="radio" name="rental_mobil_options[filter_sort_date]" value="oldest" <?php checked(rental_mobil_get_option('filter_sort_date', 'newest'), 'oldest'); ?>>
+                <?php _e('Terlama - Terbaru', 'rental-mobil-wp'); ?>
+            </label>
+        </div>
+
+        <h4><?php _e('Judul', 'rental-mobil-wp'); ?></h4>
+        <div class="rental-mobil-filter-sort-option">
+            <label>
+                <input type="radio" name="rental_mobil_options[filter_sort_title]" value="a_to_z" <?php checked(rental_mobil_get_option('filter_sort_title', 'a_to_z'), 'a_to_z'); ?>>
+                <?php _e('A - Z', 'rental-mobil-wp'); ?>
+            </label>
+            <label>
+                <input type="radio" name="rental_mobil_options[filter_sort_title]" value="z_to_a" <?php checked(rental_mobil_get_option('filter_sort_title', 'a_to_z'), 'z_to_a'); ?>>
+                <?php _e('Z - A', 'rental-mobil-wp'); ?>
+            </label>
+        </div>
+
+        <h4><?php _e('Acak', 'rental-mobil-wp'); ?></h4>
+        <div class="rental-mobil-filter-sort-option">
+            <label>
+                <input type="checkbox" name="rental_mobil_options[filter_sort_random]" value="1" <?php checked(rental_mobil_get_option('filter_sort_random', '0'), '1'); ?>>
+                <?php _e('Tampilkan kendaraan secara acak', 'rental-mobil-wp'); ?>
+            </label>
+        </div>
+    </div>
+    <p class="description"><?php _e('Pilih opsi pengurutan default untuk daftar kendaraan.', 'rental-mobil-wp'); ?></p>
+    <style>
+        .rental-mobil-filter-sort-options h4 {
+            margin: 15px 0 5px;
+        }
+        .rental-mobil-filter-sort-option {
+            margin-left: 15px;
+        }
+        .rental-mobil-filter-sort-option label {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+    <?php
+}
+
+/**
  * Share platforms callback
  */
 function rental_mobil_share_platforms_callback() {
@@ -1566,6 +1652,84 @@ function rental_mobil_share_platforms_callback() {
     </fieldset>
     <p class="description"><?php _e('Pilih platform share yang ingin ditampilkan pada detail kendaraan.', 'rental-mobil-wp'); ?></p>
     <p class="description"><?php _e('URL yang dishare akan menggunakan slug halaman saat ini dan parameter kata_kunci untuk mengarahkan ke kendaraan yang spesifik.', 'rental-mobil-wp'); ?></p>
+    <?php
+}
+
+/**
+ * Share message callback
+ */
+function rental_mobil_share_message_callback() {
+    $options = rental_mobil_get_options();
+    $default_message = "Saya menemukan kendaraan {nama_kendaraan} yang menarik di {site_name}. Cek di sini: {url}";
+    $share_message = isset($options['share_message']) ? $options['share_message'] : $default_message;
+    ?>
+    <textarea id="share_message" name="rental_mobil_options[share_message]" rows="5" class="large-text"><?php echo esc_textarea($share_message); ?></textarea>
+    <div class="description">
+        <?php _e('Template pesan share. Gunakan placeholder berikut:', 'rental-mobil-wp'); ?>
+        <br>
+        <div class="rental-mobil-share-placeholders">
+            <span class="rental-mobil-placeholder-item" data-placeholder="{nama_kendaraan}">
+                <code>{nama_kendaraan}</code> - <?php _e('Nama kendaraan', 'rental-mobil-wp'); ?>
+            </span>
+            <br>
+            <span class="rental-mobil-placeholder-item" data-placeholder="{site_name}">
+                <code>{site_name}</code> - <?php _e('Nama situs', 'rental-mobil-wp'); ?>
+            </span>
+            <br>
+            <span class="rental-mobil-placeholder-item" data-placeholder="{url}">
+                <code>{url}</code> - <?php _e('URL kendaraan', 'rental-mobil-wp'); ?>
+            </span>
+            <br>
+            <span class="rental-mobil-placeholder-item" data-placeholder="{harga_harian}">
+                <code>{harga_harian}</code> - <?php _e('Harga harian kendaraan', 'rental-mobil-wp'); ?>
+            </span>
+        </div>
+    </div>
+
+    <style>
+        .rental-mobil-share-placeholders {
+            margin-top: 10px;
+        }
+        .rental-mobil-share-placeholders .rental-mobil-placeholder-item {
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 5px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+        .rental-mobil-share-placeholders .rental-mobil-placeholder-item:hover {
+            background-color: #f0f0f0;
+        }
+        .rental-mobil-share-placeholders .rental-mobil-placeholder-item code {
+            background-color: #f8f8f8;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border: 1px solid #e0e0e0;
+        }
+    </style>
+
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        // Klik placeholder untuk menambahkan ke textarea
+        $('.rental-mobil-share-placeholders .rental-mobil-placeholder-item').on('click', function() {
+            var placeholder = $(this).data('placeholder');
+            var textarea = $('#share_message');
+            var cursorPos = textarea.prop('selectionStart');
+            var textBefore = textarea.val().substring(0, cursorPos);
+            var textAfter = textarea.val().substring(cursorPos);
+
+            // Tambahkan placeholder ke posisi kursor
+            textarea.val(textBefore + placeholder + textAfter);
+
+            // Atur kursor setelah placeholder
+            var newCursorPos = cursorPos + placeholder.length;
+            textarea.prop('selectionStart', newCursorPos);
+            textarea.prop('selectionEnd', newCursorPos);
+            textarea.focus();
+        });
+    });
+    </script>
     <?php
 }
 
@@ -1899,4 +2063,11 @@ function rental_mobil_trakteer_button($type = 'overlay') {
     return '';
 }
 
+/**
+ * Get specific option with default value
+ */
+function rental_mobil_get_option($key, $default = '') {
+    $options = rental_mobil_get_options();
+    return isset($options[$key]) ? $options[$key] : $default;
+}
 
