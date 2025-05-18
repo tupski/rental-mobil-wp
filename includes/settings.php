@@ -1200,7 +1200,7 @@ function rental_mobil_validate_options($input) {
 
     // Sanitize share platforms
     if (isset($input['share_platforms']) && is_array($input['share_platforms'])) {
-        $valid_platforms = array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
+        $valid_platforms = array('whatsapp', 'facebook', 'twitter', 'telegram', 'email', 'copy');
         $output['share_platforms'] = array_intersect($input['share_platforms'], $valid_platforms);
     } else {
         $output['share_platforms'] = array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
@@ -1668,6 +1668,9 @@ function rental_mobil_get_share_platforms() {
     $share_platforms = isset($options['share_platforms']) && is_array($options['share_platforms'])
         ? $options['share_platforms']
         : array('whatsapp', 'facebook', 'twitter', 'telegram', 'email');
+
+    // Pastikan tidak ada duplikasi
+    $share_platforms = array_unique($share_platforms);
 
     // Tambahkan debugging jika diperlukan
     if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -2279,6 +2282,12 @@ function rental_mobil_save_settings_ajax() {
             if (!isset($form_data['rental_mobil_options'][$option_key]) && isset($existing_options[$option_key])) {
                 $validated_options[$option_key] = $existing_options[$option_key];
             }
+
+            // Khusus untuk share_platforms, pastikan nilai 'copy' juga disertakan jika ada di form data
+            if ($option_key === 'share_platforms' && isset($form_data['rental_mobil_options'][$option_key])) {
+                $valid_platforms = array('whatsapp', 'facebook', 'twitter', 'telegram', 'email', 'copy');
+                $validated_options[$option_key] = array_intersect($form_data['rental_mobil_options'][$option_key], $valid_platforms);
+            }
         }
 
         // Gabungkan dengan opsi yang sudah ada untuk memastikan tidak ada yang hilang
@@ -2419,11 +2428,10 @@ function rental_mobil_wp_add_custom_css() {
 /**
  * Fungsi untuk menampilkan tombol donasi (dinonaktifkan)
  *
- * @param string $type Tipe tombol (tidak digunakan)
  * @return string String kosong
  */
-function rental_mobil_trakteer_button($type = 'overlay') {
-    // Parameter $type tidak digunakan, tetapi dipertahankan untuk kompatibilitas
+function rental_mobil_trakteer_button() {
+    // Fungsi ini tidak melakukan apa-apa, hanya untuk kompatibilitas
     return '';
 }
 
