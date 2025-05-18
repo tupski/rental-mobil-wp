@@ -22,7 +22,7 @@ if (!defined('WPINC')) {
                 <!-- Badge akan diisi oleh JavaScript -->
             </div>
 
-            <!-- Galeri (akan muncul kedua di mobile) -->
+            <!-- Galeri (akan muncul ketiga di mobile) -->
             <div class="rental-mobil-quick-view-gallery">
                 <!-- Gambar utama -->
                 <div class="rental-mobil-quick-view-main-image">
@@ -45,7 +45,6 @@ if (!defined('WPINC')) {
                 </div>
             </div>
 
-            <!-- Tombol Bagikan (akan muncul setelah foto di mobile) -->
             <?php
             // Dapatkan platform share dari pengaturan
             $share_platforms = rental_mobil_get_share_platforms();
@@ -90,7 +89,7 @@ if (!defined('WPINC')) {
                 </div>
             </div>
 
-            <!-- Tombol Bagikan untuk mobile -->
+            <!-- Tombol Bagikan untuk mobile (akan muncul keempat di mobile) -->
             <div class="rental-mobil-quick-view-share rental-mobil-mobile-share">
                 <button class="rental-mobil-button rental-mobil-mobile-share-button">
                     <span class="dashicons dashicons-share-alt"></span>
@@ -141,13 +140,13 @@ if (!defined('WPINC')) {
             </div>
             <?php endif; ?>
 
-            <!-- Detail (akan muncul ketiga di mobile) -->
+            <!-- Detail (akan muncul kelima di mobile) -->
             <div class="rental-mobil-quick-view-details">
                 <div class="rental-mobil-quick-view-meta">
                     <!-- Meta akan diisi oleh JavaScript -->
                 </div>
 
-                <!-- Harga (akan muncul keempat di mobile) -->
+                <!-- Harga (akan muncul keenam di mobile) -->
                 <div class="rental-mobil-quick-view-prices">
                     <div class="rental-mobil-quick-view-price-item">
                         <span class="rental-mobil-quick-view-price-label"><?php _e('Harga per Hari', 'rental-mobil-wp'); ?></span>
@@ -165,7 +164,7 @@ if (!defined('WPINC')) {
                     </div>
                 </div>
 
-                <!-- Tombol Booking (akan muncul kelima di mobile) -->
+                <!-- Tombol Booking (akan muncul ketujuh di mobile) -->
                 <div class="rental-mobil-quick-view-actions">
                     <button class="rental-mobil-button rental-mobil-button-booking rental-mobil-quick-view-booking" data-id="">
                         <?php _e('Booking Sekarang', 'rental-mobil-wp'); ?>

@@ -1977,9 +1977,10 @@ select option {
         display: none;
     }
 
-    .rental-mobil-mobile-share {
-        display: block;
-        margin-top: 15px;
+    .rental-mobil-quick-view-share.rental-mobil-mobile-share {
+        display: block !important; /* Pastikan muncul di mobile */
+        margin: 15px 0;
+        order: 4; /* Pastikan urutan sesuai */
     }
 
     .rental-mobil-mobile-share-button {
@@ -2090,7 +2091,14 @@ select option {
 
 /* Mobile Share Modal */
 .rental-mobil-mobile-share {
-    display: none;
+    display: none; /* Sembunyikan di desktop */
+}
+
+/* Pastikan tombol share mobile hanya muncul di mobile */
+@media (min-width: 769px) {
+    .rental-mobil-mobile-share {
+        display: none !important;
+    }
 }
 
 .rental-mobil-mobile-share-modal {
@@ -2864,9 +2872,14 @@ select option {
         padding: 0;
     }
 
-    /* Reorder elemen untuk mobile */
+    /* Reorder elemen untuk mobile sesuai permintaan */
+    .rental-mobil-quick-view-container {
+        display: flex;
+        flex-direction: column;
+    }
+
     .rental-mobil-quick-view-title {
-        order: 1;
+        order: 1; /* Judul */
         margin: 0 0 10px 0;
         font-size: 20px;
         font-weight: 700;
@@ -2876,7 +2889,7 @@ select option {
     }
 
     .rental-mobil-quick-view-badges {
-        order: 2;
+        order: 2; /* Badge */
         margin-bottom: 15px;
         display: flex;
         flex-wrap: wrap;
@@ -2884,7 +2897,7 @@ select option {
     }
 
     .rental-mobil-quick-view-gallery {
-        order: 3;
+        order: 3; /* Gambar */
         margin-bottom: 15px;
     }
 
@@ -2932,8 +2945,15 @@ select option {
         flex-shrink: 0;
     }
 
+    /* Tombol share pada mobile */
+    .rental-mobil-quick-view-share.rental-mobil-mobile-share {
+        order: 4; /* Tombol Share */
+        margin: 15px 0;
+        width: 100%;
+    }
+
     .rental-mobil-quick-view-details {
-        order: 5;
+        order: 5; /* Detail */
     }
 
     .rental-mobil-quick-view-meta {
@@ -2960,6 +2980,7 @@ select option {
         background-color: #f0f7fc;
         border-radius: 8px;
         padding: 10px;
+        order: 6; /* Harga */
     }
 
     .rental-mobil-quick-view-price-item {
@@ -2994,6 +3015,7 @@ select option {
         display: flex;
         flex-direction: column;
         gap: 10px;
+        order: 7; /* Tombol Booking */
     }
 
     .rental-mobil-quick-view-actions .rental-mobil-button-booking {
@@ -3002,13 +3024,6 @@ select option {
         font-size: 16px;
         font-weight: 600;
         border-radius: 8px;
-    }
-
-    /* Tombol share pada mobile */
-    .rental-mobil-quick-view-share.rental-mobil-mobile-share {
-        order: 4;
-        margin: 15px 0;
-        width: 100%;
     }
 
     .rental-mobil-quick-view-share.rental-mobil-mobile-share .rental-mobil-button {

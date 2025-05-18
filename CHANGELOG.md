@@ -2,6 +2,15 @@
 
 Semua perubahan penting pada plugin Rental Mobil WP akan didokumentasikan di file ini.
 
+## [1.7.6] - 2024-05-27
+
+### Ditambahkan
+- Pengaturan untuk mengaktifkan/menonaktifkan tombol bagikan di detail kendaraan dan modal zoom
+- Perbaikan urutan elemen di mobile pada quick view modal
+
+### Diubah
+- Tombol bagikan tidak akan ditampilkan jika dinonaktifkan di pengaturan
+
 ## [1.7.5] - 2024-05-26
 
 ### Diubah

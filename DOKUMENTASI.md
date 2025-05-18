@@ -152,6 +152,8 @@ Plugin ini terintegrasi dengan WhatsApp untuk mengirim pesan booking. Anda dapat
 
 Plugin ini menyediakan fitur berbagi ke berbagai platform seperti WhatsApp, Facebook, Twitter, Telegram, dan Email. Anda dapat mengatur platform yang ditampilkan dan template pesan di tab Share.
 
+Anda juga dapat mengaktifkan atau menonaktifkan tombol bagikan melalui pengaturan di tab Share. Jika dinonaktifkan, tombol bagikan tidak akan ditampilkan di detail kendaraan dan modal zoom.
+
 ## FAQ
 
 ### Bagaimana cara menambahkan kendaraan?

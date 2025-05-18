@@ -121,6 +121,15 @@ function rental_mobil_register_settings() {
         'rental_mobil_share'
     );
 
+    // Pengaturan Aktifkan/Nonaktifkan Tombol Bagikan
+    add_settings_field(
+        'enable_share_buttons',
+        __('Tombol Bagikan', 'rental-mobil-wp'),
+        'rental_mobil_enable_share_buttons_callback',
+        'rental_mobil_share',
+        'rental_mobil_share_section'
+    );
+
     // Pengaturan Platform Share
     add_settings_field(
         'share_platforms',
@@ -1198,6 +1207,13 @@ function rental_mobil_validate_options($input) {
         $output['admin_filter_options'] = array('merk', 'transmisi', 'bahan_bakar', 'tipe', 'tahun', 'featured', 'popular');
     }
 
+    // Sanitize enable share buttons
+    if (isset($input['enable_share_buttons'])) {
+        $output['enable_share_buttons'] = (bool) $input['enable_share_buttons'];
+    } else {
+        $output['enable_share_buttons'] = false;
+    }
+
     // Sanitize share platforms
     if (isset($input['share_platforms']) && is_array($input['share_platforms'])) {
         $valid_platforms = array('whatsapp', 'facebook', 'twitter', 'telegram', 'email', 'copy');
@@ -1654,9 +1670,31 @@ function rental_mobil_get_admin_filter_options() {
 }
 
 /**
+ * Check if share buttons are enabled
+ */
+function rental_mobil_is_share_buttons_enabled() {
+    // Hapus cache opsi untuk memastikan data terbaru
+    wp_cache_delete('rental_mobil_options', 'options');
+    wp_cache_delete('alloptions', 'options');
+
+    // Dapatkan opsi langsung dari database
+    $options = get_option('rental_mobil_options', array());
+
+    // Periksa apakah enable_share_buttons ada dan bernilai true
+    $enabled = isset($options['enable_share_buttons']) ? (bool) $options['enable_share_buttons'] : true;
+
+    return $enabled;
+}
+
+/**
  * Get share platforms
  */
 function rental_mobil_get_share_platforms() {
+    // Jika tombol bagikan dinonaktifkan, kembalikan array kosong
+    if (!rental_mobil_is_share_buttons_enabled()) {
+        return array();
+    }
+
     // Hapus cache opsi untuk memastikan data terbaru
     wp_cache_delete('rental_mobil_options', 'options');
     wp_cache_delete('alloptions', 'options');
@@ -1858,6 +1896,24 @@ function rental_mobil_admin_filter_options_callback() {
  */
 function rental_mobil_share_section_callback() {
     echo '<p>' . __('Atur pengaturan share untuk detail kendaraan.', 'rental-mobil-wp') . '</p>';
+}
+
+/**
+ * Enable share buttons callback
+ */
+function rental_mobil_enable_share_buttons_callback() {
+    $options = rental_mobil_get_options();
+    $enable_share_buttons = isset($options['enable_share_buttons']) ? $options['enable_share_buttons'] : true;
+    ?>
+    <fieldset>
+        <legend class="screen-reader-text"><?php _e('Tombol Bagikan', 'rental-mobil-wp'); ?></legend>
+        <label for="enable_share_buttons">
+            <input type="checkbox" id="enable_share_buttons" name="rental_mobil_options[enable_share_buttons]" value="1" <?php checked($enable_share_buttons, true); ?>>
+            <?php _e('Aktifkan tombol bagikan di detail kendaraan', 'rental-mobil-wp'); ?>
+        </label>
+    </fieldset>
+    <p class="description"><?php _e('Jika dinonaktifkan, tombol bagikan tidak akan ditampilkan di detail kendaraan dan modal zoom.', 'rental-mobil-wp'); ?></p>
+    <?php
 }
 
 /**
